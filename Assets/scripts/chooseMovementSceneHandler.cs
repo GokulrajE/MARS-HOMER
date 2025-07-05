@@ -34,13 +34,13 @@ public class MovementSceneHandler : MonoBehaviour
     {
 
         // Initialize if needed
-        if (AppData.UserData.dTableConfig == null)
+        if (AppData.Instance.userData.dTableConfig == null)
         {
             // Inialize the logger
             AppLogger.StartLogging(SceneManager.GetActiveScene().name);
             // Initialize.
             Debug.Log("calling");
-            AppData.InitializeRobot();
+            //AppData.InitializeRobot();
         }
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
@@ -68,18 +68,18 @@ public class MovementSceneHandler : MonoBehaviour
             SceneManager.LoadScene(assessmentScene);
 
         //To initiate the Mars
-        if (MarsComm.desThree < AppData.ArmSupportController.MARS_ACTIVATED && ACTIVATE)
-            AppData.ArmSupportController.initiate();
+        //if (MarsComm.desThree < AppData.ArmSupportController.MARS_ACTIVATED && ACTIVATE)
+        //    AppData.ArmSupportController.initiate();
      
-        //To Deactivate the Mars
-        if(MarsComm.desThree >= AppData.ArmSupportController.MARS_ACTIVATED && DEACTIVATE)
-        { 
-            MarsComm.onclickRealease();
-            if (MarsComm.desThree == 0)
-            {
-                DEACTIVATE = false;
-            }
-        }
+        ////To Deactivate the Mars
+        //if(MarsComm.desThree >= AppData.ArmSupportController.MARS_ACTIVATED && DEACTIVATE)
+        //{ 
+        //    MarsComm.onclickRealease();
+        //    if (MarsComm.desThree == 0)
+        //    {
+        //        DEACTIVATE = false;
+        //    }
+        //}
            
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
@@ -112,40 +112,40 @@ public class MovementSceneHandler : MonoBehaviour
             LoadNextScene();
             changeScene = false;
         }
-       updateGUI();
+       //updateGUI();
        
     }
-    public void updateGUI()
-    {
-        if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)//2005
-        {
-            ACTIVATE = false;
-            gainMessageText.text = "READY TO ACTIVATE SUPPORT";
-        }
-        if (MarsComm.desThree == AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)//2006
-        {
+    //public void updateGUI()
+    //{
+    //    if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)//2005
+    //    {
+    //        ACTIVATE = false;
+    //        gainMessageText.text = "READY TO ACTIVATE SUPPORT";
+    //    }
+    //    if (MarsComm.desThree == AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)//2006
+    //    {
            
-            gainMessageText.text = $"GAIN - {AppData.ArmSupportController.getGain()} %";
-            supportIndicator.value = MarsComm.desOne;
-            nextButton.gameObject.SetActive(true);  // Show
-        }
-        if (MarsComm.desThree == AppData.ArmSupportController.SEND_ARM_WEIGHT)//2004
-        {
-            gainMessageText.text = "ACTIVATING...";
-            nextButton.gameObject.SetActive(false);  // hide
-        }
-        if(MarsComm.desThree<=2003)
-        {
-            gainMessageText.text = "ACTIVATE-MARS";//2003 OR 0
-            nextButton.gameObject.SetActive(false);  // hide
-        }
-    }
+    //        gainMessageText.text = $"GAIN - {AppData.ArmSupportController.getGain()} %";
+    //        supportIndicator.value = MarsComm.desOne;
+    //        nextButton.gameObject.SetActive(true);  // Show
+    //    }
+    //    if (MarsComm.desThree == AppData.ArmSupportController.SEND_ARM_WEIGHT)//2004
+    //    {
+    //        gainMessageText.text = "ACTIVATING...";
+    //        nextButton.gameObject.SetActive(false);  // hide
+    //    }
+    //    if(MarsComm.desThree<=2003)
+    //    {
+    //        gainMessageText.text = "ACTIVATE-MARS";//2003 OR 0
+    //        nextButton.gameObject.SetActive(false);  // hide
+    //    }
+    //}
     private void UpdateMovementToggleButtons()
     {
         foreach (Transform child in movementSelectGroup.transform)
         {
             Toggle toggleComponent = child.GetComponent<Toggle>();
-            bool isPrescribed = AppData.UserData.movementMoveTimePrsc[toggleComponent.name] > 0;
+            bool isPrescribed = AppData.Instance.userData.movementMoveTimePrsc[toggleComponent.name] > 0;
             // Hide the component if it has no prescribed time.
             toggleComponent.interactable = isPrescribed;
             toggleComponent.gameObject.SetActive(isPrescribed);
@@ -158,7 +158,7 @@ public class MovementSceneHandler : MonoBehaviour
                 if (timeLeftText != null)
                 {
                     // Set the text to your desired value
-                    timeLeftText.text = $"{AppData.UserData.getTodayMoveTimeForMovement(toggleComponent.name)} / {AppData.UserData.movementMoveTimePrsc[toggleComponent.name]} min";
+                    timeLeftText.text = $"{AppData.Instance.userData.getTodayMoveTimeForMovement(toggleComponent.name)} / {AppData.Instance.userData.movementMoveTimePrsc[toggleComponent.name]} min";
                 }
                 else
                 {
@@ -198,29 +198,29 @@ public class MovementSceneHandler : MonoBehaviour
             Toggle toggleComponent = child.GetComponent<Toggle>();
             if (toggleComponent != null && toggleComponent.isOn)
             {
-                //for tuk-tuk only
-                initialAngle = MarsComm.angleOne;
-                toggleSelected = true;
-                AppData.selectedMovement = child.name;
-                nextScene = AppData.selectGame[AppData.MarsDefs.getMovementIndex(AppData.selectedMovement)];
-                AppData.selectedGame = nextScene;
-                Debug.Log(nextScene);
-                AppLogger.LogInfo($"Selected '{AppData.selectedMovement}'.");
-                break;
+                ////for tuk-tuk only
+                //initialAngle = MarsComm.angleOne;
+                //toggleSelected = true;
+                //AppData.selectedMovement = child.name;
+                //nextScene = AppData.selectGame[MarsDefs.getMovementIndex(AppData.selectedMovement)];
+                //AppData.selectedGame = nextScene;
+                //Debug.Log(nextScene);
+                //AppLogger.LogInfo($"Selected '{AppData.selectedMovement}'.");
+                //break;
             }
         }
     }
     public void onclickActivateMarsWithFullSupport()
     {
-        AppData.ArmSupportController.UseFullWeightSupport();
+        //AppData.ArmSupportController.UseFullWeightSupport();
     }
     public void onclickActivateMarsWithHalfSupport()
     {
-        AppData.ArmSupportController.UseHalfWeightSupport();
+        //AppData.ArmSupportController.UseHalfWeightSupport();
     }
     public void onclickActivateMarsWithNoSupport()
     {
-        AppData.ArmSupportController.UseNoWeightSupport();
+        //AppData.ArmSupportController.UseNoWeightSupport();
     }
     public void initiateSupportSystem()
     {
@@ -229,20 +229,20 @@ public class MovementSceneHandler : MonoBehaviour
     public void OnPlutoButtonReleased()
     {
         // check support is activated or not
-        if (MarsComm.desThree != AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)
-            return;
+        //if (MarsComm.desThree != AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)
+        //    return;
 
-        if (toggleSelected)
-        {
+        //if (toggleSelected)
+        //{
            
 
-            changeScene = true;
-            toggleSelected = false;
-        }
-        else
-        {
-            Debug.LogWarning("Select at least one toggle to proceed.");
-        }
+        //    changeScene = true;
+        //    toggleSelected = false;
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("Select at least one toggle to proceed.");
+        //}
     }
 
     void LoadNextScene()
@@ -273,11 +273,11 @@ public class MovementSceneHandler : MonoBehaviour
     }
     private void OnExitButtonClicked()
     {
-        if (MarsComm.desThree>=AppData.ArmSupportController.MARS_ACTIVATED)
-        {
-            DeactivateMessageText.text = "To quit, Deactivate Mars...";
-            return;
-        }
+        //if (MarsComm.desThree>=AppData.ArmSupportController.MARS_ACTIVATED)
+        //{
+        //    DeactivateMessageText.text = "To quit, Deactivate Mars...";
+        //    return;
+        //}
            
         StartCoroutine(LoadSummaryScene());
     }

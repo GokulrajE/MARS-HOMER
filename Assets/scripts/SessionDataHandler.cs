@@ -21,23 +21,24 @@ public static class SessionDataHandler
     public static string MOVEMENT = "Mechanism";
     public static Dictionary<string, float> movementMoveTimePrev { get; private set; } // Previous movement time 
   
-    public static void parseMovementMoveTimePrev()
-    {
-        movementMoveTimePrev = UserData.createMoveTimeDictionary();
-        for (int i = 0; i < MarsDefs.Movements.Length; i++)
-        {
-            var _totalMoveTime = UserData.dTableSession.AsEnumerable()
-                .Where(row => DateTime.ParseExact(row.Field<string>(dateTime), dateTimeFormat, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
-                .Where(row => row.Field<string>(movement) == MarsDefs.Movements[i])
-                .Sum(row => Convert.ToInt32(row[moveTime]));
-            movementMoveTimePrev[MarsDefs.Movements[i]] = _totalMoveTime / 60f;
-        }
-    }
+    //public static void parseMovementMoveTimePrev()
+    //{
+    //    movementMoveTimePrev = marsUserData.createMoveTimeDictionary();
+    //    for (int i = 0; i < MarsDefs.Movements.Length; i++)
+    //    {
+    //        var _totalMoveTime = marsUserData.dTableSession.AsEnumerable()
+    //            .Where(row => DateTime.ParseExact(row.Field<string>(dateTime), dateTimeFormat, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
+    //            .Where(row => row.Field<string>(movement) == MarsDefs.Movements[i])
+    //            .Sum(row => Convert.ToInt32(row[moveTime]));
+    //        movementMoveTimePrev[MarsDefs.Movements[i]] = _totalMoveTime / 60f;
+    //    }
+    //}
 
     //CALCULATE MOVETIME PER DAY FOR ALL MOVEMENTS
     public static  void MovTimePerDay()
     {
-        var movTimePerDay = UserData.dTableSession.AsEnumerable()
+       
+        var movTimePerDay = AppData.Instance.userData.dTableSession.AsEnumerable()
             .GroupBy(row => DateTime.ParseExact(row.Field<string>(DATETIME), DATEFORMAT_INFILE, CultureInfo.InvariantCulture).Date) // Group by date only
             .Select(group => new
             {
@@ -62,7 +63,7 @@ public static class SessionDataHandler
     public static void SelectedMovement(string movement)
     {
   
-        var filteredData = UserData.dTableSession.AsEnumerable()
+        var filteredData = AppData.Instance.userData.dTableSession.AsEnumerable()
             .Where(row => row.Field<string>(MOVEMENT) == movement)
             .Select(row => new
             {
@@ -101,9 +102,9 @@ public static class SessionDataHandler
         {
             DateTime _day = today.AddDays(-i);
             // Get the summary data for this date.
-            var _moveTime = UserData.dTableSession.AsEnumerable()
-                .Where(row => DateTime.ParseExact(row.Field<string>(dateTime), dateTimeFormat, CultureInfo.InvariantCulture).Date == _day)
-                .Sum(row => Convert.ToInt32(row[moveTime]));
+            var _moveTime = AppData.Instance.userData.dTableSession.AsEnumerable()
+                .Where(row => DateTime.ParseExact(row.Field<string>(DATETIME), DATEFORMAT_INFILE, CultureInfo.InvariantCulture).Date == _day)
+                .Sum(row => Convert.ToInt32(row[MOVETIME]));
             // Create the day summary.
             daySummaries[i - 1] = new DaySummary
             {

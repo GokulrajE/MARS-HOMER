@@ -80,13 +80,13 @@ public class HalfWeightSupportROM : MonoBehaviour
             
         }
 
-        AppData.ArmSupportController.UseNoWeightSupport();
+        //AppData.ArmSupportController.UseNoWeightSupport();
      
     }
     public void updateSupportGUI()
     {
         supportIndicator.fillAmount = MarsComm.SUPPORT;
-        support.text = $"Support:{AppData.ArmSupportController.getGain()}%";
+        //support.text = $"Support:{AppData.ArmSupportController.getGain()}%";
     }
 
 

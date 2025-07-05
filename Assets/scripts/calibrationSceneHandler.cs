@@ -41,18 +41,18 @@ public class calibrationSceneHandler : MonoBehaviour
             calibrating = false;
         }
 
-
+        Debug.Log(calibrationState);
         if (calibrationState > 1)
         {
             switch (MarsComm.desThree)
             {
                 case SEND_UPPERARM_LENGTH:
-                    AppData.dataSendToRobot = new float[] { AppData.lu / 1000.0f, MarsComm.thetades1, SEND_FOREARM_LENGTH, MarsComm.controlStatus };
+                    AppData.dataSendToRobot = new float[] { AppData.Instance.userData.uaLength / 1000.0f, MarsComm.thetades1, SEND_FOREARM_LENGTH, MarsComm.controlStatus };
                  
                     break;
 
                 case SEND_FOREARM_LENGTH:
-                    AppData.dataSendToRobot = new float[] { AppData.lf / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_X, MarsComm.controlStatus };
+                    AppData.dataSendToRobot = new float[] { AppData.Instance.userData.faLength / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_X, MarsComm.controlStatus };
 
                     break;
 

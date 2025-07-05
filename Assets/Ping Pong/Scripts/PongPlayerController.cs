@@ -41,12 +41,12 @@ public class PongPlayerController : MonoBehaviour
 
     public void getAssessmentData()
     {
-        UserData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
-        DataRow lastRow = UserData.dTableAssessment.Rows[UserData.dTableAssessment.Rows.Count - 1];
-        y_min = float.Parse((lastRow.Field<string>(AppData.miny)));
-        y_max = float.Parse((lastRow.Field<string>(AppData.maxy)));
-        //Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars);
-        Debug.Log("working");
+        //marsUserData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
+        //DataRow lastRow = marsUserData.dTableAssessment.Rows[marsUserData.dTableAssessment.Rows.Count - 1];
+        //y_min = float.Parse((lastRow.Field<string>(AppData.miny)));
+        //y_max = float.Parse((lastRow.Field<string>(AppData.maxy)));
+        ////Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars);
+        //Debug.Log("working");
     }
 
     // Update is called once per frame
@@ -81,7 +81,7 @@ public class PongPlayerController : MonoBehaviour
 
         if (Mathf.Abs(MarsComm.angleOne) > (Mathf.Abs(MovementSceneHandler.initialAngle) - 20))
         {
-            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleThree))), y_min, y_max);
+            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleThree))), y_min, y_max);
             this.transform.position = new Vector2(this.transform.position.x,yValue );
             //Debug.Log(Angle2ScreenZ((Mathf.Sin(3.14f / 180 * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleThree))), y_min, y_max));
             if (transform.position.y > topBound)

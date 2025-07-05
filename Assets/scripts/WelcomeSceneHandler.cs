@@ -3,9 +3,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using NeuroRehabLibrary;
+using System.Threading.Tasks;
 using System.Data;
 using System.IO;
+using System.Linq;
 public class welcomSceneHandler : MonoBehaviour
 {
     //public GameObject loading;
@@ -21,61 +22,74 @@ public class welcomSceneHandler : MonoBehaviour
     private DaySummary[] daySummaries;
     public static bool changeScene = false;
     public readonly string nextScene = "calibrationScene";
-    public string filePath = $"{Application.dataPath}/data/configdata.csv"; 
+ 
 
-
-    // Private variables
-    private bool attachPlutoButtonEvent = false;
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize.
-      
-        if (!File.Exists(DataManager.filePathforConfig))
+        Debug.Log(DataManager.basePath);
+        if (!Directory.Exists(DataManager.basePath))
         {
-            Debug.Log(filePath);
-            SceneManager.LoadScene("configuration");
+            
+            SceneManager.LoadScene("getConfig");
             return;
         }
-        AppData.InitializeRobot();
 
-        daySummaries = SessionDataHandler.CalculateMoveTimePerDay();
-        SessionManager.Initialize(DataManager.directoryPathSession);
-        SessionManager.Instance.Login();
+        // Get all subdirectories excluding metadata
+        var validUserDirs = Directory.GetDirectories(DataManager.basePath)
+        .Select(Path.GetFileName)
+        .Where(name => !name.ToLower().Contains("meta"))
+        .ToList();
+       
 
-        // Inialize the logger
-        AppLogger.StartLogging(SceneManager.GetActiveScene().name);
+        if (validUserDirs.Count == 1)
+        {
+            AppData.Instance.setUser(validUserDirs[0]);
+            DataManager.setUserId(AppData.Instance.userID);
+        }
+
+        if (!File.Exists(DataManager.filePathforConfig))
+        {
+            
+            SceneManager.LoadScene("getConfig");
+            return;
+        }
+
+        AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
-        AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
+        AppLogger.LogInfo($"'{SceneManager.GetActiveScene().name}' scene started.");
+        daySummaries = AppData.Instance.userData.CalculateMoveTimePerDay();
+
+       
         UpdateUserData();
         UpdatePieChart();
+       
+       
+        //Task.Run(() =>  // Run in a background task
+        //{
+        //    if (!awsManager.IsTaskScheduled(awsManager.taskName))
+        //    {
+        //        awsManager.ScheduleTask();
+        //    }
+        //    awsManager.RunAWSpythonScript();
 
-        // Update summary display
-        if (!piChartUpdated)
-        {
-           
-        }
+        //});
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (MarsComm.desThree != 1998)
-            AppData.sendToRobot(AppData.dataSendToRobot);
-        // Attach PlutoButton release event after 2 seconds if it is not attached already.
-        if (!attachPlutoButtonEvent && Time.timeSinceLevelLoad > 2)
-        {
-            attachPlutoButtonEvent = true;
-            MarsComm.OnButtonReleased += onMarsButtonReleased;
-        }
-
+    
         // Check if it time to switch to the next scene
         if (changeScene == true)
         {
             LoadTargetScene();
             changeScene = false;
         }
+        //Debug.Log(MarsComm.desThree+"des3");
     }
 
     public void onMarsButtonReleased()
@@ -94,10 +108,10 @@ public class welcomSceneHandler : MonoBehaviour
     private void UpdateUserData()
     {
       
-        userName.text = AppData.UserData.hospNumber;
-        int movetime = AppData.UserData.totalMoveTimeRemaining;
-        Debug.Log(AppData.UserData.isExceeded);
-        if (AppData.UserData.isExceeded)
+        userName.text = AppData.Instance.userData.hospNumber;
+        int movetime = AppData.Instance.userData.totalMoveTimeRemaining;
+        Debug.Log(AppData.Instance.userData.isExceeded);
+        if (AppData.Instance.userData.isExceeded)
         {
             timeRemainingToday.text = $"Done +{movetime}[min]";
             timeRemainingToday.color = Color.green ;
@@ -108,8 +122,10 @@ public class welcomSceneHandler : MonoBehaviour
             timeRemainingToday.text = $"{movetime} min";
         }
        
-        todaysDay.text = AppData.UserData.getCurrentDayOfTraining().ToString();
+        todaysDay.text = AppData.Instance.userData.getCurrentDayOfTraining().ToString();
         todaysDate.text = DateTime.Now.ToString("ddd, dd-MM-yyyy");
+        if (!File.Exists(awsManager.filePathUploadStatus))
+            awsManager.createFile(userName.text);
     }
 
     private void UpdatePieChart()
@@ -119,7 +135,7 @@ public class welcomSceneHandler : MonoBehaviour
         {
             prevDays[i].text = daySummaries[i].Day;
             prevDates[i].text = daySummaries[i].Date;
-            pies[i].fillAmount = daySummaries[i].MoveTime / AppData.UserData.totalMoveTimePrsc;
+            pies[i].fillAmount = daySummaries[i].MoveTime / AppData.Instance.userData.totalMoveTimePrsc;
             pies[i].color = new Color32(148, 234, 107, 255);
         }
         piChartUpdated = true;
@@ -132,6 +148,6 @@ public class welcomSceneHandler : MonoBehaviour
     private void OnApplicationQuit()
     {
         Application.Quit();
-        JediComm.Disconnect();
+        //JediComm.Disconnect();
     }
 }

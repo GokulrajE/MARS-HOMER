@@ -60,25 +60,25 @@ public class weightEstimation : MonoBehaviour
         if (weightCalibStatus == 2004)
         {
 
-            if (MarsComm.desThree < AppData.ArmSupportController.SEND_ARM_WEIGHT)
-            {
-                AppData.dataSendToRobot = new float[] { sol[0], (float)MarsComm.thetades1, AppData.ArmSupportController.SEND_ARM_WEIGHT, (float)MarsComm.controlStatus };
-                AppData.sendToRobot(AppData.dataSendToRobot);
-            }
-            if (MarsComm.desThree == AppData.ArmSupportController.SEND_ARM_WEIGHT)
-            {
-                AppData.dataSendToRobot = new float[] { sol[1], (float)MarsComm.thetades1, AppData.ArmSupportController.MARS_ACTIVATED, (float)MarsComm.controlStatus };
-                AppData.sendToRobot(AppData.dataSendToRobot);
+            //if (MarsComm.desThree < AppData.ArmSupportController.SEND_ARM_WEIGHT)
+            //{
+            //    AppData.dataSendToRobot = new float[] { sol[0], (float)MarsComm.thetades1, AppData.ArmSupportController.SEND_ARM_WEIGHT, (float)MarsComm.controlStatus };
+            //    AppData.sendToRobot(AppData.dataSendToRobot);
+            //}
+            //if (MarsComm.desThree == AppData.ArmSupportController.SEND_ARM_WEIGHT)
+            //{
+            //    AppData.dataSendToRobot = new float[] { sol[1], (float)MarsComm.thetades1, AppData.ArmSupportController.MARS_ACTIVATED, (float)MarsComm.controlStatus };
+            //    AppData.sendToRobot(AppData.dataSendToRobot);
 
-            }
-            else if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)
-            {
+            //}
+            //else if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)
+            //{
 
-                Debug.Log("Weight Calibration Complete");
-                AppLogger.LogInfo("weight calibration has been completed successfully " + "b1=" + sol[0] + "b2 = " + sol[1] + "sigmoid dz  = " + MarsComm.desOne + "sigmoid Flex = " + MarsComm.desTwo + "Flexion Torque  = " + MarsComm.desThree);
+            //    Debug.Log("Weight Calibration Complete");
+            //    AppLogger.LogInfo("weight calibration has been completed successfully " + "b1=" + sol[0] + "b2 = " + sol[1] + "sigmoid dz  = " + MarsComm.desOne + "sigmoid Flex = " + MarsComm.desTwo + "Flexion Torque  = " + MarsComm.desThree);
 
-                weightCalibStatus = 2006;
-            }
+            //    weightCalibStatus = 2006;
+            //}
            
 
         }
@@ -89,14 +89,14 @@ public class weightEstimation : MonoBehaviour
    
     public void updateGUI()
     {
-        if (weightCalibStatus <= AppData.ArmSupportController.SEND_ARM_WEIGHT)
-            return;
-        UpdateText.text = "b1=" + sol[0] +
-                      "b2 = " + sol[1] + '\n' +
-                      "Weight Estimation Complete" + '\n' +
-                      "sigmoid dz  = " + MarsComm.desOne + '\n' +
-                      "sigmoid Flex = " + MarsComm.desTwo + '\n' +
-                      "Flexion Torque  = " + MarsComm.desThree;
+        //if (weightCalibStatus <= AppData.ArmSupportController.SEND_ARM_WEIGHT)
+        //    return;
+        //UpdateText.text = "b1=" + sol[0] +
+        //              "b2 = " + sol[1] + '\n' +
+        //              "Weight Estimation Complete" + '\n' +
+        //              "sigmoid dz  = " + MarsComm.desOne + '\n' +
+        //              "sigmoid Flex = " + MarsComm.desTwo + '\n' +
+        //              "Flexion Torque  = " + MarsComm.desThree;
        
     }
     public void onClickRecord()
@@ -263,10 +263,10 @@ public class weightEstimation : MonoBehaviour
    
     public void ActivateMars()
     {
-        if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)
-        {
-            AppData.ArmSupportController.setSupport(MarsComm.SUPPORT_CODE[1]);
-        }
+        //if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)
+        //{
+        //    AppData.ArmSupportController.setSupport(MarsComm.SUPPORT_CODE[1]);
+        //}
    
     }
     public void ROMforFullsupport()

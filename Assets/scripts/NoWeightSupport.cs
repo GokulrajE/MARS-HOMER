@@ -68,7 +68,7 @@ public class NoWeightSupport : MonoBehaviour
     public void updateSupportGUI()
     {
         supportIndicator.fillAmount = MarsComm.SUPPORT;
-        support.text = $"Support:{AppData.ArmSupportController.getGain()}%";
+        //support.text = $"Support:{AppData.ArmSupportController.getGain()}%";
     }
 
     private void OnApplicationQuit()

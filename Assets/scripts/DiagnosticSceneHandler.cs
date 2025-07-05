@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DiagnosticSceneHandler : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class DiagnosticSceneHandler : MonoBehaviour
     void Start()
     {
         
-        AppData.InitializeRobot();
+        AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
     }
 
     private void Update()
@@ -42,10 +43,10 @@ public class DiagnosticSceneHandler : MonoBehaviour
                              "shoulderPosy  : " + MarsComm.shPosY.ToString() + "\n" +
                              "shoulderPosz  : " + MarsComm.shPosZ.ToString() + "\n" +
                              "lenUpperArm   : " + MarsComm.lenUpperArm.ToString() + "\n" +
-                             "lenLowerArm   : " + MarsComm.lenUpperArm.ToString() +"\n"+
+                             "lenLowerArm   : " + MarsComm.lenUpperArm.ToString() + "\n" +
                              "weight1       : " + MarsComm.lenUpperArm.ToString() + "\n" +
                              "weight2       : " + MarsComm.lenUpperArm.ToString() + "\n" +
-                             
+
                              //$"IMU1         :  aX - {MarsComm.imu1aX.ToString()}    aY - {MarsComm.imu1aY.ToString()}   aZ - {MarsComm.imu1aZ}" + "\n" +
                              //$"IMU2         :  aX - {MarsComm.imu2aX.ToString()}    aY - {MarsComm.imu2aY.ToString()}   aZ - {MarsComm.imu2aZ}" + "\n" +
                              //$"IMU3         :  aX - {MarsComm.imu3aX.ToString()}    aY - {MarsComm.imu3aY.ToString()}   aZ - {MarsComm.imu3aZ}" + "\n" +

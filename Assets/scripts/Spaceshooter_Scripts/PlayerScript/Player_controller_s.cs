@@ -46,31 +46,31 @@ public class Player_controller_s : MonoBehaviour
         xMax = 0.9f * screenBounds.x;//changed into x from y
         yMin = -screenBounds.y / 1 + 0.2f;//change into 1 from 4
         yMax = screenBounds.y - screenBounds.y / 1.5f;
-        threshold = MarsComm.OFFSET[AppData.useHand];
+        //threshold = MarsComm.OFFSET[AppData.useHand];
         getAssessmentData();
         audioSource = GetComponent<AudioSource>();
         gm = FindObjectOfType<GameManagerScript>();
     }
     public static void getAssessmentData()
     {
-        UserData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
-        DataRow lastRow = UserData.dTableAssessment.Rows[UserData.dTableAssessment.Rows.Count - 1];
-        zMinMars = float.Parse((lastRow.Field<string>(AppData.minx)));
-        zMaxMars = float.Parse((lastRow.Field<string>(AppData.maxx)));
-        yMinMars = float.Parse((lastRow.Field<string>(AppData.miny)));
-        yMaxMars = float.Parse((lastRow.Field<string>(AppData.maxy)));
-        Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars+"possistion Rom");
-        Debug.Log("working");
+        //AppData.Instance._userData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
+        //DataRow lastRow = AppData.Instance.userData.dTableAssessment.Rows[AppData.Instance.userData.dTableAssessment.Rows.Count - 1];
+        //zMinMars = float.Parse((lastRow.Field<string>(AppData.minx)));
+        //zMaxMars = float.Parse((lastRow.Field<string>(AppData.maxx)));
+        //yMinMars = float.Parse((lastRow.Field<string>(AppData.miny)));
+        //yMaxMars = float.Parse((lastRow.Field<string>(AppData.maxy)));
+        //Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars+"possistion Rom");
+        //Debug.Log("working");
     }
     public void FixedUpdate()
     {
         
-        th1 = MarsComm.OFFSET[AppData.useHand] * MarsComm.angleOne;
-        th2 = MarsComm.OFFSET[AppData.useHand] * MarsComm.angleTwo;
-        th3 = MarsComm.OFFSET[AppData.useHand] * MarsComm.angleThree;
+        th1 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angleOne;
+        th2 = MarsComm.OFFSET[AppData.Instance.userData.uaLength] * MarsComm.angleTwo;
+        th3 = MarsComm.OFFSET[AppData.Instance.userData.uaLength] * MarsComm.angleThree;
         yMARS = Mathf.Sin(th1) * (475.0f * Mathf.Cos(th2) + 291.0f * Mathf.Cos(th2 + th3));
         zMARS = (-475.0f * Mathf.Sin(th2) - 291.0f * Mathf.Sin(th2 + th3));
-        xSS = DEPENDENT[AppData.useHand] * -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
+        xSS = DEPENDENT[AppData.Instance.userData.uaLength] * -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
         ySS = ((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yMARS - ((yMinMars + yMaxMars) / 2.0f)));
         transform.position = new Vector3(Mathf.Clamp(xSS, xMin, xMax),
             Mathf.Clamp(ySS, yMin, yMax),
