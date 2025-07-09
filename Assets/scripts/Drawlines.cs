@@ -31,7 +31,7 @@ public class Drawlines : MonoBehaviour
     int[] DEPENDENT = new int[] { 0, -1, 1 };
     void Start()
     {
-        hand_use = AppData.useHand;
+        hand_use = AppData.Instance.userData.useHand;
         Debug.Log(hand_use);
         if (hand_use == 1)
         {

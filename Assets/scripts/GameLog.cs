@@ -44,7 +44,7 @@ public class GameLog : MonoBehaviour
         string dir = Path.Combine(DataManager.directoryPathSession, date, sessionNum);
         Directory.CreateDirectory(dir);
 
-        fileName = Path.Combine(dir, $"{AppData.selectedMovement}_{AppData.selectedGame}_{dateTime}.csv");
+        //fileName = Path.Combine(dir, $"{AppData.selectedMovement}_{AppData.selectedGame}_{dateTime}.csv");
         AppData.trialDataFileLocation = fileName;
 
         File.Create(fileName).Dispose();

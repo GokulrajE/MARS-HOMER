@@ -523,7 +523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.5411765, b: 0, a: 1}
+  m_Color: {r: 0.10188681, g: 0.08896833, b: 0.07824138, a: 0.36862746}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2448,8 +2448,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281216061
-  m_fontColor: {r: 0.23921569, g: 0.17254902, b: 0.18039216, a: 1}
+    rgba: 4281216066
+  m_fontColor: {r: 0.25882354, g: 0.17254902, b: 0.18039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2816,7 +2816,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1033140799}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2828,8 +2828,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -211.17932, y: 445.02}
-  m_SizeDelta: {x: -373.8357, y: -841.52}
+  m_AnchoredPosition: {x: -246.58, y: 458.14795}
+  m_SizeDelta: {x: -423.05, y: -815.2641}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1033140801
 MonoBehaviour:
@@ -2844,7 +2844,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3721,8 +3721,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281216061
-  m_fontColor: {r: 0.23921569, g: 0.17254902, b: 0.18039216, a: 1}
+    rgba: 4281215554
+  m_fontColor: {r: 0.25882354, g: 0.16470589, b: 0.18039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4087,7 +4087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9176471, g: 0.57254905, b: 0, a: 1}
+  m_Color: {r: 0.9568628, g: 0.53333336, b: 0.18823531, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4687,7 +4687,6 @@ MonoBehaviour:
   - {fileID: 1330799673}
   - {fileID: 1863016079}
   piChartUpdated: 1
-  filePath: D:/MARS-HOMER/Assets/data/configdata.csv
 --- !u!4 &1731361027
 Transform:
   m_ObjectHideFlags: 0
@@ -4908,7 +4907,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gokul
+  m_text: '!2232'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 19fdcf8687240c84282a0307838c5f96, type: 2}
   m_sharedMaterial: {fileID: 6678091363555379842, guid: 19fdcf8687240c84282a0307838c5f96, type: 2}

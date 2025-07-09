@@ -98,6 +98,7 @@ public static class JediComm
                 if (readFullSerialPacket())
                 {
                     plTime = DateTime.Now;
+
                     ConnectToRobot.isMARS = true;
                     MarsComm.parseByteArray(rawBytes, plCount, plTime);
                 }
@@ -105,6 +106,7 @@ public static class JediComm
                 {
                     ConnectToRobot.isMARS = false;
                 }
+
             }
             catch (TimeoutException)
             {
@@ -119,6 +121,7 @@ public static class JediComm
     // Read a full serial packet.
     static private bool readFullSerialPacket()
     {
+
         plCount = 0;
         int chksum = 0;
         int _chksum;
@@ -134,6 +137,7 @@ public static class JediComm
             {
                 // Read all the payload bytes.
                 for (int i = 0; i < rawBytes[0] - 1; i++)
+
                 {
                     rawBytes[plCount++] = (byte)serPort.ReadByte();
                     chksum += rawBytes[plCount - 1];

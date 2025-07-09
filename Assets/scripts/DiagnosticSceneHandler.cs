@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using TMPro;
 using UnityEngine;
+
 using UnityEngine.UI;
 using System.Linq;
+
 
 public class DiagnosticSceneHandler : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class DiagnosticSceneHandler : MonoBehaviour
 
     void Start()
     {
+
          // Connect to the robot.
         ConnectToRobot.Connect(AppData.COMPort);
 
@@ -28,6 +31,7 @@ public class DiagnosticSceneHandler : MonoBehaviour
         // Get device version.
         MarsComm.getVersion();
         MarsComm.startSensorStream();
+
     }
 
     private void Update()
@@ -135,7 +139,7 @@ public class DiagnosticSceneHandler : MonoBehaviour
             "",
             ""
         });
-        //Construct the display text while ensuring values are safely converted to string
+
         string robotAngles = string.Join(" ", new string[] {
             MarsComm.angle1.ToString(FLOAT_FORMAT).PadRight(8),
             MarsComm.angle2.ToString(FLOAT_FORMAT).PadRight(8),
@@ -157,6 +161,7 @@ public class DiagnosticSceneHandler : MonoBehaviour
         });
 
         dataDisplayText.text = stateText + sensorText;
+
     }
 
     /*

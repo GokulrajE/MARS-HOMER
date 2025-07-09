@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b671ea146d81c714699c14a3062daba3
+guid: 83be9e76c1981bb4a8e42eb3d1217cf6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7164916930600239499
-    second: bannerfinal_0
+      213: 2728164660365829033
+    second: HOMER_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bannerfinal_0
+      name: HOMER_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 206
+        width: 1146
+        height: 111
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,8 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 57ef362530a119c90800000000000000
-      internalID: -7164916930600239499
+      spriteID: 9a321eddd436cd520800000000000000
+      internalID: 2728164660365829033
       vertices: []
       indices: 
       edges: []
@@ -143,8 +143,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      bannerfinal_0: -7164916930600239499
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -34,13 +34,15 @@ public class MovementSceneHandler : MonoBehaviour
     {
 
         // Initialize if needed
-        if (AppData.UserData.dTableConfig == null)
+        if (AppData.Instance.userData.dTableConfig == null)
         {
             // Inialize the logger
             AppLogger.StartLogging(SceneManager.GetActiveScene().name);
             // Initialize.
             Debug.Log("calling");
+
             // AppData.InitializeRobot();
+
         }
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
@@ -67,7 +69,7 @@ public class MovementSceneHandler : MonoBehaviour
         if(!File.Exists($"{DataManager.directoryAssessmentData}/{DataManager.SupportCalibrationFileName}"))
             SceneManager.LoadScene(assessmentScene);
 
-        //To initiate the Mars
+
         // NEEDS CHANGE
         // if (MarsComm.desThree < AppData.ArmSupportController.MARS_ACTIVATED && ACTIVATE)
         //     AppData.ArmSupportController.initiate();
@@ -82,6 +84,7 @@ public class MovementSceneHandler : MonoBehaviour
         //         DEACTIVATE = false;
         //     }
         // }
+
 
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
@@ -114,9 +117,10 @@ public class MovementSceneHandler : MonoBehaviour
             LoadNextScene();
             changeScene = false;
         }
-       updateGUI();
+       //updateGUI();
        
     }
+
     public void updateGUI()
     {
         // NEEDS CHANGE
@@ -143,12 +147,13 @@ public class MovementSceneHandler : MonoBehaviour
         //     nextButton.gameObject.SetActive(false);  // hide
         // }
     }
+
     private void UpdateMovementToggleButtons()
     {
         foreach (Transform child in movementSelectGroup.transform)
         {
             Toggle toggleComponent = child.GetComponent<Toggle>();
-            bool isPrescribed = AppData.UserData.movementMoveTimePrsc[toggleComponent.name] > 0;
+            bool isPrescribed = AppData.Instance.userData.movementMoveTimePrsc[toggleComponent.name] > 0;
             // Hide the component if it has no prescribed time.
             toggleComponent.interactable = isPrescribed;
             toggleComponent.gameObject.SetActive(isPrescribed);
@@ -161,7 +166,7 @@ public class MovementSceneHandler : MonoBehaviour
                 if (timeLeftText != null)
                 {
                     // Set the text to your desired value
-                    timeLeftText.text = $"{AppData.UserData.getTodayMoveTimeForMovement(toggleComponent.name)} / {AppData.UserData.movementMoveTimePrsc[toggleComponent.name]} min";
+                    timeLeftText.text = $"{AppData.Instance.userData.getTodayMoveTimeForMovement(toggleComponent.name)} / {AppData.Instance.userData.movementMoveTimePrsc[toggleComponent.name]} min";
                 }
                 else
                 {
@@ -201,6 +206,7 @@ public class MovementSceneHandler : MonoBehaviour
             Toggle toggleComponent = child.GetComponent<Toggle>();
             if (toggleComponent != null && toggleComponent.isOn)
             {
+
                 //for tuk-tuk only
                 initialAngle = MarsComm.angle1;
                 toggleSelected = true;
@@ -210,20 +216,21 @@ public class MovementSceneHandler : MonoBehaviour
                 Debug.Log(nextScene);
                 AppLogger.LogInfo($"Selected '{AppData.selectedMovement}'.");
                 break;
+
             }
         }
     }
     public void onclickActivateMarsWithFullSupport()
     {
-        AppData.ArmSupportController.UseFullWeightSupport();
+        //AppData.ArmSupportController.UseFullWeightSupport();
     }
     public void onclickActivateMarsWithHalfSupport()
     {
-        AppData.ArmSupportController.UseHalfWeightSupport();
+        //AppData.ArmSupportController.UseHalfWeightSupport();
     }
     public void onclickActivateMarsWithNoSupport()
     {
-        AppData.ArmSupportController.UseNoWeightSupport();
+        //AppData.ArmSupportController.UseNoWeightSupport();
     }
     public void initiateSupportSystem()
     {
@@ -232,21 +239,23 @@ public class MovementSceneHandler : MonoBehaviour
     public void OnPlutoButtonReleased()
     {
         // check support is activated or not
+
         // NEEDS CHANGE
         // if (MarsComm.desThree != AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)
         //     return;
 
-        if (toggleSelected)
-        {
+//         if (toggleSelected)
+//         {
 
 
-            changeScene = true;
-            toggleSelected = false;
-        }
-        else
-        {
-            Debug.LogWarning("Select at least one toggle to proceed.");
-        }
+
+        //    changeScene = true;
+        //    toggleSelected = false;
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("Select at least one toggle to proceed.");
+        //}
     }
 
     void LoadNextScene()
@@ -277,6 +286,7 @@ public class MovementSceneHandler : MonoBehaviour
     }
     private void OnExitButtonClicked()
     {
+
         // NEEDS CHANGE
         // if (MarsComm.desThree>=AppData.ArmSupportController.MARS_ACTIVATED)
         // {

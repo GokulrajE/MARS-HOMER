@@ -128,6 +128,7 @@ public static class MarsComm
     // Public variables
     static public DateTime previousTime { get; private set; }
     static public DateTime currentTime { get; private set; }
+
     static public double frameRate { get; private set; }
     static public String deviceId { get; private set; }
     static public String version { get; private set; }
@@ -177,13 +178,17 @@ public static class MarsComm
             return status & 0x01;
         }
     }
+
     static public int limb
+
     {
         get => currentStateData[3] & 0x0F;
     }
     static public int marButton
     {
+
         get => (currentStateData[3] >> 4) & 0x01;
+
     }
     static public int calibButton
     {
@@ -273,7 +278,9 @@ public static class MarsComm
         }
     }
 
+
     private static int getControlType(int statusByte)
+
     {
         return (statusByte & 0x0E) >> 1;
     }
@@ -295,6 +302,7 @@ public static class MarsComm
 
     public static void parseByteArray(byte[] payloadBytes, int payloadCount, DateTime payloadTime)
     {
+
         Debug.Log("adsgasdg");
         if (payloadCount == 0)
         {
@@ -487,6 +495,7 @@ public static class MarsComm
         // endPt[1] = Mathf.Sin(theta1) * (len1 * Mathf.Cos(theta2) + len2 * Mathf.Cos(theta2 + theta3));
         // endPt[2] = -len1 * Mathf.Sin(theta2) - len2 * Mathf.Sin(theta2 + theta3);
 
+
         // if (calibrationSceneHandler.calibrationState > 0)
         // {
         //     shPos = new float[] { endPt[0], endPt[1] + AppData.lu, endPt[2] - AppData.lf };
@@ -566,6 +575,7 @@ public static class MarsComm
             new byte[] {
                 (byte)INDATATYPECODES[Array.IndexOf(INDATATYPE, "SET_LIMB")],
                 (byte)Array.IndexOf(LIMBTYPE, limb)
+
             }
         );
     }
@@ -611,6 +621,7 @@ public static class MarsComm
         // AppData.sendToRobot(AppData.dataSendToRobot);
 
     }
+   
 
 }
 

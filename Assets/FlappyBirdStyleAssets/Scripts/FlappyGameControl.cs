@@ -238,7 +238,7 @@ public class FlappyGameControl : MonoBehaviour
         SessionManager.Instance.SetDevice(device, currentGameSession);
         SessionManager.Instance.SetAssistMode(assistMode, assistModeParameters, currentGameSession);
         SessionManager.Instance.SetDeviceSetupLocation(deviceSetupLocation, currentGameSession);
-        SessionManager.Instance.mechanism(AppData.MarsDefs.Movements[0], currentGameSession);
+        SessionManager.Instance.mechanism(MarsDefs.Movements[0], currentGameSession);
        
        
     }

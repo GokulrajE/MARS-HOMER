@@ -79,6 +79,7 @@ public class weightEstimation : MonoBehaviour
 
             //     weightCalibStatus = 2006;
             // }
+
            
 
         }
@@ -89,6 +90,7 @@ public class weightEstimation : MonoBehaviour
    
     public void updateGUI()
     {
+
         if (weightCalibStatus <= AppData.ArmSupportController.SEND_ARM_WEIGHT)
             return;
         // UpdateText.text = "b1=" + sol[0] +
@@ -97,6 +99,7 @@ public class weightEstimation : MonoBehaviour
         //               "sigmoid dz  = " + MarsComm.desOne + '\n' +
         //               "sigmoid Flex = " + MarsComm.desTwo + '\n' +
         //               "Flexion Torque  = " + MarsComm.desThree;
+
        
     }
     public void onClickRecord()
@@ -262,12 +265,13 @@ public class weightEstimation : MonoBehaviour
     }
 
     public void ActivateMars()
-    {   
+
         // NEEDS CHANGE
         // if (MarsComm.desThree == AppData.ArmSupportController.MARS_ACTIVATED)
         // {
         //     AppData.ArmSupportController.setSupport(MarsComm.SUPPORT_CODE[1]);
         // }
+
 
     }
     public void ROMforFullsupport()

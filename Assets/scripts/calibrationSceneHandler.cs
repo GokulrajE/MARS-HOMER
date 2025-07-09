@@ -41,9 +41,11 @@ public class calibrationSceneHandler : MonoBehaviour
             calibrating = false;
         }
 
-
+        Debug.Log(calibrationState);
         if (calibrationState > 1)
         {
+
+
             // NEEDS CHANGE
             // switch (MarsComm.desThree)
             // {

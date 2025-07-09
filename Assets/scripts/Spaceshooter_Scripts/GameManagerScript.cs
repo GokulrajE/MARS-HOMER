@@ -49,7 +49,7 @@ public class GameManagerScript : MonoBehaviour
             }
         }
         StartNewGameSession();
-        support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
+        //support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
         SupportSlider.fillAmount = MarsComm.SUPPORT;
        
     }
@@ -98,7 +98,7 @@ public class GameManagerScript : MonoBehaviour
     }
     public void updateMarsSupportUI()
     {
-        support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
+        //support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
         SupportSlider.fillAmount = MarsComm.SUPPORT;
     }
     void StartNewGameSession()
@@ -122,7 +122,7 @@ public class GameManagerScript : MonoBehaviour
         SessionManager.Instance.SetDevice(device, currentGameSession);
         SessionManager.Instance.SetAssistMode(assistMode, assistModeParameters, currentGameSession);
         SessionManager.Instance.SetDeviceSetupLocation(deviceSetupLocation, currentGameSession);
-        SessionManager.Instance.mechanism(AppData.MarsDefs.Movements[1], currentGameSession);
+        SessionManager.Instance.mechanism(MarsDefs.Movements[1], currentGameSession);
 
     }
     void EndCurrentGameSession()

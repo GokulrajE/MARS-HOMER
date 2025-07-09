@@ -68,7 +68,7 @@ public class Drawpath : MonoBehaviour
     }
     public void onclickHalfweightSupport()
     {
-        AppData.ArmSupportController.UseHalfWeightSupport(1);
+        //AppData.ArmSupportController.UseHalfWeightSupport(1);
         paths = Drawlines.paths_pass;
         max_x = paths.Max(v => v.x);
         min_x = paths.Min(v => v.x);
@@ -96,7 +96,7 @@ public class Drawpath : MonoBehaviour
     public void updateSupportGUI()
     {
         supportIndicator.fillAmount = MarsComm.SUPPORT;
-        support.text = $"Support:{AppData.ArmSupportController.getGain()}%";
+        //support.text = $"Support:{AppData.ArmSupportController.getGain()}%";
     }
   
     private void OnApplicationQuit()

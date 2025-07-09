@@ -107,7 +107,7 @@ public class UIManager : MonoBehaviour {
 	}
     public void updateMarsSupportUI()
     {
-        support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
+        //support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
         SupportSlider.fillAmount = MarsComm.SUPPORT;
     }
     public void onMarsButtonReleased()
@@ -137,7 +137,7 @@ public class UIManager : MonoBehaviour {
         SessionManager.Instance.SetDevice(device, currentGameSession);
         SessionManager.Instance.SetAssistMode(assistMode, assistModeParameters, currentGameSession);
         SessionManager.Instance.SetDeviceSetupLocation(deviceSetupLocation, currentGameSession);
-        SessionManager.Instance.mechanism(AppData.MarsDefs.Movements[2], currentGameSession);
+        SessionManager.Instance.mechanism(MarsDefs.Movements[2], currentGameSession);
 
     }
     void EndCurrentGameSession()
