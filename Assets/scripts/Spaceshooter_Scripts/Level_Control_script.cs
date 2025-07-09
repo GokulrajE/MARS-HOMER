@@ -22,7 +22,7 @@ public class Level_Control_script : MonoBehaviour
         InitializeLevelButtons();
         Checkscore();
         UpdateScoreDisplay();
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
     }
 
     // Update is called once per frame
@@ -142,7 +142,7 @@ private void InitializeLevelButtons()
     }
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
 }
 

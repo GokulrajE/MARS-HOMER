@@ -79,11 +79,13 @@ public class PongPlayerController : MonoBehaviour
     {
         
 
-        if (Mathf.Abs(MarsComm.angleOne) > (Mathf.Abs(MovementSceneHandler.initialAngle) - 20))
+        if (Mathf.Abs(MarsComm.angle1) > (Mathf.Abs(MovementSceneHandler.initialAngle) - 20))
         {
-            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angleThree))), y_min, y_max);
+
+            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle1) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle2) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle2 + 3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle3))), y_min, y_max);
+
             this.transform.position = new Vector2(this.transform.position.x,yValue );
-            //Debug.Log(Angle2ScreenZ((Mathf.Sin(3.14f / 180 * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleThree))), y_min, y_max));
+            //Debug.Log(Angle2ScreenZ((Mathf.Sin(3.14f / 180 * MarsComm.angle1) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angle2) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angle2 + 3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angle3))), y_min, y_max));
             if (transform.position.y > topBound)
             {
                 transform.position = new Vector3(transform.position.x, topBound, 0);

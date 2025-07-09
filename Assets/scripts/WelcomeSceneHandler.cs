@@ -37,6 +37,7 @@ public class welcomSceneHandler : MonoBehaviour
             return;
         }
 
+
         // Get all subdirectories excluding metadata
         var validUserDirs = Directory.GetDirectories(DataManager.basePath)
         .Select(Path.GetFileName)
@@ -82,7 +83,16 @@ public class welcomSceneHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-    
+
+        // if (MarsComm.desThree != 1998)
+            // AppData.sendToRobot(AppData.dataSendToRobot);
+        // Attach PlutoButton release event after 2 seconds if it is not attached already.
+        if (!attachPlutoButtonEvent && Time.timeSinceLevelLoad > 2)
+        {
+            attachPlutoButtonEvent = true;
+            MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
+        }
+
         // Check if it time to switch to the next scene
         if (changeScene == true)
         {
@@ -143,7 +153,7 @@ public class welcomSceneHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
     private void OnApplicationQuit()
     {

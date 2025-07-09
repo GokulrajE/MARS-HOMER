@@ -36,7 +36,7 @@ public class connectStatusHandler : MonoBehaviour
     void Update()
     {
         // Update connection status
-        if (JediComm.isMars)
+        if (ConnectToRobot.isMARS)
         {
             connectStatus.color = Color.green;
             loading.SetActive(false);

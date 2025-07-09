@@ -34,7 +34,7 @@ public class GameManagerScript : MonoBehaviour
     void Start()
     {
         playerMoveTime = 0;
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         Playerscore = FindObjectOfType<PlayerScore>();
         timer = gameDuration; // Initialize timer 
         GameOverPanel.SetActive(false);
@@ -57,7 +57,7 @@ public class GameManagerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //angeltext.text = MarsComm.angleOne + "\\" + MarsComm.angleTwo + "\\" + MarsComm.angleThree + "\\" + MarsComm.angleFour;
+        //angeltext.text = MarsComm.angle1 + "\\" + MarsComm.angle2 + "\\" + MarsComm.angle3 + "\\" + MarsComm.angle4;
         // Check if the Escape key is pressed
         if (Input.GetKeyDown(KeyCode.Escape) || isGameOver)
         {

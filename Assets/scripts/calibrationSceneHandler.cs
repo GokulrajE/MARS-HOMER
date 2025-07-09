@@ -29,7 +29,7 @@ public class calibrationSceneHandler : MonoBehaviour
         //AppData.InitializeRobot();
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
 
     }
 
@@ -44,50 +44,53 @@ public class calibrationSceneHandler : MonoBehaviour
         Debug.Log(calibrationState);
         if (calibrationState > 1)
         {
-            switch (MarsComm.desThree)
-            {
-                case SEND_UPPERARM_LENGTH:
-                    AppData.dataSendToRobot = new float[] { AppData.Instance.userData.uaLength / 1000.0f, MarsComm.thetades1, SEND_FOREARM_LENGTH, MarsComm.controlStatus };
-                 
-                    break;
 
-                case SEND_FOREARM_LENGTH:
-                    AppData.dataSendToRobot = new float[] { AppData.Instance.userData.faLength / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_X, MarsComm.controlStatus };
 
-                    break;
+            // NEEDS CHANGE
+            // switch (MarsComm.desThree)
+            // {
+            //     case SEND_UPPERARM_LENGTH:
+            //         AppData.dataSendToRobot = new float[] { AppData.lu / 1000.0f, MarsComm.thetades1, SEND_FOREARM_LENGTH, MarsComm.controlStatus };
 
-                case SEND_SHOLDER_POSITION_X:
-                    AppData.dataSendToRobot = new float[] { MarsComm.shPos[0] / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_Y, MarsComm.controlStatus };
-                 
-                    break;
+            //         break;
 
-                case SEND_SHOLDER_POSITION_Y:
-                    AppData.dataSendToRobot = new float[] { MarsComm.shPos[1] / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_Z, MarsComm.controlStatus };
-                   
-                    break;
+            //     case SEND_FOREARM_LENGTH:
+            //         AppData.dataSendToRobot = new float[] { AppData.lf / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_X, MarsComm.controlStatus };
 
-                case SEND_SHOLDER_POSITION_Z:
-                    AppData.dataSendToRobot = new float[] { MarsComm.shPos[2] / 1000.0f, MarsComm.thetades1, SENT_SUCCESSFULLY, MarsComm.controlStatus };
-                 
-                    break;
+            //         break;
 
-                case SENT_SUCCESSFULLY:
-                    if (Mathf.Abs(MarsComm.shPos[0]) > 50 || Mathf.Abs(MarsComm.shPos[1]) > 50)
-                    {
-                        panel.GetComponent<Image>().color = new Color32(255, 0, 0, 100);
-                        messageBox.text = "Align Shoulder Joint properly\nShoulder Position:   x - " + MarsComm.shPos[0] + "  , y - " + MarsComm.shPos[1] + "  , z - " + MarsComm.shPos[2];
-                        calibrationState = CALIBRATION_FAILD;
-                    }
-                    else
-                    {
-                        panel.GetComponent<Image>().color = new Color32(0, 255, 0, 100);
-                        messageBox.text = "Kinematic Calibration completed\nShoulder Position: x- " + MarsComm.shPos[0] + "  , y - " + MarsComm.shPos[1] + "  , z- " + MarsComm.shPos[2] + "\nCalibration Completed - Press Mars Button To Select Movements";
-                        calibrationState = CALIBRATION_SUCCESS;
-                    }
-                    break;
+            //     case SEND_SHOLDER_POSITION_X:
+            //         AppData.dataSendToRobot = new float[] { MarsComm.shPos[0] / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_Y, MarsComm.controlStatus };
 
-            }
-            AppData.sendToRobot(AppData.dataSendToRobot);
+            //         break;
+
+            //     case SEND_SHOLDER_POSITION_Y:
+            //         AppData.dataSendToRobot = new float[] { MarsComm.shPos[1] / 1000.0f, MarsComm.thetades1, SEND_SHOLDER_POSITION_Z, MarsComm.controlStatus };
+
+            //         break;
+
+            //     case SEND_SHOLDER_POSITION_Z:
+            //         AppData.dataSendToRobot = new float[] { MarsComm.shPos[2] / 1000.0f, MarsComm.thetades1, SENT_SUCCESSFULLY, MarsComm.controlStatus };
+
+            //         break;
+
+            //     case SENT_SUCCESSFULLY:
+            //         if (Mathf.Abs(MarsComm.shPos[0]) > 50 || Mathf.Abs(MarsComm.shPos[1]) > 50)
+            //         {
+            //             panel.GetComponent<Image>().color = new Color32(255, 0, 0, 100);
+            //             messageBox.text = "Align Shoulder Joint properly\nShoulder Position:   x - " + MarsComm.shPos[0] + "  , y - " + MarsComm.shPos[1] + "  , z - " + MarsComm.shPos[2];
+            //             calibrationState = CALIBRATION_FAILD;
+            //         }
+            //         else
+            //         {
+            //             panel.GetComponent<Image>().color = new Color32(0, 255, 0, 100);
+            //             messageBox.text = "Kinematic Calibration completed\nShoulder Position: x- " + MarsComm.shPos[0] + "  , y - " + MarsComm.shPos[1] + "  , z- " + MarsComm.shPos[2] + "\nCalibration Completed - Press Mars Button To Select Movements";
+            //             calibrationState = CALIBRATION_SUCCESS;
+            //         }
+            //         break;
+
+            // }
+            // AppData.sendToRobot(AppData.dataSendToRobot);
 
 
         }
@@ -151,7 +154,7 @@ public class calibrationSceneHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
     private void OnApplicationQuit()
     {

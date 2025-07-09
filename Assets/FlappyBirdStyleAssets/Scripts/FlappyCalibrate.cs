@@ -55,11 +55,11 @@ public class FlappyCalibrate : MonoBehaviour
         Vector3 movement = new Vector3 (0.0f, 0.0f, moveVertical);
 		GetComponent<Rigidbody2D>().velocity = movement * speed;
 
-        double y_value = ((Mathf.Cos(3.14f/180*MarsComm.angleOne) * (333 * Mathf.Cos(3.14f / 180 * MarsComm.angleTwo) + 381 * Mathf.Cos(3.14f / 180 * MarsComm.angleTwo + 3.14f / 180 *MarsComm.angleThree))));
+        double y_value = ((Mathf.Cos(3.14f/180*MarsComm.angle1) * (333 * Mathf.Cos(3.14f / 180 * MarsComm.angle2) + 381 * Mathf.Cos(3.14f / 180 * MarsComm.angle2 + 3.14f / 180 *MarsComm.angle3))));
         double result_value = (-(y_value/400)*7.0);
 		
         // Debug.Log("PlayerPosition: "+AppData.plutoData.enc1);
-        ScoreText.text = MarsComm.angleOne.ToString();
+        ScoreText.text = MarsComm.angle1.ToString();
 
         GetComponent<Rigidbody2D>().position = new Vector3
 		(

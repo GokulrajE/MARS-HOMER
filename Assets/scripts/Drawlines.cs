@@ -66,9 +66,9 @@ public class Drawlines : MonoBehaviour
     {
         if (hand_use == 1)
         {
-            float theta1 = -MarsComm.angleOne;
-            float theta2 = -MarsComm.angleTwo;
-            float theta3 = -MarsComm.angleThree;
+            float theta1 = -MarsComm.angle1;
+            float theta2 = -MarsComm.angle2;
+            float theta3 = -MarsComm.angle3;
 
             x_value = (-(475 * Mathf.Sin(3.14f / 180 * theta2) + 291 * Mathf.Sin(3.14f / 180 * theta2 + 3.14f / 180 * theta3)));
             y_value = ((Mathf.Sin(3.14f / 180 * theta1) * (475 * Mathf.Cos(3.14f / 180 * theta2) + 291 * Mathf.Cos(3.14f / 180 * theta2 + 3.14f / 180 * theta3))));
@@ -79,13 +79,13 @@ public class Drawlines : MonoBehaviour
         }
         else if (hand_use == 2)
         {
-            y_value = ((Mathf.Sin(3.14f / 180 * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * MarsComm.angleTwo + 3.14f / 180 * MarsComm.angleThree))));
-            x_value = (-(475 * Mathf.Sin(3.14f / 180 * MarsComm.angleTwo) + 291 * Mathf.Sin(3.14f / 180 * MarsComm.angleTwo + 3.14f / 180 * MarsComm.angleThree)));
+            y_value = ((Mathf.Sin(3.14f / 180 * MarsComm.angle1) * (475 * Mathf.Cos(3.14f / 180 * MarsComm.angle2) + 291 * Mathf.Cos(3.14f / 180 * MarsComm.angle2 + 3.14f / 180 * MarsComm.angle3))));
+            x_value = (-(475 * Mathf.Sin(3.14f / 180 * MarsComm.angle2) + 291 * Mathf.Sin(3.14f / 180 * MarsComm.angle2 + 3.14f / 180 * MarsComm.angle3)));
             x_u = -(((x_value - x_c) * 14) / (max_x_init - min_x_init));
             y_u = -(((y_value - y_c) * 7) / (max_y_init - min_y_init)) + 1;
         }
-        //y_value = ((Mathf.Sin(3.14f / 180 * (DEPENDENT[AppData.useHand]*MarsComm.angleOne)) * (475 * Mathf.Cos(3.14f / 180 * (DEPENDENT[AppData.useHand]*MarsComm.angleTwo)) + 291 * Mathf.Cos(3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angleTwo)+ 3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angleThree)))));
-        //x_value = (-(475 * Mathf.Sin(3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angleTwo)) + 291 * Mathf.Sin(3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angleTwo) + 3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angleThree))));
+        //y_value = ((Mathf.Sin(3.14f / 180 * (DEPENDENT[AppData.useHand]*MarsComm.angle1)) * (475 * Mathf.Cos(3.14f / 180 * (DEPENDENT[AppData.useHand]*MarsComm.angle2)) + 291 * Mathf.Cos(3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angle2)+ 3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angle3)))));
+        //x_value = (-(475 * Mathf.Sin(3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angle2)) + 291 * Mathf.Sin(3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angle2) + 3.14f / 180 * (DEPENDENT[AppData.useHand] * MarsComm.angle3))));
         //x_u = DEPENDENT[AppData.useHand] * -(((x_value - x_c) * 14) / (max_x_init - min_x_init));
         //y_u = -(((y_value - y_c) * 7) / (max_y_init - min_y_init)) + 1;
         Vector3 to_draw_values = new Vector3((float)x_u, (float)y_u, 0.0f);

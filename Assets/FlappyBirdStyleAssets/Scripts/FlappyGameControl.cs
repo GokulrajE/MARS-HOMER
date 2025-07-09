@@ -90,7 +90,7 @@ public class FlappyGameControl : MonoBehaviour
     void Start()
     {
         playerMoveTime = 0;
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         path_to_data = Application.dataPath;
         flappyGameCount++;
         LevelText.enabled = false;
@@ -480,7 +480,7 @@ public class FlappyGameControl : MonoBehaviour
     }
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
 
     public void OnApplicationQuit()
