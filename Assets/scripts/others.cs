@@ -37,9 +37,7 @@ public class marsUserData
     static public string movement = "Mechanism";
     static public string moveTime = "MoveTime";
     static public string dateTime = "DateTime";
-    public  int useHand;
-    public int faLength;
-    public int uaLength;
+  
     static public string dateFormat = "dd-MM-yyyy";
     static public string hosno = "hospno";
     static public string startDateH = "startdate";
@@ -47,6 +45,10 @@ public class marsUserData
     static public string forearmLength = "forearmLength";
     static public string upperarmLength = "upperarmLength";
     static public string maxx = "Max_x", minx = "Min_x", maxy = "Max_y", miny = "Min_y";
+
+    public int useHand;
+    public int faLength;
+    public int uaLength;
 
     public  Dictionary<string, float> movementMoveTimePrsc { get; private set; } // Prescribed movement time
     public  Dictionary<string, float> movementMoveTimeCurr { get; private set; } // Current movement time
@@ -81,8 +83,8 @@ public class marsUserData
                 _Prsc += movementMoveTimePrsc[movement];
                 _total += movementMoveTimePrev[movement] - movementMoveTimeCurr[movement];
             }
-            Debug.Log(_Prsc + "prescribed");
-            Debug.Log(_total + "done");
+            //Debug.Log(_Prsc + "prescribed");
+            //Debug.Log(_total + "done");
             if (_Prsc < _total)
             {
                 isExceeded = true;
@@ -124,8 +126,7 @@ public class marsUserData
         //this.rightHand = dTableConfig.Rows[0]["TrainingSide"].ToString().ToUpper() == "RIGHT";
     }
 
-    public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");
-
+   
     public  void parseMovementMoveTimePrev()
     {
         movementMoveTimePrev = createMoveTimeDictionary();
@@ -171,27 +172,10 @@ public class marsUserData
             movementMoveTimePrsc[MarsDefs.Movements[i]] = float.Parse(lastRow.Field<string>(MarsDefs.Movements[i]));
         }
     }
-    //private  void parseTherapyConfigData()
-    //{
-    //    //create th dictionary
-    //    movementMoveTimeCurr = createMoveTimeDictionary();
-    //    movementMoveTimePrsc = createMoveTimeDictionary();
 
-    //    DataRow lastRow = dTableConfig.Rows[dTableConfig.Rows.Count - 1];
-    //    //patient data
-    //    hospNumber = lastRow.Field<string>(hosno);
-    //    startDate = DateTime.ParseExact(lastRow.Field<string>(startDateH), dateFormat, CultureInfo.InvariantCulture);
-    //    useHand = AppData.Instance.IsTrainingSide("RIGHT") ? 1 : 2;
-    //    uaLength = int.Parse(lastRow.Field<string>(upperarmLength));
-    //    faLength = int.Parse(lastRow.Field<string>(forearmLength));
+    public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");
 
 
-    //    //parse the prescribed movement time for training
-    //    for (int i = 0; i < MarsDefs.Movements.Length; i++)
-    //    {
-    //        movementMoveTimePrsc[MarsDefs.Movements[i]] = float.Parse(lastRow.Field<string>(MarsDefs.Movements[i]));
-    //    }
-    //}
     public DaySummary[] CalculateMoveTimePerDay(int noOfPastDays = 7)
     {
         DateTime today = DateTime.Now.Date;

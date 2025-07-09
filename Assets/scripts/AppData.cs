@@ -58,7 +58,7 @@ public partial class AppData
         InitializeRobotConnection(doNotResetMovement, _dtstr);
 
         // Intialize the Mars AAN logger.
-        //PlutoAanLogger.StartLogging(_dtstr);
+        //MarsLogger.StartLogging(_dtstr);
 
         // Initialize the user data.
         UnityEngine.Debug.Log(DataManager.filePathforConfig);
@@ -118,10 +118,10 @@ public partial class AppData
     }
     public void InitializeRobot()
     {
-        DataManager.createFileStructure();
+        //DataManager.createFileStructure();
         JediComm.ConnectToRobot(comPort);
 
-        userData = new marsUserData(DataManager.filePathforConfig, DataManager.filePathSessionData);
+        //userData = new marsUserData(DataManager.filePathforConfig, DataManager.filePathSessionData);
 
     }
     public static void sendToRobot(float[] data)

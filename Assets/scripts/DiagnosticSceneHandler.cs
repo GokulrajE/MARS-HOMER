@@ -12,8 +12,9 @@ public class DiagnosticSceneHandler : MonoBehaviour
    
     void Start()
     {
-        
-        AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
+
+        //AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
+        AppData.Instance.InitializeRobot();
     }
 
     private void Update()

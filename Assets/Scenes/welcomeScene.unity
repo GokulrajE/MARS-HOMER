@@ -2448,8 +2448,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281216061
-  m_fontColor: {r: 0.23921569, g: 0.17254902, b: 0.18039216, a: 1}
+    rgba: 4281216066
+  m_fontColor: {r: 0.25882354, g: 0.17254902, b: 0.18039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2828,8 +2828,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -165.56999, y: 438.95}
-  m_SizeDelta: {x: -325.02, y: -853.66}
+  m_AnchoredPosition: {x: -246.58, y: 458.14795}
+  m_SizeDelta: {x: -423.05, y: -815.2641}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1033140801
 MonoBehaviour:
@@ -3721,8 +3721,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281216061
-  m_fontColor: {r: 0.23921569, g: 0.17254902, b: 0.18039216, a: 1}
+    rgba: 4281215554
+  m_fontColor: {r: 0.25882354, g: 0.16470589, b: 0.18039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4687,7 +4687,6 @@ MonoBehaviour:
   - {fileID: 1330799673}
   - {fileID: 1863016079}
   piChartUpdated: 1
-  filePath: D:/MARS-HOMER/Assets/data/configdata.csv
 --- !u!4 &1731361027
 Transform:
   m_ObjectHideFlags: 0
