@@ -49,8 +49,8 @@ public class UIManager : MonoBehaviour {
             
             playAudio(1);
 			playerWon = false;
-            EndCurrentGameSession();
-            gameData.StopLogging();
+            //EndCurrentGameSession();
+            //gameData.StopLogging();
            
         }
         else if (BoundController.playerScore >= winScore && !isFinished
@@ -62,8 +62,8 @@ public class UIManager : MonoBehaviour {
 			enemyWon = false;
             win = 1;
 			playerWon = true;
-            EndCurrentGameSession();
-            gameData.StopLogging();
+            //EndCurrentGameSession();
+            //gameData.StopLogging();
 
         }
         
@@ -124,8 +124,8 @@ public class UIManager : MonoBehaviour {
             Assessment = 0 // Example assessment value, 
                            //If this script for calibration and assessment then Assessment=1. 
         };
-        SessionManager.Instance.StartGameSession(currentGameSession);
-        SetSessionDetails();
+        //SessionManager.Instance.StartGameSession(currentGameSession);
+        //SetSessionDetails();
     }
 
     public void SetSessionDetails()
@@ -156,7 +156,7 @@ public class UIManager : MonoBehaviour {
     //Reloads the Level
     public void LoadScene(string sceneName)
 	{
-        EndCurrentGameSession();
+        //EndCurrentGameSession();
         Application.LoadLevel(sceneName);
 	}
 

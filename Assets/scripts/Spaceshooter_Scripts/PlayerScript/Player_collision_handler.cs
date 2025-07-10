@@ -42,12 +42,12 @@ public class Player_collision_handler : MonoBehaviour
             }
             StartCoroutine(Blink());
             ps.DeductScore();
-            gameData.events = 2;
+            //gameData.events = 2;
             Debug.Log("enemy hit or astroid it");
             // destroy the player GameObject after the animation 
             isDestroyed = true;
 
-            // gameManager.GameOver(); // Trigger game over
+            gameManager.GameOver(); // Trigger game over
             //  destroy  the asteroid
             Destroy(other.gameObject);
         }

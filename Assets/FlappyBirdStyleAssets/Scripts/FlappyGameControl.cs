@@ -98,7 +98,7 @@ public class FlappyGameControl : MonoBehaviour
         Time.timeScale = 1;
         ShowGameMenu();
         column_position_flag = false;
-        StartNewGameSession();
+        //StartNewGameSession();
         //support.text = "Support: " + Mathf.Round(weightEstimation.support * 100.0f).ToString() + " %";
     }
 
@@ -474,7 +474,7 @@ public class FlappyGameControl : MonoBehaviour
 
     public void quit_pressed()
     {
-        EndCurrentGameSession();
+        //EndCurrentGameSession();
 
         SceneManager.LoadScene("chooseMovementScene");
     }

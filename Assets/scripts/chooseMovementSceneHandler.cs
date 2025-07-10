@@ -59,7 +59,7 @@ public class MovementSceneHandler : MonoBehaviour
         nextButton.onClick.AddListener(OnNextButtonClicked);
         UpdateMovementToggleButtons();
         StartCoroutine(DelayedAttachListeners());
-        nextButton.gameObject.SetActive(false); // Hide
+        //nextButton.gameObject.SetActive(false); // Hide
         supportIndicator.value = 0;
 
     }
@@ -273,6 +273,15 @@ public class MovementSceneHandler : MonoBehaviour
         }
         DEACTIVATE = true;
         
+    }
+    //To control the motor manually hold and release 
+    public void onClickHold()
+    {
+        MarsComm.onclickHold();
+    }
+    public void onClickRelease()
+    {
+        MarsComm.onclickRealease();
     }
     private void OnExitButtonClicked()
     {
