@@ -6,6 +6,7 @@ using System.Collections;
 using System.IO;
 using System;
 using UnityEngine.Rendering.Universal;
+using System.Linq;
 
 
 public class MovementSceneHandler : MonoBehaviour
@@ -32,16 +33,17 @@ public class MovementSceneHandler : MonoBehaviour
 
     void Start()
     {
-
+        
         // Initialize if needed
-        if (AppData.Instance.userData.dTableConfig == null)
-        {
-            // Inialize the logger
-            AppLogger.StartLogging(SceneManager.GetActiveScene().name);
-            // Initialize.
-            Debug.Log("calling");
-            //AppData.InitializeRobot();
-        }
+        //if (AppData.Instance.userData.dTableConfig == null)
+        //{
+        //    // Inialize the logger
+        //    AppLogger.StartLogging(SceneManager.GetActiveScene().name);
+        //    // Initialize.
+        //    Debug.Log("calling");
+        //    AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
+        //    //AppData.InitializeRobot();
+        //}
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
        
@@ -65,7 +67,7 @@ public class MovementSceneHandler : MonoBehaviour
     void Update()
     {
         if(!File.Exists($"{DataManager.directoryAssessmentData}/{DataManager.SupportCalibrationFileName}"))
-            SceneManager.LoadScene(assessmentScene);
+            //SceneManager.LoadScene(assessmentScene);
 
         //To initiate the Mars
         //if (MarsComm.desThree < AppData.ArmSupportController.MARS_ACTIVATED && ACTIVATE)
@@ -193,20 +195,21 @@ public class MovementSceneHandler : MonoBehaviour
 
     void CheckToggleStates()
     {
+        string selectedMovement;
         foreach (Transform child in movementSelectGroup.transform)
         {
             Toggle toggleComponent = child.GetComponent<Toggle>();
             if (toggleComponent != null && toggleComponent.isOn)
             {
                 ////for tuk-tuk only
-                //initialAngle = MarsComm.angleOne;
-                //toggleSelected = true;
-                //AppData.selectedMovement = child.name;
-                //nextScene = AppData.selectGame[MarsDefs.getMovementIndex(AppData.selectedMovement)];
-                //AppData.selectedGame = nextScene;
-                //Debug.Log(nextScene);
-                //AppLogger.LogInfo($"Selected '{AppData.selectedMovement}'.");
-                //break;
+                initialAngle = MarsComm.angleOne;
+                toggleSelected = true;
+                selectedMovement = child.name;
+                nextScene = AppData.selectGame[MarsDefs.getMovementIndex(selectedMovement)];
+                AppData.selectedGame = nextScene;
+                Debug.Log(nextScene);
+                AppLogger.LogInfo($"Selected '{selectedMovement}'.");
+                break;
             }
         }
     }
@@ -228,21 +231,21 @@ public class MovementSceneHandler : MonoBehaviour
     }
     public void OnPlutoButtonReleased()
     {
-        // check support is activated or not
+        //check support is activated or not
         //if (MarsComm.desThree != AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)
         //    return;
 
-        //if (toggleSelected)
-        //{
-           
+        if (toggleSelected)
+        {
 
-        //    changeScene = true;
-        //    toggleSelected = false;
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("Select at least one toggle to proceed.");
-        //}
+
+            changeScene = true;
+            toggleSelected = false;
+        }
+        else
+        {
+            Debug.LogWarning("Select at least one toggle to proceed.");
+        }
     }
 
     void LoadNextScene()

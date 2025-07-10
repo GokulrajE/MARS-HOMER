@@ -31,13 +31,14 @@ public class Player_controller_s : MonoBehaviour
     float th1, th2, th3, yMARS, zMARS;
     float xSS, ySS,previosXss;
     public float tilt;
-
+    public DataTable dTableAssessment;
     public static float yMinMars = 175;
     public static float yMaxMars = 775;
     public static float zMinMars = 291 - 300;
     public static float zMaxMars = 291 + 300;
     public static new Vector3 playerPos;
     Vector3 temp;
+    public string maxx = "Max_x", minx = "Min_x", maxy = "Max_y", miny = "Min_y";
     void Start()
     {
         mainCamera = Camera.main;
@@ -51,26 +52,27 @@ public class Player_controller_s : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         gm = FindObjectOfType<GameManagerScript>();
     }
-    public static void getAssessmentData()
+    public  void getAssessmentData()
     {
-        //AppData.Instance._userData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
-        //DataRow lastRow = AppData.Instance.userData.dTableAssessment.Rows[AppData.Instance.userData.dTableAssessment.Rows.Count - 1];
-        //zMinMars = float.Parse((lastRow.Field<string>(AppData.minx)));
-        //zMaxMars = float.Parse((lastRow.Field<string>(AppData.maxx)));
-        //yMinMars = float.Parse((lastRow.Field<string>(AppData.miny)));
-        //yMaxMars = float.Parse((lastRow.Field<string>(AppData.maxy)));
-        //Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars+"possistion Rom");
-        //Debug.Log("working");
+        Debug.Log(DataManager.directoryAssessmentData);
+        dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[1]}");
+        DataRow lastRow = dTableAssessment.Rows[dTableAssessment.Rows.Count - 1];
+        zMinMars = float.Parse((lastRow.Field<string>(minx)));
+        zMaxMars = float.Parse((lastRow.Field<string>(maxx)));
+        yMinMars = float.Parse((lastRow.Field<string>(miny)));
+        yMaxMars = float.Parse((lastRow.Field<string>(maxy)));
+        Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars + "possistion Rom");
+        Debug.Log("working");
     }
     public void FixedUpdate()
     {
         
         th1 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angleOne;
-        th2 = MarsComm.OFFSET[AppData.Instance.userData.uaLength] * MarsComm.angleTwo;
-        th3 = MarsComm.OFFSET[AppData.Instance.userData.uaLength] * MarsComm.angleThree;
+        th2 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angleTwo;
+        th3 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angleThree;
         yMARS = Mathf.Sin(th1) * (475.0f * Mathf.Cos(th2) + 291.0f * Mathf.Cos(th2 + th3));
         zMARS = (-475.0f * Mathf.Sin(th2) - 291.0f * Mathf.Sin(th2 + th3));
-        xSS = DEPENDENT[AppData.Instance.userData.uaLength] * -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
+        xSS = DEPENDENT[AppData.Instance.userData.useHand] * -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
         ySS = ((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yMARS - ((yMinMars + yMaxMars) / 2.0f)));
         transform.position = new Vector3(Mathf.Clamp(xSS, xMin, xMax),
             Mathf.Clamp(ySS, yMin, yMax),

@@ -22,7 +22,7 @@ public class welcomSceneHandler : MonoBehaviour
     private DaySummary[] daySummaries;
     public static bool changeScene = false;
     public readonly string nextScene = "calibrationScene";
- 
+    public bool attachMarsButtonEvent = false;
 
 
     // Start is called before the first frame update
@@ -82,7 +82,12 @@ public class welcomSceneHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-    
+        if (!attachMarsButtonEvent && Time.timeSinceLevelLoad > 2)
+        {
+            attachMarsButtonEvent = true;
+            MarsComm.OnButtonReleased += onMarsButtonReleased;
+        }
+
         // Check if it time to switch to the next scene
         if (changeScene == true)
         {
@@ -148,6 +153,6 @@ public class welcomSceneHandler : MonoBehaviour
     private void OnApplicationQuit()
     {
         Application.Quit();
-        //JediComm.Disconnect();
+        JediComm.Disconnect();
     }
 }

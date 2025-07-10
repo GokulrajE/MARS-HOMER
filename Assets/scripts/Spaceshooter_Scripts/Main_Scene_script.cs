@@ -15,7 +15,7 @@ public class Main_Scene_script : MonoBehaviour
     {
         // Attach mars button event
         MarsComm.OnButtonReleased += onMarsButtonReleased;
-        StartNewGameSession();
+        //StartNewGameSession();
     }
 
     // Update is called once per frame

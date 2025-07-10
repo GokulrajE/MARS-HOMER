@@ -74,6 +74,9 @@ public partial class AppData
             Convert.ToInt32(userData.dTableSession.Rows[userData.dTableSession.Rows.Count - 1]["SessionNumber"]) + 1 : 1;
         AppLogger.LogWarning($"Session number set to {currentSessionNumber}.");
 
+        dataSendToRobot = new float[] { (float)userData.useHand, 0.0f, 1998.0f, 0.0f };
+        sendToRobot(dataSendToRobot);
+
         //set to upload the data to the AWS
         // awsManager.changeUploadStatus(awsManager.status[0]);
     }
@@ -122,7 +125,7 @@ public partial class AppData
         JediComm.ConnectToRobot(comPort);
 
         //userData = new marsUserData(DataManager.filePathforConfig, DataManager.filePathSessionData);
-
+       
     }
     public static void sendToRobot(float[] data)
     {

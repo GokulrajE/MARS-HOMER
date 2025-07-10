@@ -19,7 +19,12 @@ public class DiagnosticSceneHandler : MonoBehaviour
 
     private void Update()
     {
-        updateTextBox();
+        if (JediComm.isMars)
+        {
+            updateTextBox();
+
+        }
+       
       
     }
     public void updateTextBox()

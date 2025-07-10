@@ -48,9 +48,9 @@ public class GameManagerScript : MonoBehaviour
                 int.TryParse(values[1], out currentLevel); // Parse the second value as currentLevel
             }
         }
-        StartNewGameSession();
+        //StartNewGameSession();
         //support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
-        SupportSlider.fillAmount = MarsComm.SUPPORT;
+        //SupportSlider.fillAmount = MarsComm.SUPPORT;
        
     }
 
@@ -94,7 +94,7 @@ public class GameManagerScript : MonoBehaviour
         {
             changeScene = false;
         }
-        updateMarsSupportUI();
+        //updateMarsSupportUI();
     }
     public void updateMarsSupportUI()
     {
@@ -103,14 +103,14 @@ public class GameManagerScript : MonoBehaviour
     }
     void StartNewGameSession()
     {
-        currentGameSession = new GameSession
-        {
-            GameName = "spaceShooter",
-            Assessment = 0 // Example assessment value, 
-                           //If this script for calibration and assessment then Assessment=1. 
-        };
-        SessionManager.Instance.StartGameSession(currentGameSession);
-        SetSessionDetails();
+        //currentGameSession = new GameSession
+        //{
+        //    GameName = "spaceShooter",
+        //    Assessment = 0 // Example assessment value, 
+        //                   //If this script for calibration and assessment then Assessment=1. 
+        //};
+        ////SessionManager.Instance.StartGameSession(currentGameSession);
+        ////SetSessionDetails();
     }
 
     public void SetSessionDetails()
@@ -161,9 +161,9 @@ public class GameManagerScript : MonoBehaviour
         {
 
             GameOverPanel.SetActive(true);
-            EndCurrentGameSession();
-            gameData.StopLogging();
-            savedata();
+            //EndCurrentGameSession();
+            //gameData.StopLogging();
+            //savedata();
         }
 
         timerText.text = "Time:0s";

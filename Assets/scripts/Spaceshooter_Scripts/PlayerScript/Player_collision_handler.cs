@@ -34,21 +34,21 @@ public class Player_collision_handler : MonoBehaviour
         // Check if the player is hit by an asteroid
         if ((other.CompareTag("Asteroid") && !isDestroyed)||(other.CompareTag("Enemy")&&!isDestroyed)||(other.CompareTag("EnemyLaser")&&!isDestroyed))//check if any asteroid or enemy hit the player 
         {
-            // Trigger the explosion animation , 
-            // animator.SetTrigger("TriggerExplosion");
-            // if (audioSource != null && ExplosionSound != null)
-            // {
-            //     audioSource.PlayOneShot(ExplosionSound);
-            // }
+            //Trigger the explosion animation,
+            animator.SetTrigger("TriggerExplosion");
+            if (audioSource != null && ExplosionSound != null)
+            {
+                audioSource.PlayOneShot(ExplosionSound);
+            }
             StartCoroutine(Blink());
             ps.DeductScore();
             gameData.events = 2;
             Debug.Log("enemy hit or astroid it");
             // destroy the player GameObject after the animation 
-            // isDestroyed = true;
+            isDestroyed = true;
 
             // gameManager.GameOver(); // Trigger game over
-                                    //  destroy  the asteroid
+            //  destroy  the asteroid
             Destroy(other.gameObject);
         }
        

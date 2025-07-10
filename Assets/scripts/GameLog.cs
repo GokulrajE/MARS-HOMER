@@ -16,10 +16,10 @@ public class GameLog : MonoBehaviour
     void Start()
     {
         Playerscore = FindObjectOfType<PlayerScore>();
-        ResetGameData();
-        InitializeSessionDetails();
-        CreateLogFile();
-        gameData.StartDataLog(fileName);
+        //ResetGameData();
+        //InitializeSessionDetails();
+        //CreateLogFile();
+        //gameData.StartDataLog(fileName);
     }
 
     private void ResetGameData()
@@ -52,10 +52,10 @@ public class GameLog : MonoBehaviour
     void Update()
     {
        
-        if (gameData.isLogging)
-        { 
-            gameData.LogData();
-        }
+        //if (gameData.isLogging)
+        //{ 
+        //    gameData.LogData();
+        //}
         time += Time.deltaTime;
     }
     

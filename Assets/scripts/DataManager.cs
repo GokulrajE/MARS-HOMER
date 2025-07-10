@@ -58,7 +58,7 @@ public class DataManager : MonoBehaviour
     public static string GetRomFileName(string mechanism) => FixPath(Path.Combine(directoryAssessmentData, $"{mechanism}-rom.csv"));
     public static void createFileStructure()
     {
-        directoryAssessmentData = basePath+ "/rom";
+        directoryAssessmentData = basePath+"/assessmentData";
         directoryPathSession = basePath + "/sessions";
         directoryPathRawData = basePath + "/rawdata";
         logPath = basePath + "/applog";

@@ -126,13 +126,13 @@ public static class JediComm
         int checksum = 0;
         int receivedChecksum;
         plcount = 0;
-        
+    
         if (serPort.ReadByte() == HeaderIn && serPort.ReadByte() == HeaderIn)
         {
             checksum += HeaderIn + HeaderIn;
             // Read payload size
             payLoadBytes[plcount++] = (byte)serPort.ReadByte();
-            Debug.Log(payLoadBytes[0]);
+            //Debug.Log(payLoadBytes[0]);
             checksum += payLoadBytes[0];
             if (payLoadBytes[0] != HeaderIn) 
             { 

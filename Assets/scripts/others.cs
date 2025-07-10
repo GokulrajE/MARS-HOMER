@@ -10,6 +10,7 @@ using static AppData;
 using System.IO;
 using Unity.VisualScripting;
 using System.Text;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 
 
@@ -123,7 +124,7 @@ public class marsUserData
         }
      
         //check for TrainingSide
-        this.rightHand = dTableConfig.Rows[0]["TrainingSide"].ToString().ToUpper() == "RIGHT";
+        //this.rightHand = dTableConfig.Rows[0]["TrainingSide"].ToString().ToUpper() == "RIGHT";
     }
 
    
@@ -151,7 +152,7 @@ public class marsUserData
 
     public int getTodayMoveTimeForMovement(string movement)
     {
-        return (int)SessionDataHandler.movementMoveTimePrev[movement] + (int)movementMoveTimeCurr[movement];
+        return (int)movementMoveTimePrev[movement] + (int)movementMoveTimeCurr[movement];
     }
 
     public int getCurrentDayOfTraining()
@@ -163,7 +164,9 @@ public class marsUserData
     {
         DataRow lastRow = dTableConfig.Rows[dTableConfig.Rows.Count - 1];
         hospNumber = lastRow.Field<string>("HospitalNumber");
-        //rightHand = lastRow.Field<string>("TrainingSide") == "right";
+        rightHand = lastRow.Field<string>("TrainingSide").ToString().ToUpper() == "RIGHT";
+        uaLength = int.Parse(lastRow.Field<string>("upperarmLength"));
+        faLength = int.Parse(lastRow.Field<string>("forearmLength"));
         //AppData.trainingSide = ; // lastRow.Field<string>("TrainingSide");
         startDate = DateTime.ParseExact(lastRow.Field<string>("Startdate"), "dd-MM-yyyy", CultureInfo.InvariantCulture);
         movementMoveTimePrsc = createMoveTimeDictionary();//prescribed time
@@ -180,6 +183,8 @@ public class marsUserData
             useHand = 1;
         }
         Debug.Log(useHand+"usehand");
+        Debug.Log(uaLength);
+        Debug.Log(faLength);
     }
 
     public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");
