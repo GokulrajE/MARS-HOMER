@@ -123,7 +123,7 @@ public class marsUserData
         }
      
         //check for TrainingSide
-        //this.rightHand = dTableConfig.Rows[0]["TrainingSide"].ToString().ToUpper() == "RIGHT";
+        this.rightHand = dTableConfig.Rows[0]["TrainingSide"].ToString().ToUpper() == "RIGHT";
     }
 
    
@@ -163,7 +163,7 @@ public class marsUserData
     {
         DataRow lastRow = dTableConfig.Rows[dTableConfig.Rows.Count - 1];
         hospNumber = lastRow.Field<string>("HospitalNumber");
-        rightHand = lastRow.Field<string>("TrainingSide") == "right";
+        //rightHand = lastRow.Field<string>("TrainingSide") == "right";
         //AppData.trainingSide = ; // lastRow.Field<string>("TrainingSide");
         startDate = DateTime.ParseExact(lastRow.Field<string>("Startdate"), "dd-MM-yyyy", CultureInfo.InvariantCulture);
         movementMoveTimePrsc = createMoveTimeDictionary();//prescribed time
@@ -171,6 +171,15 @@ public class marsUserData
         {
             movementMoveTimePrsc[MarsDefs.Movements[i]] = float.Parse(lastRow.Field<string>(MarsDefs.Movements[i]));
         }
+        if (this.rightHand)
+        {
+            useHand = 2;
+        }
+        else
+        {
+            useHand = 1;
+        }
+        Debug.Log(useHand+"usehand");
     }
 
     public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");

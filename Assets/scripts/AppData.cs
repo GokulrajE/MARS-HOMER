@@ -87,7 +87,7 @@ public partial class AppData
         {
             MarsComLogger.StartLogging(datetimestr);
         }
-
+        InitializeRobot();
         //if (!ConnectToRobot.isPLUTO)
         //{
         //    ConnectToRobot.Connect(COMPort);
