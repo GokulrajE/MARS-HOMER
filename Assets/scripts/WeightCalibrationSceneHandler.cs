@@ -119,12 +119,12 @@ public class weightEstimation : MonoBehaviour
             phi2[0] = MarsComm.shA;
             phi3[0] = MarsComm.elF;
             momentArm[0] = Mathf.Pow(MarsComm.endPt[0] * MarsComm.endPt[0] + MarsComm.endPt[1] * MarsComm.endPt[1], 0.5f);
-            force[0] = MarsComm.forceOne;
-            tauf[0] = MarsComm.forceOne * momentArm[0] / 1000.0f;
+            force[0] = MarsComm.force;
+            tauf[0] = MarsComm.force * momentArm[0] / 1000.0f;
             Debug.Log(phi1.Length);
             Debug.Log("shF  =   " + MarsComm.shF + ",   shA   =   " + MarsComm.shA + ",   elF   =   " + MarsComm.elF + ",   tauf   =   " + tauf[0] + ",   endx   =   " + MarsComm.endPt[0] + ",   endy   =   " + MarsComm.endPt[1]);
-            UpdateText.text = "shF  =   " + MarsComm.shF + ",   shA   =   " + MarsComm.shA + ",   elF   =   " + MarsComm.elF + ",   tauf   =   " + tauf[0] + ",   endx   =   " + MarsComm.endPt[0] + ",   endy   =   " + MarsComm.endPt[1]+"force = "+MarsComm.forceOne;
-            data = $"{MarsComm.shF},{MarsComm.shA},{MarsComm.elF},{tauf[0]},{MarsComm.endPt[0]},{MarsComm.endPt[1]},{MarsComm.forceOne},{MarsComm.angleOne},{MarsComm.angleTwo},{MarsComm.angleThree},{MarsComm.angleFour},{MarsComm.shPos[0]},{MarsComm.shPos[1]},{MarsComm.shPos[2]}";
+            UpdateText.text = "shF  =   " + MarsComm.shF + ",   shA   =   " + MarsComm.shA + ",   elF   =   " + MarsComm.elF + ",   tauf   =   " + tauf[0] + ",   endx   =   " + MarsComm.endPt[0] + ",   endy   =   " + MarsComm.endPt[1]+"force = "+MarsComm.force;
+            data = $"{MarsComm.shF},{MarsComm.shA},{MarsComm.elF},{tauf[0]},{MarsComm.endPt[0]},{MarsComm.endPt[1]},{MarsComm.force},{MarsComm.angle1},{MarsComm.angle2},{MarsComm.angle3},{MarsComm.angle4},{MarsComm.shPos[0]},{MarsComm.shPos[1]},{MarsComm.shPos[2]}";
            
         }
         else
@@ -142,12 +142,12 @@ public class weightEstimation : MonoBehaviour
             phi2[phi2.Length - 1] = MarsComm.shA;
             phi3[phi3.Length - 1] = MarsComm.elF;
             momentArm[momentArm.Length - 1] = Mathf.Pow(MarsComm.endPt[0] * MarsComm.endPt[0] + MarsComm.endPt[1] * MarsComm.endPt[1], 0.5f);
-            force[force.Length - 1] = MarsComm.forceOne;
-            tauf[tauf.Length - 1] = MarsComm.forceOne * momentArm[momentArm.Length - 1] / 1000.0f;
+            force[force.Length - 1] = MarsComm.force;
+            tauf[tauf.Length - 1] = MarsComm.force * momentArm[momentArm.Length - 1] / 1000.0f;
             UpdateText.text = "shF  =   " + MarsComm.shF + ",   shA :" + MarsComm.shA + ",elF :" + MarsComm.elF + ",tauf = " + tauf[tauf.Length - 1] + ",endx = " + MarsComm.endPt[0] + ",   endy   =   " + MarsComm.endPt[1];
 
             Debug.Log("shF  =   " + MarsComm.shF + ",   shA   =   " + MarsComm.shA + ",   elF   =   " + MarsComm.elF + ",   tauf   =   " + tauf[tauf.Length - 1] + ",   endx   =   " + MarsComm.endPt[0] + ",   endy   =   " + MarsComm.endPt[1]);
-            data = $"{MarsComm.shF},{MarsComm.shA},{MarsComm.elF},{tauf[tauf.Length - 1]},{MarsComm.endPt[0]},{MarsComm.endPt[1]},{MarsComm.forceOne},{MarsComm.angleOne},{MarsComm.angleTwo},{MarsComm.angleThree},{MarsComm.angleFour},{MarsComm.shPos[0]},{MarsComm.shPos[1]},{MarsComm.shPos[2]}";
+            data = $"{MarsComm.shF},{MarsComm.shA},{MarsComm.elF},{tauf[tauf.Length - 1]},{MarsComm.endPt[0]},{MarsComm.endPt[1]},{MarsComm.force},{MarsComm.angle1},{MarsComm.angle2},{MarsComm.angle3},{MarsComm.angle4},{MarsComm.shPos[0]},{MarsComm.shPos[1]},{MarsComm.shPos[2]}";
         }
         //test purpose
         AppData.writeAssessmentData(headerData1, data, $"testData.csv", DataManager.directoryAssessmentData);

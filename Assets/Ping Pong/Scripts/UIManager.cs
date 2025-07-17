@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour {
         //AppData.InitializeRobot();
         //SessionManager.Initialize(DataManager.directoryPathSession);
         //SessionManager.Instance.Login();
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
 		finishObjects = GameObject.FindGameObjectsWithTag("ShowOnFinish");
 		hideFinished();
@@ -215,7 +215,7 @@ public class UIManager : MonoBehaviour {
 	}
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
 
 

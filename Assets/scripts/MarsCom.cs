@@ -10,11 +10,16 @@ public static class MarsComm
  
     static public float[] currentSensorData;
     static public byte currentButtonState,previousButtonState;
-    static int sensorDataLength ; 
-   
+    static int sensorDataLength ;
     // Button released event.
     public delegate void MarsButtonReleasedEvent();
-    public static event MarsButtonReleasedEvent OnButtonReleased;
+    public static event MarsButtonReleasedEvent OnMarsButtonReleased;
+    public delegate void CalibButtonReleasedEvent();
+    public static event CalibButtonReleasedEvent OnCalibButtonReleased;
+    // New data event.
+    public delegate void MarsNewDataEvent();
+    public static event MarsNewDataEvent OnNewMarsData;
+   
 
     //constant variables
     private const float len1 = 475.0f, len2 = 291.0f;
@@ -116,35 +121,35 @@ public static class MarsComm
     //    }
     //}
 
-    static public float angleOne
+    static public float angle1
     {
         get
         {
             return currentSensorData[0];
         }
     }
-    static public float angleTwo
+    static public float angle2
     {
         get
         {
             return currentSensorData[1];
         }
     }
-    static public float angleThree
+    static public float angle3
     {
         get
         {
             return currentSensorData[2];
         }
     }
-    static public float angleFour
+    static public float angle4
     {
         get
         {
             return currentSensorData[3];
         }
     }
-    static public float forceOne
+    static public float force
     {
         get
         {
@@ -375,7 +380,7 @@ public static class MarsComm
             //// Check if the button has been released.
             if (previousButtonState == 0 && currentButtonState == 1)
             {
-                OnButtonReleased?.Invoke();
+                OnMarsButtonReleased?.Invoke();
             }
 
         }
@@ -388,10 +393,10 @@ public static class MarsComm
     static public void computeShouderPosition()
     {
            
-            theta1 = OFFSET[AppData.Instance.userData.useHand] * angleOne;
-            theta2 = OFFSET[AppData.Instance.userData.useHand] * angleTwo;
-            theta3 = OFFSET[AppData.Instance.userData.useHand] * angleThree;
-            theta4 = OFFSET[AppData.Instance.userData.useHand] * angleFour;
+            theta1 = OFFSET[AppData.Instance.userData.useHand] * angle1;
+            theta2 = OFFSET[AppData.Instance.userData.useHand] * angle2;
+            theta3 = OFFSET[AppData.Instance.userData.useHand] * angle3;
+            theta4 = OFFSET[AppData.Instance.userData.useHand] * angle4;
 
             zvec[0] = Mathf.Cos(theta1) * Mathf.Cos(theta2 + theta3 + theta4);
             zvec[1] = Mathf.Sin(theta1) * Mathf.Cos(theta2 + theta3 + theta4);
@@ -440,7 +445,7 @@ public static class MarsComm
     {
         AppLogger.LogInfo($"motor on hold");
         controlStatus = CONTROL_STATUS_CODE[0];
-        thetades1 = MarsComm.angleOne;
+        thetades1 = MarsComm.angle1;
         AppData.dataSendToRobot = new float[] { 0, thetades1, 0, controlStatus };
         AppData.sendToRobot(AppData.dataSendToRobot);
 

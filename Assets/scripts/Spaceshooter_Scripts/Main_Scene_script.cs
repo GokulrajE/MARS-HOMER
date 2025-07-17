@@ -14,7 +14,7 @@ public class Main_Scene_script : MonoBehaviour
     void Start()
     {
         // Attach mars button event
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         StartNewGameSession();
     }
 
@@ -87,6 +87,6 @@ void StartNewGameSession()
     }
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
 }

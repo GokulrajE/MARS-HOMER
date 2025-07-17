@@ -22,6 +22,7 @@ public static class MarsDefs
         return Array.IndexOf(Movements, Movement);
     }
 }
+
 public class marsUserData
 {
     public  bool isExceeded { get; private set; }
@@ -163,14 +164,24 @@ public class marsUserData
     {
         DataRow lastRow = dTableConfig.Rows[dTableConfig.Rows.Count - 1];
         hospNumber = lastRow.Field<string>("HospitalNumber");
-        rightHand = lastRow.Field<string>("TrainingSide") == "right";
-        //AppData.trainingSide = ; // lastRow.Field<string>("TrainingSide");
+        rightHand = lastRow.Field<string>("TrainingSide").ToLower() == "right";
         startDate = DateTime.ParseExact(lastRow.Field<string>("Startdate"), "dd-MM-yyyy", CultureInfo.InvariantCulture);
         movementMoveTimePrsc = createMoveTimeDictionary();//prescribed time
         for (int i = 0; i < MarsDefs.Movements.Length; i++)
         {
             movementMoveTimePrsc[MarsDefs.Movements[i]] = float.Parse(lastRow.Field<string>(MarsDefs.Movements[i]));
         }
+        if (rightHand)
+        {
+            useHand = 2;
+        }
+        else
+        {
+            useHand = 1;
+        }
+        faLength = int.Parse(lastRow.Field<string>("forearmLength"));
+        uaLength = int.Parse(lastRow.Field<string>("upperarmLength"));
+        Debug.Log($"{useHand},{faLength}, {uaLength}");
     }
 
     public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");
@@ -200,6 +211,15 @@ public class marsUserData
         return daySummaries;
     }
 }
+public static class Others
+{
+    public static float gameTime = 0f;
+    public static float highestSuccessRate = 0f;
+    public static string GetAbbreviatedDayName(DayOfWeek dayOfWeek)
+    {
+        return dayOfWeek.ToString().Substring(0, 3);
+    }
+}
 public class MarsMovement
 {
     //public static readonly Dictionary<string, float> DefaultMechanismSpeeds = new Dictionary<string, float>
@@ -217,9 +237,10 @@ public class MarsMovement
     public bool promCompleted { get; private set; }
     public bool aromCompleted { get; private set; }
     public bool apromCompleted { get; private set; }
+    public bool romCompleted { get; private set; }
     public ROM oldRom { get; private set; }
     public ROM newRom { get; private set; }
-    public ROM currRom { get => newRom.isSet ? newRom : (oldRom.isSet ? oldRom : null); }
+    public ROM currRom { get => newRom.isRomSet ? newRom : (oldRom.isRomSet ? oldRom : null); }
     public float currSpeed { get; private set; } = -1f;
     // Trial details for the mechanism.
     public int trialNumberDay { get; private set; }
@@ -232,16 +253,17 @@ public class MarsMovement
         this.side = side;
         oldRom = new ROM(this.name);
         newRom = new ROM();
-        promCompleted = false;
-        aromCompleted = false;
-        apromCompleted = false;
+        //promCompleted = false;
+        //aromCompleted = false;
+        //apromCompleted = false;
+        romCompleted = false;
         this.side = side;
-        currSpeed = -1f;
+        //currSpeed = -1f;
         UpdateTrialNumbers(sessno);
     }
 
-    public bool IsMovement(string movName) => string.Equals(name, movName, StringComparison.OrdinalIgnoreCase);
-
+    public bool IsMarsSupport(string movName) => string.Equals(name, movName, StringComparison.OrdinalIgnoreCase);
+    
     public bool IsSide(string sideName) => string.Equals(side, sideName, StringComparison.OrdinalIgnoreCase);
 
     public bool IsSpeedUpdated() => currSpeed > 0;
@@ -255,49 +277,29 @@ public class MarsMovement
     public float[] CurrentArom => currRom == null ? null : new float[] { currRom.aromMin, currRom.aromMax };
     public float[] CurrentProm => currRom == null ? null : new float[] { currRom.promMin, currRom.promMax };
     public float[] CurrentAProm => currRom == null ? null : new float[] { currRom.apromMin, currRom.apromMax };
-    public void ResetPromValues()
+    public void ResetRomValues()
     {
-        newRom.SetProm(0, 0);
-        promCompleted = false;
+        newRom.setRom(0, 0,0,0);
+        romCompleted = false;
     }
 
-    public void ResetAromValues()
-    {
-        newRom.SetArom(0, 0);
-        aromCompleted = false;
-    }
-    public void ResetAPromValues()
-    {
-        newRom.SetAProm(0, 0);
-        apromCompleted = false;
-    }
 
-    public void SetNewPromValues(float pmin, float pmax)
+
+    public void SetNewRomValues(float minx, float maxx, float miny, float maxy)
     {
-        newRom.SetProm(pmin, pmax);
-        if (pmin != 0 || pmax != 0) promCompleted = true;
+        newRom.setRom(minx,maxx,miny,maxy);
+        if (minx != 0 || maxx != 0 || miny!=0 || maxy!=0) romCompleted = true;
         // Cehck if newRom's mechanism needs to be set.
         if (newRom.movement == null)
         {
-            newRom.SetMechanism(this.name);
+            newRom.SetMovement(this.name);
         }
     }
 
-    public void SetNewAromValues(float amin, float amax)
-    {
-        newRom.SetArom(amin, amax);
-        if (amin != 0 || amax != 0) aromCompleted = true;
-    }
-
-    public void SetNewAPromValues(float apmin, float apmax)
-    {
-        newRom.SetAProm(apmin, apmax);
-        if (apmin != 0 || apmax != 0) apromCompleted = true;
-    }
 
     public void SaveAssessmentData()
     {
-        if (promCompleted && aromCompleted && apromCompleted)
+        if (romCompleted)
         {
             // Save the new ROM values to the file.
             newRom.WriteToAssessmentFile();
@@ -308,10 +310,10 @@ public class MarsMovement
      */
     public void UpdateTrialNumbers(int sessno)
     {
-        // Get the last row for the today, for the selected mechanism.
+        // Get the last row for the today, for the selected MarsSupport.
         var selRows = AppData.Instance.userData.dTableSession.AsEnumerable()?
             .Where(row => DateTime.ParseExact(row.Field<string>("DateTime"), DataManager.DATEFORMAT, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
-            .Where(row => row.Field<string>("Movement") == this.name);
+            .Where(row => row.Field<string>("Movment") == this.name);
 
         // Check if the selected rows is null.
         if (selRows.Count() == 0)
@@ -343,20 +345,24 @@ public class MarsMovement
 public class ROM
 {
     public static string[] FILEHEADER = new string[] {
-        "DateTime", "PromMin", "PromMax", "AromMin", "AromMax","APromMin","APromMax"
+        "DateTime", "MinX","MaxX","MinY","MaxY"
     };
     // Class attributes to store data read from the file
     public string datetime;
-    public float promMin { get; private set; }
-    public float promMax { get; private set; }
-    public float aromMin { get; private set; }
-    public float aromMax { get; private set; }
-    public float apromMin { get; private set; }
-    public float apromMax { get; private set; }
+    public float MinX {  get; private set; }
+    public float MaxX { get; private set; }
+    public float MinY { get; private set; }
+    public float MaxY { get; private set; }
+    public string mode { get; private set; }
+    public bool isRomXSet { get => MinX != 0 || MaxX != 0; }
+    public bool isRomYSet { get => MinY != 0 || MaxY != 0; }
+
+    public bool isRomSet { get => isRomXSet && isRomYSet; }
+
     public string movement { get; private set; }
-    public bool isAromSet { get => aromMin != 0 || aromMax != 0; }
-    public bool isPromSet { get => promMin != 0 || promMax != 0; }
-    public bool isSet { get => isAromSet && isPromSet; }
+
+   
+  
 
     // Constructor that reads the file and initializes values based on the mechanism
     public ROM(string movementName, bool readFromFile = true)
@@ -367,21 +373,20 @@ public class ROM
             // Handle case when no matching mechanism is found
             datetime = null;
             movement = movementName;
-            promMin = 0;
-            promMax = 0;
-            aromMin = 0;
-            aromMax = 0;
-            apromMin = 0;
-            apromMax = 0;
+            MinX = 0;
+            MaxX = 0;
+            MinY = 0;
+            MaxY = 0;
+          
         }
     }
 
     public ROM(float angmin, float angmax, float aromAngMin, float aromAngMax, string mov, bool tofile)
     {
-        promMin = angmin;
-        promMax = angmax;
-        aromMin = aromAngMin;
-        aromMax = aromAngMax;
+        MinX = angmin;
+        MaxX = angmax;
+        MinY = aromAngMin;
+        MaxY = aromAngMax;
         movement = mov;
         datetime = DateTime.Now.ToString();
         if (tofile) WriteToAssessmentFile();
@@ -389,51 +394,39 @@ public class ROM
 
     public ROM()
     {
-        promMin = 0;
-        promMax = 0;
-        aromMin = 0;
-        aromMax = 0;
-        apromMin = 0;
-        apromMax = 0;
+        MinX = 0;
+        MaxX = 0;
+        MinY = 0;
+        MaxY = 0;
+        mode = null;
         movement = null;
         datetime = null;
     }
 
-    public void SetMechanism(string mov) => movement = (movement == null) ? mov : movement;
+    public void SetMovement(string mov) => movement = (movement == null) ? mov : movement;
+    public void SetMarsMode(string Mode) => mode = (mode == null) ? Mode : mode; // fws,hws,nws modes
 
-    public void SetProm(float min, float max)
+
+    public void setRom(float Minx , float Maxx, float Miny, float Maxy)
     {
-        promMin = min;
-        promMax = max;
+        MinX = Minx;
+        MaxX = Maxx;
+        MinY = Miny;
+        MaxY = Maxy;
         datetime = DateTime.Now.ToString();
     }
-
-    public void SetArom(float min, float max)
-    {
-        aromMin = min;
-        aromMax = max;
-        datetime = DateTime.Now.ToString();
-    }
-    public void SetAProm(float min, float max)
-    {
-        apromMin = min;
-        apromMax = max;
-        datetime = DateTime.Now.ToString();
-    }
-
-
     public void WriteToAssessmentFile()
     {
-        string fileName = DataManager.GetRomFileName(movement); ;
+        string fileName = DataManager.GetRomFileName(movement,mode); ;
         using (StreamWriter file = new StreamWriter(fileName, true))
         {
-            file.WriteLine(string.Join(",", new string[] { datetime, promMin.ToString(), promMax.ToString(), aromMin.ToString(), aromMax.ToString(), apromMin.ToString(), apromMax.ToString() }));
+            file.WriteLine(string.Join(",", new string[] { datetime, MinX.ToString(), MaxX.ToString(), MinY.ToString(), MaxY.ToString()}));
         }
     }
 
     private void ReadFromFile(string movementName)
     {
-        string fileName = DataManager.GetRomFileName(movementName);
+        string fileName = DataManager.GetRomFileName(movementName, mode);
         // Create the file if it doesn't exist
         if (!File.Exists(fileName))
         {
@@ -450,23 +443,20 @@ public class ROM
             // Set default values for the mechanism.
             datetime = null;
             movement = movementName;
-            promMin = 0;
-            promMax = 0;
-            aromMin = 0;
-            aromMax = 0;
-            apromMin = 0;
-            apromMax = 0;
+            MinX = 0;
+            MaxX = 0;
+            MinY = 0;
+            MaxY = 0;
             return;
         }
         // Assign ROM from the last row.
         datetime = romData.Rows[romData.Rows.Count - 1].Field<string>("DateTime");
         movement = movementName;
-        promMin = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("PromMin"));
-        promMax = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("PromMax"));
-        aromMin = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("AromMin"));
-        aromMax = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("AromMax"));
-        apromMin = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("APromMin"));
-        apromMax = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("APromMax"));
+        MinX = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinX"));
+        MaxX = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxX"));
+        MinY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinY"));
+        MaxY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxY"));
+
     }
 }
 
@@ -481,19 +471,3 @@ public static class Miscellaneous
 
 
 
-// Function to read all the user data.
-//public static void readAllUserData()
-//{
-
-//    dTableConfig = DataManager.loadCSV(DataManager.filePathforConfig);
-//    dTableSession = DataManager.loadCSV(DataManager.filePathSessionData);
-//    //dTableAssessment = DataManager.loadCSV(DataManager.filePathAssessmentData);
-
-//    Debug.Log("getting");
-//    parseTherapyConfigData();
-
-//    Debug.Log(DataManager.filePathSessionData);
-//    Debug.Log(DataManager.filePathforConfig);
-
-//    parseMovementMoveTimePrev();
-//}

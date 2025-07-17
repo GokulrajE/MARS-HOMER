@@ -34,7 +34,7 @@ public class GameManagerScript : MonoBehaviour
     void Start()
     {
         playerMoveTime = 0;
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         Playerscore = FindObjectOfType<PlayerScore>();
         timer = gameDuration; // Initialize timer 
         GameOverPanel.SetActive(false);

@@ -25,15 +25,15 @@ public class DiagnosticSceneHandler : MonoBehaviour
     public void updateTextBox()
     {
         //Construct the display text while ensuring values are safely converted to string
-        string displayText = "Theta1        : " + MarsComm.angleOne.ToString() + "\n" +
-                             "Theta2        : " + MarsComm.angleTwo.ToString() + "\n" +
-                             "Theta3        : " + MarsComm.angleThree.ToString() + "\n" +
-                             "Theta4        : " + MarsComm.angleFour.ToString() + "\n" +
+        string displayText = "Theta1        : " + MarsComm.angle1.ToString() + "\n" +
+                             "Theta2        : " + MarsComm.angle2.ToString() + "\n" +
+                             "Theta3        : " + MarsComm.angle3.ToString() + "\n" +
+                             "Theta4        : " + MarsComm.angle4.ToString() + "\n" +
                              "IMUAng1       : " + MarsComm.imuAng1.ToString() + "\n" +
                              "IMUAng2       : " + MarsComm.imuAng2.ToString() + "\n" +
                              "IMUAng3       : " + MarsComm.imuAng3.ToString() + "\n" +
                              "IMUAng4       : " + MarsComm.imuAng4.ToString() + "\n" +
-                             "Force1        : " + MarsComm.forceOne.ToString() + "\n" +
+                             "Force1        : " + MarsComm.force.ToString() + "\n" +
                              "calibBtnState : " + MarsComm.calibBtnState.ToString() + "\n" +
 
                              "des1          : " + MarsComm.desOne.ToString() + "\n" +

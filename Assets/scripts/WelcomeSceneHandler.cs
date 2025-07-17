@@ -110,7 +110,7 @@ public class welcomSceneHandler : MonoBehaviour
       
         userName.text = AppData.Instance.userData.hospNumber;
         int movetime = AppData.Instance.userData.totalMoveTimeRemaining;
-        Debug.Log(AppData.Instance.userData.isExceeded);
+        //Debug.Log(AppData.Instance.userData.isExceeded);
         if (AppData.Instance.userData.isExceeded)
         {
             timeRemainingToday.text = $"Done +{movetime}[min]";
@@ -143,7 +143,7 @@ public class welcomSceneHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
     private void OnApplicationQuit()
     {

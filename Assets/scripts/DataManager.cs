@@ -52,10 +52,23 @@ public class DataManager : MonoBehaviour
         "GameName", "GameParameter", "GameSpeed",
         "AssistMode", "DesiredSuccessRate", "SuccessRate", "CurrentControlBound", "NextControlBound","MoveTime"
     };
-
+    // Raw data header.    
+    public static string[] RAWFILEHEADER = new string[] {
+        "DeviceRunTime", "PacketNumber", "Status", "DataType", "ErrorStatus",
+        "ControlType", "Calibration",  "Mechanism",
+        "Button", "Angle", "Torque", "Desired", "Control", "ControlBound", "ControlDir", "Target",
+        "Error", "ErrorDiff", "ErrorSum",
+        "GamePlayerX", "GamePlayerY", "GameTargetX", "GameTargetY", "GameState",
+        "AanTargetPosition", "AanInitialPosition", "AanState"
+    };
     public static string DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static string GetRomFileName(string mechanism) => FixPath(Path.Combine(directoryAssessmentData, $"{mechanism}-rom.csv"));
+    public static string GetRomFileName(string Movement, string Mode) => FixPath(Path.Combine(directoryAssessmentData, $"{Movement}-{Mode}-rom.csv"));
+    public static string GetTrialRawDataFileName(
+        int sessNo,
+        int trialNo,
+        string game,
+        string movement) => FixPath(Path.Combine(directoryPathRawData, $"raw-sess{sessNo:D2}-trial{trialNo:D3}-{game}-{movement}.csv"));
     public static void createFileStructure()
     {
         directoryAssessmentData = basePath+ "/rom";
@@ -67,23 +80,21 @@ public class DataManager : MonoBehaviour
 
      
         Directory.CreateDirectory(basePath);
-        //Directory.CreateDirectory(directoryPathConfig);
         Directory.CreateDirectory(directoryPathSession);
         Directory.CreateDirectory(directoryPathRawData);
         Directory.CreateDirectory(directoryAssessmentData);
-          
-        //File.Create(filePathSessionData).Dispose(); // Ensure the file handle is released
-        //File.Create(filePathAssessmentData).Dispose(); // Ensure the file handle is released
         Debug.Log("Directory created at: " + basePath);
         
-        //writeHeader(filePathSessionData);
     }
+
     public static string FixPath(string path) => path.Replace("\\", "/");
+
     public static void setUserId(string userID)
     {
         basePath = FixPath(Path.Combine(Application.dataPath, "data", AppData.Instance.userID, "data"));
         filePathforConfig = basePath + "/configdata.csv";
     }
+
     public static void CreateSessionFile(string device, string location, string[] header = null)
     {
 
@@ -265,107 +276,3 @@ public static class AppLogger
         LogMessage(message, LogMessageType.ERROR);
     }
 }
-//public static class AppLogger
-//{
-//    public static readonly string directoryPath = Application.dataPath + "/data";
-//    private static string logFilePath;
-//    private static StreamWriter logWriter = null;
-//    private static readonly object logLock = new object();
-//    public static string currentScene { get; private set; } = "";
-//    public static string currentMechanism { get; private set; } = "";
-//    public static string currentGame { get; private set; } = "";
-//    public static bool isLogging
-//    {
-//        get
-//        {
-//            return logFilePath != null;
-//        }
-//    }
-//    public static void StartLogging(string scene)
-//    {
-//        // Start Log file only if we are not already logging.
-//        if (isLogging)
-//        {
-//            return;
-//        }
-
-//        if (!Directory.Exists(directoryPath + "/applog"))
-//        {
-//            Directory.CreateDirectory(directoryPath + "/applog");
-//        }
-
-//        // Not logging right now. Create a new one.
-//        logFilePath = directoryPath + $"/applog/log-{DateTime.Now:dd-MM-yyyy-HH-mm-ss}.log";
-//        if (!File.Exists(logFilePath))
-//        {
-//            using (File.Create(logFilePath)) { }
-//        }
-//        logWriter = new StreamWriter(logFilePath, true);
-//        currentScene = scene;
-//        LogInfo("Created PLUTO log file.");
-//    }
-
-//    public static void SetCurrentScene(string scene)
-//    {
-//        if (isLogging)
-//        {
-//            currentScene = scene;
-//        }
-//    }
-
-//    public static void SetCurrentMechanism(string movement)
-//    {
-//        if (isLogging)
-//        {
-//            currentMechanism = movement;
-//        }
-//    }
-
-//    public static void SetCurrentGame(string game)
-//    {
-//        if (isLogging)
-//        {
-//            currentGame = game;
-//        }
-//    }
-
-//    public static void StopLogging()
-//    {
-//        if (logWriter != null)
-//        {
-//            LogInfo("Closing log file.");
-//            logWriter.Close();
-//            logWriter = null;
-//            logFilePath = null;
-//            currentScene = "";
-//        }
-//    }
-
-//    public static void LogMessage(string message, LogMessageType logMsgType)
-//    {
-//        lock (logLock)
-//        {
-//            if (logWriter != null)
-//            {
-//                logWriter.WriteLine($"{DateTime.Now:dd-MM-yyyy HH:mm:ss} {logMsgType,-7} [{currentScene}] [{currentMechanism}] [{currentGame}] {message}");
-//                logWriter.Flush();
-//            }
-//        }
-//    }
-
-//    public static void LogInfo(string message)
-//    {
-//        LogMessage(message, LogMessageType.INFO);
-//    }
-
-//    public static void LogWarning(string message)
-//    {
-//        LogMessage(message, LogMessageType.WARNING);
-//    }
-
-//    public static void LogError(string message)
-//    {
-//        LogMessage(message, LogMessageType.ERROR);
-//    }
-//}
-

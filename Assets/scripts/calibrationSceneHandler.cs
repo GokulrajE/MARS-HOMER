@@ -29,7 +29,7 @@ public class calibrationSceneHandler : MonoBehaviour
         //AppData.InitializeRobot();
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
 
     }
 
@@ -151,7 +151,7 @@ public class calibrationSceneHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
     private void OnApplicationQuit()
     {

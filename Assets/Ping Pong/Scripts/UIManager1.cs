@@ -20,7 +20,7 @@ public class UIManager1 : MonoBehaviour {
     public readonly string nextScene = "pong_game";
     // Use this for initialization
     void Start () {
-        MarsComm.OnButtonReleased += onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         //pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
         finishObjects = GameObject.FindGameObjectsWithTag("ShowOnFinish");
 		hideFinished();
@@ -131,6 +131,6 @@ public class UIManager1 : MonoBehaviour {
 	}
     private void OnDestroy()
     {
-        MarsComm.OnButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
     }
 }

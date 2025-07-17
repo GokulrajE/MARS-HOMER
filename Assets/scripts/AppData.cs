@@ -21,15 +21,30 @@ public partial class AppData
 
     static public readonly string comPort = "COM19";
 
+    /*
+   * SESSION DETAILS
+   */
+    public int currentSessionNumber { get; set; }
+    public DateTime startTime { get; private set; }
+    public DateTime? stopTime { get; private set; }
+    public DateTime trialStartTime { get; set; }
+    public DateTime? trialStopTime { get; set; }
 
+    public string selectedGame { get; private set; } = null;
+    static public string trialDataFileLocation;
 
-    static public string selectedGame;
-    static public DateTime startTime;  
+    /*
+    * Logging file names.
+    */
+    public string trialRawDataFile { get; private set; } = null;
+    private StringBuilder rawDataString = null;
+    private readonly object rawDataLock = new object();
+    private StringBuilder aanExecDataString = null;
 
     public string userID { get; private set; } = null;
 
-    static public int currentSessionNumber;
-    static public string trialDataFileLocation;
+   
+    
 
     /* DO OBJECT CREATION HERE */
     public MarsMovement selectedMovement {  get; private set; }
@@ -150,6 +165,10 @@ public partial class AppData
         AppLogger.LogInfo($"Selected mechanism '{selectedMovement.name}'.");
         AppLogger.SetCurrentMechanism(selectedMovement.name);
         AppLogger.LogInfo($"Trial numbers for ' {selectedMovement.name}' updated. Day: {selectedMovement.trialNumberDay}, Session: {selectedMovement.trialNumberSession}.");
+    }
+    public void SetGame(string game)
+    {
+        selectedGame = game;
     }
    
     public string trainingSide => userData?.rightHand == true ? "RIGHT" : "LEFT";
@@ -274,11 +293,11 @@ public static class gameData
             string[] _data = new string[] {
                MarsComm.currentTime.ToString(),
                MarsComm.buttonState.ToString(),
-               MarsComm.angleOne.ToString("G17"),
-               MarsComm.angleTwo.ToString("G17"),
-               MarsComm.angleThree.ToString("G17"),
-               MarsComm.angleFour.ToString("G17"),
-               MarsComm.forceOne.ToString("G17"),
+               MarsComm.angle1.ToString("G17"),
+               MarsComm.angle2.ToString("G17"),
+               MarsComm.angle3.ToString("G17"),
+               MarsComm.angle4.ToString("G17"),
+               MarsComm.force.ToString("G17"),
                MarsComm.calibBtnState.ToString("G17"),
                MarsComm.desOne.ToString("G17"),
                MarsComm.desTwo.ToString("G17"),
