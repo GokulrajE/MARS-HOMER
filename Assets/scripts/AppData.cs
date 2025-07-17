@@ -19,7 +19,7 @@ public partial class AppData
     public static AppData Instance => _instance.Value;
 
 
-    static public readonly string comPort = "COM19";
+    static public readonly string comPort = "COM18";
 
 
 
