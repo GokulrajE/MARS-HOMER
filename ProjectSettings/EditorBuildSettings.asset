@@ -6,16 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/welcomeScene.unity
+    path: Assets/Scenes/MAIN.unity
     guid: c7ef89ba1b51639479466d34da35d7a4
   - enabled: 1
     path: Assets/Scenes/marsDiagnostics.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/calibrationScene.unity
+    path: Assets/Scenes/CALIB.unity
     guid: 02b1b3a8a6ce6294faf928e79d71b01d
   - enabled: 1
-    path: Assets/Scenes/chooseMovementScene.unity
+    path: Assets/Scenes/CHOOSEMOVEMENT.unity
     guid: ba90e3adfd6d86942946bea3547bf51e
   - enabled: 1
     path: Assets/Scenes/summaryScene.unity
@@ -36,7 +36,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Half Weight Support.unity
     guid: ed200b805794f2348bc56fb443a3c143
   - enabled: 1
-    path: Assets/Scenes/halfWeightSupportScene.unity
+    path: Assets/Scenes/halfWeightSupport.unity
     guid: ff6ca81e97b855243b7414991ec920c9
   - enabled: 1
     path: Assets/Scenes/noWeightSupportScene.unity
@@ -135,10 +135,16 @@ EditorBuildSettings:
     path: Assets/Scenes/Whack-a-mole/Whack_WelcomeScene.unity
     guid: 0c87fe50da1c0d148a86dded2850f0e4
   - enabled: 1
-    path: Assets/Scenes/configuration.unity
+    path: Assets/Scenes/CONFIG.unity
     guid: a2ba4a851b035334aa6baf3d2f143627
   - enabled: 1
-    path: Assets/Scenes/getConfig.unity
+    path: Assets/Scenes/GETCONFIG.unity
     guid: 96c617e643758dd43bc7511e43abb0df
+  - enabled: 1
+    path: Assets/Scenes/ASSESSROM.unity
+    guid: 761cc96161e79cc4daad69f01492b1e4
+  - enabled: 1
+    path: Assets/Scenes/DRAWAREA.unity
+    guid: 39136515ba527ee47be39a423a1d8bf9
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

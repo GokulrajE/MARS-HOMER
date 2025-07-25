@@ -21,9 +21,9 @@ public class welcomSceneHandler : MonoBehaviour
     public bool piChartUpdated = false;
     private DaySummary[] daySummaries;
     public static bool changeScene = false;
-    public readonly string nextScene = "calibrationScene";
- 
+    public readonly string nextScene = "ASSESSROM";
 
+    public bool attachMarsButtonEvent = false;
 
     // Start is called before the first frame update
     void Start()
@@ -65,8 +65,8 @@ public class welcomSceneHandler : MonoBehaviour
        
         UpdateUserData();
         UpdatePieChart();
-       
-       
+        AppData.Instance.SetMovement("SABDU");
+
         //Task.Run(() =>  // Run in a background task
         //{
         //    if (!awsManager.IsTaskScheduled(awsManager.taskName))
@@ -82,7 +82,12 @@ public class welcomSceneHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-    
+        if (!attachMarsButtonEvent && Time.timeSinceLevelLoad > 1)
+        {
+            attachMarsButtonEvent = true;
+            MarsComm.OnMarsButtonReleased += OnMarsButtonReleased;
+        }
+
         // Check if it time to switch to the next scene
         if (changeScene == true)
         {
@@ -92,7 +97,7 @@ public class welcomSceneHandler : MonoBehaviour
         //Debug.Log(MarsComm.desThree+"des3");
     }
 
-    public void onMarsButtonReleased()
+    public void OnMarsButtonReleased()
     {
         AppLogger.LogInfo("Mars button released.");
         changeScene = true;
@@ -143,7 +148,7 @@ public class welcomSceneHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        MarsComm.OnMarsButtonReleased -= onMarsButtonReleased;
+        MarsComm.OnMarsButtonReleased -= OnMarsButtonReleased;
     }
     private void OnApplicationQuit()
     {

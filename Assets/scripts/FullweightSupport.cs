@@ -8,9 +8,9 @@ using System;
 using UnityEngine.UI;
 using UnityEditor;
 using TMPro;
-public class Drawpath : MonoBehaviour
+public class RangOfMotion : MonoBehaviour
 {
-    public static Drawpath instance;
+    public static RangOfMotion instance;
     public float[] Encoder = new float[6];
     public float[] ELValue = new float[6];
     public float max_x;
@@ -29,17 +29,48 @@ public class Drawpath : MonoBehaviour
   
     void Awake()
     {
+        MarsComm.OnMarsButtonReleased += OnMarsButtonReleased;
         instance = this;
         Time.timeScale = 1;
     }
+   
 
     void Start()
     {
+        //Debug.Log(DataManager.basePath);
+        //if (!Directory.Exists(DataManager.basePath))
+        //{
 
-        //AppData.InitializeRobot();
-        AppLogger.StartLogging(SceneManager.GetActiveScene().name);
-        AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
-        AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
+        //    SceneManager.LoadScene("getConfig");
+        //    return;
+        //}
+
+        //// Get all subdirectories excluding metadata
+        //var validUserDirs = Directory.GetDirectories(DataManager.basePath)
+        //.Select(Path.GetFileName)
+        //.Where(name => !name.ToLower().Contains("meta"))
+        //.ToList();
+
+
+        //if (validUserDirs.Count == 1)
+        //{
+        //    AppData.Instance.setUser(validUserDirs[0]);
+        //    DataManager.setUserId(AppData.Instance.userID);
+        //}
+
+        //if (!File.Exists(DataManager.filePathforConfig))
+        //{
+
+        //    SceneManager.LoadScene("getConfig");
+        //    return;
+        //}
+
+        //AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
+        ////AppData.Instance.Initialize(SceneManager.GetActiveScene().name);
+        //AppData.Instance.InitializeRobot();
+        //AppLogger.StartLogging(SceneManager.GetActiveScene().name);
+        //AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
+        //AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
         messagePanel.SetActive(false);
         paths = new List<Vector3>();
         message.SetActive(false);
@@ -49,14 +80,14 @@ public class Drawpath : MonoBehaviour
     public void Update()
     {
        
-        updateSupportGUI();
+        //updateSupportGUI();
 
-        if(MarsComm.SUPPORT <= MarsComm.SUPPORT_CODE[2] || MarsComm.SUPPORT<0.55f)
-        {
-            Debug.Log("Half weight support initiated");
-            AppLogger.LogInfo("half weight support initiated");
-            SceneManager.LoadScene("halfWeightSupportScene");
-        }
+        //if(MarsComm.SUPPORT <= MarsComm.SUPPORT_CODE[2] || MarsComm.SUPPORT<0.55f)
+        //{
+        //    Debug.Log("Half weight support initiated");
+        //    AppLogger.LogInfo("half weight support initiated");
+        //    SceneManager.LoadScene("halfWeightSupportScene");
+        //}
       
        
     }
@@ -80,10 +111,11 @@ public class Drawpath : MonoBehaviour
             inclusion = 1;
             message.SetActive(true);
             messagePanel.SetActive(true);
-            string headerData = "startdate,Max_x,Min_x,Max_y,Min_y";
+            //string headerData = "startdate,Max_x,Min_x,Max_y,Min_y";
             DateTime time = DateTime.Now;
             string data = time.ToString() + "," + max_x + "," + min_x + "," + max_y + "," + min_y;
-            AppData.writeAssessmentData(headerData, data, DataManager.ROMWithSupportFileNames[0],DataManager.directoryAssessmentData);
+           
+            //AppData.writeAssessmentData(headerData, data, DataManager.ROMWithSupportFileNames[0],DataManager.directoryAssessmentData);
         }
         else
         {
@@ -92,7 +124,21 @@ public class Drawpath : MonoBehaviour
         }
      
     }
-   
+    public void OnMarsButtonReleased()
+    {
+       saveAssessmentData();
+
+    }
+
+    public void saveAssessmentData()
+    {
+        //save Assessment data 
+        //AppData.Instance.selectedMovement.newRom.SetMovement("SABDU");
+        //AppData.Instance.selectedMovement.newRom.SetMarsMode("FWS");
+        AppData.Instance.selectedMovement.SetNewRomValuesFWS(max_x, min_x, max_y, min_y);
+        AppData.Instance.selectedMovement.SaveAssessmentData();
+
+    }
     public void updateSupportGUI()
     {
         supportIndicator.fillAmount = MarsComm.SUPPORT;

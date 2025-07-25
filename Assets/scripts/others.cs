@@ -123,8 +123,7 @@ public class marsUserData
             parseMovementMoveTimePrev();
         }
      
-        //check for TrainingSide
-        //this.rightHand = dTableConfig.Rows[0]["TrainingSide"].ToString().ToUpper() == "RIGHT";
+       
     }
 
    
@@ -220,53 +219,71 @@ public static class Others
         return dayOfWeek.ToString().Substring(0, 3);
     }
 }
+
 public class MarsMovement
 {
-    //public static readonly Dictionary<string, float> DefaultMechanismSpeeds = new Dictionary<string, float>
-    //{
-    //    { "WFE", 10.0f },
-    //    { "WURD", 10.0f },
-    //    { "FPS", 10.0f },
-    //    { "HOC", 10.0f },
-    //    { "FME1", 10.0f },
-    //    { "FME2", 10.0f },
-    //};
-    // public static string MECHPATH { get; private set; } = DataManager.mechPath;
+    
     public string name { get; private set; }
     public string side { get; private set; }
-    public bool promCompleted { get; private set; }
-    public bool aromCompleted { get; private set; }
-    public bool apromCompleted { get; private set; }
-    public bool romCompleted { get; private set; }
-    public ROM oldRom { get; private set; }
-    public ROM newRom { get; private set; }
-    public ROM currRom { get => newRom.isRomSet ? newRom : (oldRom.isRomSet ? oldRom : null); }
+    
+    public string MarsMode {  get; private set; }
+    public void setMode(String mode)
+    {
+        MarsMode = mode;
+    }
+    //MarsMode - FWS
+    public ROM oldRomFWS { get; private set; }
+    public ROM newRomFWS { get; private set; }
+    public ROM currRomFWS { get => newRomFWS.isaromRomSet ? newRomFWS : (oldRomFWS.isaromRomSet ? oldRomFWS : null); }
+    public bool aromCompletedFWS { get; private set; }
+
+    //MarsMode - HWS
+    public ROM oldRomHWS { get; private set; }
+    public ROM newRomHWS { get; private set; }
+    public ROM currRomHS { get => newRomHWS.isaromRomSet ? newRomHWS : (oldRomHWS.isaromRomSet ? oldRomHWS : null); }
+    public bool aromCompletedHWS { get; private set; }
+    
+    //MarsMOde - NWS
+    public ROM oldRomNWS { get; private set; }
+    public ROM newRomNWS { get; private set; }
+    public ROM currRomNWS { get => newRomNWS.isaromRomSet ? newRomNWS : (oldRomNWS.isaromRomSet ? oldRomNWS : null); }
+    public bool aromCompletedNWS { get; private set; }
+
     public float currSpeed { get; private set; } = -1f;
     // Trial details for the mechanism.
     public int trialNumberDay { get; private set; }
     public int trialNumberSession { get; private set; }
 
-
     public MarsMovement(string name, string side, int sessno)
     {
         this.name = name?.ToUpper() ?? string.Empty;
         this.side = side;
-        oldRom = new ROM(this.name);
-        newRom = new ROM();
-        //promCompleted = false;
-        //aromCompleted = false;
-        //apromCompleted = false;
-        romCompleted = false;
+       
+        //objs MarsMode - FWS
+        oldRomFWS = new ROM(this.name,"FWS");
+        newRomFWS = new ROM();
+        aromCompletedFWS = false;
+
+        //objs MarsMode - FWS
+        oldRomHWS = new ROM(this.name,"HWS");
+        newRomHWS = new ROM();
+        aromCompletedHWS = false;
+
+        //objs MarsMode - FWS
+        oldRomNWS = new ROM(this.name,"NWS");
+        newRomNWS = new ROM();
+        aromCompletedNWS = false;
+
         this.side = side;
         //currSpeed = -1f;
         UpdateTrialNumbers(sessno);
     }
 
-    public bool IsMarsSupport(string movName) => string.Equals(name, movName, StringComparison.OrdinalIgnoreCase);
+    public bool IsMarsMovement(string movName) => string.Equals(name, movName, StringComparison.OrdinalIgnoreCase);
     
     public bool IsSide(string sideName) => string.Equals(side, sideName, StringComparison.OrdinalIgnoreCase);
 
-    public bool IsSpeedUpdated() => currSpeed > 0;
+    //public bool IsSpeedUpdated() => currSpeed > 0;
 
     public void NextTrail()
     {
@@ -274,39 +291,84 @@ public class MarsMovement
         trialNumberSession += 1;
     }
 
-    public float[] CurrentArom => currRom == null ? null : new float[] { currRom.aromMin, currRom.aromMax };
-    public float[] CurrentProm => currRom == null ? null : new float[] { currRom.promMin, currRom.promMax };
-    public float[] CurrentAProm => currRom == null ? null : new float[] { currRom.apromMin, currRom.apromMax };
-    public void ResetRomValues()
+    public float[] CurrentArom => currRomFWS == null ? null : new float[] { currRomFWS.aromMinX, currRomFWS.aromMaxX, currRomFWS.aromMinY, currRomFWS.aromMaxY };
+
+    public void ResetRomValuesFWS()
     {
-        newRom.setRom(0, 0,0,0);
-        romCompleted = false;
+        newRomFWS.setRom(0, 0,0,0);
+        aromCompletedFWS = false;
+    }
+    public void ResetRomValuesHWS()
+    {
+        newRomHWS.setRom(0, 0, 0, 0);
+        aromCompletedHWS = false;
+    }
+    public void ResetRomValuesNWS()
+    {
+        newRomNWS.setRom(0, 0, 0, 0);
+        aromCompletedNWS = false;
     }
 
 
 
-    public void SetNewRomValues(float minx, float maxx, float miny, float maxy)
+    public void SetNewRomValuesFWS(float minx, float maxx, float miny, float maxy)
     {
-        newRom.setRom(minx,maxx,miny,maxy);
-        if (minx != 0 || maxx != 0 || miny!=0 || maxy!=0) romCompleted = true;
+        newRomFWS.setRom(minx,maxx,miny,maxy);
+        if (minx != 0 || maxx != 0 || miny!=0 || maxy!=0) aromCompletedFWS = true;
         // Cehck if newRom's mechanism needs to be set.
-        if (newRom.movement == null)
+        if (newRomFWS.movement == null)
         {
-            newRom.SetMovement(this.name);
+            newRomFWS.SetMovement(this.name);
+        }
+        if (newRomFWS.mode == null)
+        {
+            newRomFWS.SetMarsMode(this.MarsMode);
+        }
+    }
+
+    public void SetNewRomValuesHWS(float minx, float maxx, float miny, float maxy)
+    {
+        newRomHWS.setRom(minx, maxx, miny, maxy);
+        if (minx != 0 || maxx != 0 || miny != 0 || maxy != 0) aromCompletedHWS = true;
+        // Cehck if newRom's mechanism needs to be set.
+        if (newRomHWS.movement == null)
+        {
+            newRomHWS.SetMovement(this.name);
+        }
+        if (newRomHWS.mode == null)
+        {
+            newRomHWS.SetMarsMode(this.MarsMode);
+        }
+    }
+
+    public void SetNewRomValuesNWS(float minx, float maxx, float miny, float maxy)
+    {
+        newRomNWS.setRom(minx, maxx, miny, maxy);
+        if (minx != 0 || maxx != 0 || miny != 0 || maxy != 0) aromCompletedNWS = true;
+        // Cehck if newRom's mechanism needs to be set.
+        if (newRomNWS.movement == null)
+        {
+            newRomNWS.SetMovement(this.name);
+        }
+        if (newRomNWS.mode == null)
+        {
+            newRomNWS.SetMarsMode(this.MarsMode);
         }
     }
 
 
     public void SaveAssessmentData()
     {
-        if (romCompleted)
+        if (aromCompletedFWS && aromCompletedHWS && aromCompletedNWS)
         {
             // Save the new ROM values to the file.
-            newRom.WriteToAssessmentFile();
+            newRomFWS.WriteToAssessmentFile();
+            newRomHWS.WriteToAssessmentFile();
+            newRomNWS.WriteToAssessmentFile();
         }
     }
     /*
-     * Function to update the trial numbers for the day and session for the mechanism for today.
+     * Function to update the trial numbers for the day and session for the movement for today.
      */
     public void UpdateTrialNumbers(int sessno)
     {
@@ -349,84 +411,66 @@ public class ROM
     };
     // Class attributes to store data read from the file
     public string datetime;
-    public float MinX {  get; private set; }
-    public float MaxX { get; private set; }
-    public float MinY { get; private set; }
-    public float MaxY { get; private set; }
+    public float aromMinX {  get; private set; }
+    public float aromMaxX { get; private set; }
+    public float aromMinY { get; private set; }
+    public float aromMaxY { get; private set; }
     public string mode { get; private set; }
-    public bool isRomXSet { get => MinX != 0 || MaxX != 0; }
-    public bool isRomYSet { get => MinY != 0 || MaxY != 0; }
+    public bool isAromRomXSet { get => aromMinX != 0 || aromMaxX != 0; }
+    public bool isaromRomYSet { get => aromMinY != 0 || aromMaxY != 0; }
 
-    public bool isRomSet { get => isRomXSet && isRomYSet; }
+    public bool isaromRomSet { get => isAromRomXSet && isaromRomYSet; }
 
     public string movement { get; private set; }
 
    
   
-
+    
     // Constructor that reads the file and initializes values based on the mechanism
-    public ROM(string movementName, bool readFromFile = true)
+    public ROM(string movementName,string marsMode, bool readFromFile = true)
     {
+        SetMarsMode(marsMode);
         if (readFromFile) ReadFromFile(movementName);
         else
         {
-            // Handle case when no matching mechanism is found
+            // Handle case when no matching movement is found
             datetime = null;
             movement = movementName;
-            MinX = 0;
-            MaxX = 0;
-            MinY = 0;
-            MaxY = 0;
+            aromMinX = 0;
+            aromMaxX = 0;
+            aromMinY = 0;
+            aromMaxY = 0;
           
         }
     }
-
-    public ROM(float angmin, float angmax, float aromAngMin, float aromAngMax, string mov, bool tofile)
-    {
-        MinX = angmin;
-        MaxX = angmax;
-        MinY = aromAngMin;
-        MaxY = aromAngMax;
-        movement = mov;
-        datetime = DateTime.Now.ToString();
-        if (tofile) WriteToAssessmentFile();
-    }
-
+    
     public ROM()
     {
-        MinX = 0;
-        MaxX = 0;
-        MinY = 0;
-        MaxY = 0;
-        mode = null;
+        aromMinX = 0;
+        aromMaxX = 0;
+        aromMinY = 0;
+        aromMaxY = 0;
+        //mode = null;
         movement = null;
         datetime = null;
     }
 
     public void SetMovement(string mov) => movement = (movement == null) ? mov : movement;
-    public void SetMarsMode(string Mode) => mode = (mode == null) ? Mode : mode; // fws,hws,nws modes
+    public void SetMarsMode(string Mode) => mode = (mode == null) ? Mode:mode ; // fws,hws,nws modes
 
-
+   
     public void setRom(float Minx , float Maxx, float Miny, float Maxy)
     {
-        MinX = Minx;
-        MaxX = Maxx;
-        MinY = Miny;
-        MaxY = Maxy;
+        aromMinX = Minx;
+        aromMaxX = Maxx;
+        aromMinY = Miny;
+        aromMaxY = Maxy;
         datetime = DateTime.Now.ToString();
     }
     public void WriteToAssessmentFile()
     {
-        string fileName = DataManager.GetRomFileName(movement,mode); ;
-        using (StreamWriter file = new StreamWriter(fileName, true))
-        {
-            file.WriteLine(string.Join(",", new string[] { datetime, MinX.ToString(), MaxX.ToString(), MinY.ToString(), MaxY.ToString()}));
-        }
-    }
-
-    private void ReadFromFile(string movementName)
-    {
-        string fileName = DataManager.GetRomFileName(movementName, mode);
+        string fileName = DataManager.GetRomFileName(movement,mode);
+        
         // Create the file if it doesn't exist
         if (!File.Exists(fileName))
         {
@@ -435,7 +479,21 @@ public class ROM
                 writer.WriteLine(string.Join(",", FILEHEADER));
             }
         }
-        // Read file.
+
+        Debug.Log(fileName+"filenameass"+movement+mode);
+        using (StreamWriter file = new StreamWriter(fileName, true))
+        {
+            file.WriteLine(string.Join(",", new string[] { datetime, aromMinX.ToString(), aromMaxX.ToString(), aromMinY.ToString(), aromMaxY.ToString()}));
+        }
+    }
+
+    private void ReadFromFile(string movementName)
+    {
+        if (mode == null)
+            return;
+        string fileName = DataManager.GetRomFileName(movementName, mode);
+        if (!File.Exists(fileName))
+            return;
         DataTable romData = DataManager.loadCSV(fileName);
         // Check the number of rows.
         if (romData.Rows.Count == 0)
@@ -443,23 +501,26 @@ public class ROM
             // Set default values for the mechanism.
             datetime = null;
             movement = movementName;
-            MinX = 0;
-            MaxX = 0;
-            MinY = 0;
-            MaxY = 0;
+            aromMinX = 0;
+            aromMaxX = 0;
+            aromMinY = 0;
+            aromMaxY = 0;
             return;
         }
         // Assign ROM from the last row.
         datetime = romData.Rows[romData.Rows.Count - 1].Field<string>("DateTime");
         movement = movementName;
-        MinX = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinX"));
-        MaxX = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxX"));
-        MinY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinY"));
-        MaxY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxY"));
+        aromMinX = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinX"));
+        aromMaxX = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxX"));
+        aromMinY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinY"));
+        aromMaxY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxY"));
 
     }
 }
+//public class MarsController
+//{
 
+//}
 
 public static class Miscellaneous
 {
@@ -467,6 +528,7 @@ public static class Miscellaneous
     {
         return dayOfWeek.ToString().Substring(0, 3);
     }
+
 }
 
 

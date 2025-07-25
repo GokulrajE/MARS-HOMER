@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -34,29 +35,32 @@ public static class JediComm
     public static volatile bool isMars = false;
     public static int plcount;
 
-    public static void ConnectToRobot(String port)
-    {
-        serPort = new SerialPort
-        {
-            PortName = port,
-            BaudRate = 115200,
-            Parity = Parity.None,
-            DataBits = 8,
-            StopBits = StopBits.One,
-            Handshake = Handshake.None,
-            DtrEnable = true,
-            ReadTimeout = 500,
-            WriteTimeout = 500,
-        
+    // Headers for Rx and Tx.
+    //static public byte HeaderIn = 0xFF;
+    //static public byte HeaderOut = 0xAA;
 
-        };
-        if (serPort.IsOpen)
+    static public void InitSerialComm(string port)
+    {
+        serPort = new SerialPort();
+        // Allow the user to set the appropriate properties.
+        serPort.PortName = port;
+        serPort.BaudRate = 115200;
+        serPort.Parity = Parity.None;
+        serPort.DataBits = 8;
+        serPort.StopBits = StopBits.One;
+        serPort.Handshake = Handshake.None;
+        serPort.DtrEnable = true;
+
+        // Set the read/write timeouts
+        serPort.ReadTimeout = 250;
+        serPort.WriteTimeout = 250;
+    }
+
+    static public void Connect()
+    {
+        stop = false;
+        if (serPort.IsOpen == false)
         {
-            serPort.Close(); // Close the port if it’s already open.
-        }
-        if (!serPort.IsOpen)
-        {
-            stop = false;
             try
             {
                 serPort.Open();
@@ -65,11 +69,13 @@ public static class JediComm
             {
                 Debug.Log("exception: " + ex);
             }
-
-            reader = new Thread(SerialReaderThread);
+            // Create a new thread to read the serial port data.
+            reader = new Thread(serialreaderthread);
+            reader.Priority = System.Threading.ThreadPriority.AboveNormal;
             reader.Start();
         }
     }
+
 
     public static void Disconnect()
     {
@@ -83,7 +89,7 @@ public static class JediComm
     }
 
 
-    public static void SerialReaderThread()
+    public static void serialreaderthread()
     {
         while (!stop)
         {
@@ -132,7 +138,7 @@ public static class JediComm
             checksum += HeaderIn + HeaderIn;
             // Read payload size
             payLoadBytes[plcount++] = (byte)serPort.ReadByte();
-            Debug.Log(payLoadBytes[0]);
+            //Debug.Log(payLoadBytes[0]);
             checksum += payLoadBytes[0];
             if (payLoadBytes[0] != HeaderIn) 
             { 

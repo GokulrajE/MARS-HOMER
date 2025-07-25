@@ -50,77 +50,6 @@ public static class MarsComm
     public static float thetades1;
 
     static public DateTime currentTime { get; private set; }
-    //static public float angleOne
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[0];
-    //    }
-    //}
-    //static public float angleTwo
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[1];
-    //    }
-    //}
-    //static public float angleThree
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[2];
-    //    }
-    //}
-    //static public float angleFour
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[3];
-    //    }
-    //}
-    //static public float forceOne
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[4];
-    //    }
-    //}
-    //static public float calibBtnState
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[5];
-    //    }
-    //}
-    //static public float desOne
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[6];
-    //    }
-    //}
-    //static public float desTwo
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[7];
-    //    }
-    //}
-    //static public float desThree
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[8];
-    //    }
-    //}
-    //static public float pcParameter
-    //{
-    //    get
-    //    {
-    //        return currentSensorData[9];
-    //    }
-    //}
-
     static public float angle1
     {
         get
@@ -181,7 +110,6 @@ public static class MarsComm
     {
         get
         {
-          
             return currentSensorData[8];
         }
     }
@@ -192,83 +120,155 @@ public static class MarsComm
             return currentSensorData[9];
         }
     }
-    static public float shPosX
-    {
-        get
-        {
-            return currentSensorData[10];
-        }
-    }
-    static public float shPosY
-    {
-        get
-        {
-            return currentSensorData[11];
-        }
-    }
-    static public float shPosZ
-    {
-        get
-        {
-            return currentSensorData[12];
-        }
-    }
-    static public float lenUpperArm
-    {
-        get
-        {
-            return currentSensorData[13];
-        }
-    }
-    static public float lenLowerArm
-    {
-        get
-        {
-            return currentSensorData[14];
-        }
-    }
-    static public float weight1
-    {
-        get
-        {
-            return currentSensorData[15];
-        }
-    }
-    static public float weight2
-    {
-        get
-        {
-            return currentSensorData[16];
-        }
-    }
-    static public float imuAng1
-    {
-        get
-        {
-            return currentSensorData[17];
-        }
-    }
-    static public float imuAng2
-    {
-        get
-        {
-            return currentSensorData[18];
-        }
-    }
-    static public float imuAng3
-    {
-        get
-        {
-            return currentSensorData[19];
-        }
-    }
-    static public float imuAng4
-    {
-        get
-        {
-            return currentSensorData[20];
-        }
-    }
+
+    //static public float angle1
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[0];
+    //    }
+    //}
+    //static public float angle2
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[1];
+    //    }
+    //}
+    //static public float angle3
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[2];
+    //    }
+    //}
+    //static public float angle4
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[3];
+    //    }
+    //}
+    //static public float force
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[4];
+    //    }
+    //}
+    //static public float calibBtnState
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[5];
+    //    }
+    //}
+    //static public float desOne
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[6];
+    //    }
+    //}
+    //static public float desTwo
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[7];
+    //    }
+    //}
+    //static public float desThree
+    //{
+    //    get
+    //    {
+
+    //        return currentSensorData[8];
+    //    }
+    //}
+    //static public float pcParameter
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[9];
+    //    }
+    //}
+    //static public float shPosX
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[10];
+    //    }
+    //}
+    //static public float shPosY
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[11];
+    //    }
+    //}
+    //static public float shPosZ
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[12];
+    //    }
+    //}
+    //static public float lenUpperArm
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[13];
+    //    }
+    //}
+    //static public float lenLowerArm
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[14];
+    //    }
+    //}
+    //static public float weight1
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[15];
+    //    }
+    //}
+    //static public float weight2
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[16];
+    //    }
+    //}
+    //static public float imuAng1
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[17];
+    //    }
+    //}
+    //static public float imuAng2
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[18];
+    //    }
+    //}
+    //static public float imuAng3
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[19];
+    //    }
+    //}
+    //static public float imuAng4
+    //{
+    //    get
+    //    {
+    //        return currentSensorData[20];
+    //    }
+    //}
     //if we need to get imuRaw values
     //static public float imu1aX
     //{
@@ -344,7 +344,7 @@ public static class MarsComm
     static public void initalizeDataLength(int lenght)
     {
         sensorDataLength = (int)(lenght - 2) / 4; //buttonState,checksum bytes
-        Debug.Log(sensorDataLength);
+        //Debug.Log(sensorDataLength);
 
         currentSensorData = new float[sensorDataLength];
     }
@@ -393,51 +393,54 @@ public static class MarsComm
     static public void computeShouderPosition()
     {
            
-            theta1 = OFFSET[AppData.Instance.userData.useHand] * angle1;
-            theta2 = OFFSET[AppData.Instance.userData.useHand] * angle2;
-            theta3 = OFFSET[AppData.Instance.userData.useHand] * angle3;
-            theta4 = OFFSET[AppData.Instance.userData.useHand] * angle4;
+        //    theta1 = OFFSET[2] * angle1;
+        //    theta2 = OFFSET[2] * angle2;
+        //    theta3 = OFFSET[2] * angle3;
+        //    theta4 = OFFSET[2] * angle4;
 
-            zvec[0] = Mathf.Cos(theta1) * Mathf.Cos(theta2 + theta3 + theta4);
-            zvec[1] = Mathf.Sin(theta1) * Mathf.Cos(theta2 + theta3 + theta4);
-            zvec[2] = -Mathf.Sin(theta2 + theta3 + theta4);
+        //    zvec[0] = Mathf.Cos(theta1) * Mathf.Cos(theta2 + theta3 + theta4);
+        //    zvec[1] = Mathf.Sin(theta1) * Mathf.Cos(theta2 + theta3 + theta4);
+        //    zvec[2] = -Mathf.Sin(theta2 + theta3 + theta4);
 
-            endPt[0] = Mathf.Cos(theta1) * (len1 * Mathf.Cos(theta2) + len2 * Mathf.Cos(theta2 + theta3));
-            endPt[1] = Mathf.Sin(theta1) * (len1 * Mathf.Cos(theta2) + len2 * Mathf.Cos(theta2 + theta3));
-            endPt[2] = -len1 * Mathf.Sin(theta2) - len2 * Mathf.Sin(theta2 + theta3);
+        //    endPt[0] = Mathf.Cos(theta1) * (len1 * Mathf.Cos(theta2) + len2 * Mathf.Cos(theta2 + theta3));
+        //    endPt[1] = Mathf.Sin(theta1) * (len1 * Mathf.Cos(theta2) + len2 * Mathf.Cos(theta2 + theta3));
+        //    endPt[2] = -len1 * Mathf.Sin(theta2) - len2 * Mathf.Sin(theta2 + theta3);
 
-            if (calibrationSceneHandler.calibrationState>0) 
-            {
-              shPos = new float[] { endPt[0], endPt[1] + AppData.Instance.userData.uaLength, endPt[2] - AppData.Instance.userData.faLength};
-            }
-            
-            elPt[0] = endPt[0] - AppData.Instance.userData.faLength * zvec[0];
-            elPt[1] = endPt[1] - AppData.Instance.userData.faLength * zvec[1];
-            elPt[2] = endPt[2] - AppData.Instance.userData.faLength * zvec[2];
+        //    shPos = new float[] { endPt[0], endPt[1] + 250, endPt[2] - 150 };
 
-            fA[0] = endPt[0] - elPt[0];
-            fA[1] = endPt[1] - elPt[1];
-            fA[2] = endPt[2] - elPt[2];
+        //Debug.Log(string.Join(",", shPos));
+        //if (calibrationSceneHandler.calibrationState>0) 
+        //{
+        //  shPos = new float[] { endPt[0], endPt[1] + AppData.Instance.userData.uaLength, endPt[2] - AppData.Instance.userData.faLength};
+        //}
 
-            uA[0] = elPt[0] - shPos[0];
-            uA[1] = elPt[1] - shPos[1];
-            uA[2] = elPt[2] - shPos[2];
+        //elPt[0] = endPt[0] - AppData.Instance.userData.faLength * zvec[0];
+        //elPt[1] = endPt[1] - AppData.Instance.userData.faLength * zvec[1];
+        //elPt[2] = endPt[2] - AppData.Instance.userData.faLength * zvec[2];
 
-            if (Mathf.Abs((fA[0] * uA[0] + fA[1] * uA[1] + fA[2] * uA[2]) / (AppData.Instance.userData.faLength * AppData.Instance.userData.uaLength)) > 0.9999999f)
-            {
-                elF = 0;
-            }
-            else
-            {
-                elF = Mathf.Acos((fA[0] * uA[0] + fA[1] * uA[1] + fA[2] * uA[2]) / (AppData.Instance.userData.faLength * AppData.Instance.userData.uaLength));
-            }
-            shF = Mathf.Atan2(endPt[1], endPt[0]);
+        //fA[0] = endPt[0] - elPt[0];
+        //fA[1] = endPt[1] - elPt[1];
+        //fA[2] = endPt[2] - elPt[2];
 
-            if (Mathf.Abs(uA[2] / AppData.Instance.userData.uaLength) < 1)
-            {
-                shA = Mathf.Asin(uA[2] / AppData.Instance.userData.uaLength);
-            }
-        
+        //uA[0] = elPt[0] - shPos[0];
+        //uA[1] = elPt[1] - shPos[1];
+        //uA[2] = elPt[2] - shPos[2];
+
+        //if (Mathf.Abs((fA[0] * uA[0] + fA[1] * uA[1] + fA[2] * uA[2]) / (AppData.Instance.userData.faLength * AppData.Instance.userData.uaLength)) > 0.9999999f)
+        //{
+        //    elF = 0;
+        //}
+        //else
+        //{
+        //    elF = Mathf.Acos((fA[0] * uA[0] + fA[1] * uA[1] + fA[2] * uA[2]) / (AppData.Instance.userData.faLength * AppData.Instance.userData.uaLength));
+        //}
+        //shF = Mathf.Atan2(endPt[1], endPt[0]);
+
+        //if (Mathf.Abs(uA[2] / AppData.Instance.userData.uaLength) < 1)
+        //{
+        //    shA = Mathf.Asin(uA[2] / AppData.Instance.userData.uaLength);
+        //}
+
     }
 
     //To control the motor manually hold and release 

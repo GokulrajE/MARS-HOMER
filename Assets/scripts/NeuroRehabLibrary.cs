@@ -80,7 +80,7 @@ namespace NeuroRehabLibrary
             session.DateTime = _sessionDateTime;
             session.SetStartTime();
             _currentSession = session;
-            AppData.currentSessionNumber = _currentSessionNumber;
+            //AppData.currentSessionNumber = _currentSessionNumber;
             Debug.Log($"Starting game session with session number: {session.SessionNumber}");
         }
 

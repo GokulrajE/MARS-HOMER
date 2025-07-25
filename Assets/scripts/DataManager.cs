@@ -77,8 +77,6 @@ public class DataManager : MonoBehaviour
         logPath = basePath + "/applog";
         filePathSessionData = FixPath(Path.Combine(directoryPathSession, "sessions.csv"));
         filePathAssessmentData = directoryAssessmentData + "/assessment.csv";
-
-     
         Directory.CreateDirectory(basePath);
         Directory.CreateDirectory(directoryPathSession);
         Directory.CreateDirectory(directoryPathRawData);
@@ -215,13 +213,13 @@ public static class AppLogger
         }
     }
 
-    public static void SetCurrentMechanism(string mechanism)
+    public static void SetCurrentMovement(string mechanism)
     {
         Debug.Log(mechanism);
         if (isLogging)
         {
             currentMechanism = mechanism;
-            LogInfo($"PLUTO mechanism set to '{currentMechanism}'.");
+            LogInfo($"Mars movement set to '{currentMechanism}'.");
         }
     }
 

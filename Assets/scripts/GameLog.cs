@@ -36,7 +36,7 @@ public class GameLog : MonoBehaviour
     {
         dateTime = DateTime.Now.ToString("Dyyyy-MM-ddTHH-mm-ss");
         date = DateTime.Now.ToString("yyyy-MM-dd");
-        sessionNum = "Session" + AppData.currentSessionNumber;
+        //sessionNum = "Session" + AppData.currentSessionNumber;
     }
 
     private void CreateLogFile()

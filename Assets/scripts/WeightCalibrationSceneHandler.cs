@@ -150,7 +150,7 @@ public class weightEstimation : MonoBehaviour
             data = $"{MarsComm.shF},{MarsComm.shA},{MarsComm.elF},{tauf[tauf.Length - 1]},{MarsComm.endPt[0]},{MarsComm.endPt[1]},{MarsComm.force},{MarsComm.angle1},{MarsComm.angle2},{MarsComm.angle3},{MarsComm.angle4},{MarsComm.shPos[0]},{MarsComm.shPos[1]},{MarsComm.shPos[2]}";
         }
         //test purpose
-        AppData.writeAssessmentData(headerData1, data, $"testData.csv", DataManager.directoryAssessmentData);
+        //AppData.writeAssessmentData(headerData1, data, $"testData.csv", DataManager.directoryAssessmentData);
 
 
     }
@@ -183,8 +183,8 @@ public class weightEstimation : MonoBehaviour
         DateTime time = DateTime.Now;
         string data = time.ToString() + "," + sol[0] + "," + sol[1] ;
         string data1 = time.ToString() + "," + sol[0] + "," + sol[1]+"\\n////////\\n";
-        AppData.writeAssessmentData(headerData1, data1, $"testData.csv", DataManager.directoryAssessmentData);
-        AppData.writeAssessmentData(headerData, data, DataManager.SupportCalibrationFileName, DataManager.directoryAssessmentData);
+        //AppData.writeAssessmentData(headerData1, data1, $"testData.csv", DataManager.directoryAssessmentData);
+        //AppData.writeAssessmentData(headerData, data, DataManager.SupportCalibrationFileName, DataManager.directoryAssessmentData);
          phi1 = new float[] { 0 };
          phi2 = new float[] { 0 };
          phi3 = new float[] { 0 };

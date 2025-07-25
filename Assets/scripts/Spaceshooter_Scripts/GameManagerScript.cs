@@ -48,7 +48,7 @@ public class GameManagerScript : MonoBehaviour
                 int.TryParse(values[1], out currentLevel); // Parse the second value as currentLevel
             }
         }
-        StartNewGameSession();
+        //StartNewGameSession();
         //support.text = $"Support : {AppData.ArmSupportController.getGain()}%";
         SupportSlider.fillAmount = MarsComm.SUPPORT;
        

@@ -19,7 +19,7 @@ public partial class AppData
     public static AppData Instance => _instance.Value;
 
 
-    static public readonly string comPort = "COM19";
+    static public readonly string comPort = "COM15";
 
     /*
    * SESSION DETAILS
@@ -71,6 +71,7 @@ public partial class AppData
 
         //Connect and init robot.
         InitializeRobotConnection(doNotResetMovement, _dtstr);
+        
 
         // Intialize the Mars AAN logger.
         //MarsLogger.StartLogging(_dtstr);
@@ -103,17 +104,17 @@ public partial class AppData
             MarsComLogger.StartLogging(datetimestr);
         }
 
-        //if (!ConnectToRobot.isPLUTO)
-        //{
-        //    ConnectToRobot.Connect(COMPort);
-        //}
+        if (!ConnectToRobot.isMARS)
+        {
+            ConnectToRobot.Connect(comPort);
+        }
         //// Check if the connection is successful.
-        //if (!ConnectToRobot.isConnected)
-        //{
-        //    AppLogger.LogError($"Failed to connect to PLUTO @ {COMPort}.");
-        //    throw new Exception($"Failed to connect to PLUTO @ {COMPort}.");
-        //}
-        //AppLogger.LogInfo($"Connected to PLUTO @ {COMPort}.");
+        if (!ConnectToRobot.isConnected)
+        {
+            AppLogger.LogError($"Failed to connect to MARS @ {comPort}.");
+            throw new Exception($"Failed to connect to MARS @ {comPort}.");
+        }
+        AppLogger.LogInfo($"Connected to PLUTO @ {comPort}.");
         //// Set control to NONE, calibrate and get version.
         //PlutoComm.sendHeartbeat();
         //PlutoComm.setControlType("NONE");
@@ -131,10 +132,10 @@ public partial class AppData
         // PlutoComm.startSensorStream();
         AppLogger.LogInfo($"PLUTO SensorStream started.");
     }
-    public void InitializeRobot()
+    public void InitializeRobotDiagnostics()
     {
         //DataManager.createFileStructure();
-        JediComm.ConnectToRobot(comPort);
+        ConnectToRobot.Connect(comPort);
 
         //userData = new marsUserData(DataManager.filePathforConfig, DataManager.filePathSessionData);
 
@@ -157,13 +158,13 @@ public partial class AppData
         {
             selectedMovement = null;
             //aanController = null;
-            AppLogger.LogInfo($"Selected mechanism set to null.");
+            AppLogger.LogInfo($"Selected movment set to null.");
             return;
         }
         // Set the mechanism name.
         selectedMovement = new MarsMovement(name: name, side: trainingSide, sessno: currentSessionNumber);
-        AppLogger.LogInfo($"Selected mechanism '{selectedMovement.name}'.");
-        AppLogger.SetCurrentMechanism(selectedMovement.name);
+        AppLogger.LogInfo($"Selected movement '{selectedMovement.name}'.");
+        AppLogger.SetCurrentMovement(selectedMovement.name);
         AppLogger.LogInfo($"Trial numbers for ' {selectedMovement.name}' updated. Day: {selectedMovement.trialNumberDay}, Session: {selectedMovement.trialNumberSession}.");
     }
     public void SetGame(string game)
@@ -183,44 +184,7 @@ public partial class AppData
             return dayOfWeek.ToString().Substring(0, 3);
         }
     }
-    public static void writeAssessmentData(String Header, String Data, String FileName, String DirPath)
-    {
-        String file = $"{DirPath}/{FileName}";
-        if (!Directory.Exists(DirPath))
-        {
-            Directory.CreateDirectory(DirPath);
-        }
-        if (!File.Exists(file))
-        {
-            File.Create(file).Dispose();
-        }
-        try
-        {
-
-            if (File.Exists(file) && File.ReadAllLines(file).Length == 0)
-            {
-
-                File.WriteAllText(file, Header + "\n"); // Add a new line after the header
-                Debug.Log("Header written successfully.");
-
-                File.AppendAllText(file, Data + "\n");
-                AppLogger.LogInfo($"{FileName}Assessment data writtern successfully");
-            }
-            else
-            {
-
-                File.AppendAllText(file, Data + "\n");
-                AppLogger.LogInfo($"{FileName}Assessent data writtern successfully");
-            }
-        }
-        catch (Exception ex)
-        {
-            // Catch any other generic exceptions
-            Debug.LogError("An error occurred while writing the data: " + ex.Message);
-            AppLogger.LogError("An error occurred while writing the data: " + ex.Message);
-        }
-
-    }
+   
 
 }
 
@@ -262,9 +226,9 @@ public static class gameData
         // Start new logger
         if (fname != "")
         {
-            string instructionLine = instructions[Array.IndexOf(AppData.selectGame,AppData.selectedGame)];
-            string headerWithInstructions = instructionLine + String.Join(", ", gameHeader) + "\n";
-            dataLog = new DataLogger(fname, headerWithInstructions);
+            //string instructionLine = instructions[Array.IndexOf(AppData.selectGame,AppData.selectedGame)];
+            //string headerWithInstructions = instructionLine + String.Join(", ", gameHeader) + "\n";
+            //dataLog = new DataLogger(fname, headerWithInstructions);
             isLogging = true;
             Debug.Log("logging file name is notempty");
         }
@@ -351,309 +315,40 @@ public class DataLogger
     }
 }
 
+public static class ConnectToRobot
+{
+    public static string _port;
+    public static bool isMARS = false;
+    public static bool isConnected = false;
 
-//public static int returnLastAssesment()
-//{
-//    DataTable assessmentdata = DataManager.loadCSV(DataManager.filePathAssessmentData);
-//    DataRow lastRow = assessmentdata.Rows[assessmentdata.Rows.Count - 1];
-//    DateTime  lastAssessmentDate = DateTime.ParseExact(lastRow.Field<string>(startDateH), dateTimeFormat, CultureInfo.InvariantCulture);
-//    TimeSpan duration = DateTime.Now - lastAssessmentDate;
-//    Debug.Log((int)duration.TotalDays);
-//    return (int)duration.TotalDays;
-
-//}
-//public static class ArmSupportController
-//{
-//    //To change the support Gradually
-//    public class CoroutineRunner : MonoBehaviour
-//    {
-//        private static CoroutineRunner _instance;
-
-//        public static CoroutineRunner Instance
-//        {
-//            get
-//            {
-//                if (_instance == null)
-//                {
-//                    GameObject go = new GameObject("CoroutineRunner");
-//                    _instance = go.AddComponent<CoroutineRunner>();
-//                    GameObject.DontDestroyOnLoad(go);
-//                }
-//                return _instance;
-//            }
-//        }
-//    }
-
-//    public static int SEND_ARM_WEIGHT = 2004;
-//    public static int MARS_ACTIVATED = 2005;
-//    public static int ROBOT_ACTIVE_WITH_MARS = 2006;
-
-//    public enum supportState
-//    {
-//        NOWIGHTSUPPORT = 0,
-//        FULLWEIGHTSUPPORT = 1,
-//        HALFWEIGHTSUPPORT = 2
-
-//    }
-//    public static supportState setsupportstate;
-//    //Arm weight calibration value
-//    public static float b1, b2;
-//    //gain value
-//    public static string value;
-//    private static Coroutine supportCoroutine;
-
-
-//    public static float  decayTime = 5.0f, supporti, startSupport, startDecay = 0, endSupport;
-//    public static void  initiate()
-//    {
-
-//        if (MarsComm.desThree >= MARS_ACTIVATED)
-//            return;
-//        getSupportCalibrationData();
-
-
-//        if (b1 == float.NaN && b2 == float.NaN)
-//        {
-//            SceneManager.LoadScene("weightCalibration");
-//            return;
-//        }
-
-
-//        if (MarsComm.desThree <= calibrationSceneHandler.SENT_SUCCESSFULLY)
-//        {
-//            AppData.dataSendToRobot = new float[] { b1, (float)MarsComm.thetades1, SEND_ARM_WEIGHT, (float)MarsComm.controlStatus };
-//            AppData.sendToRobot(AppData.dataSendToRobot);
-//        }
-//        if (MarsComm.desThree == SEND_ARM_WEIGHT)
-//        {
-//            AppData.dataSendToRobot = new float[] { b2, (float)MarsComm.thetades1, MARS_ACTIVATED, (float)MarsComm.controlStatus };
-//            AppData.sendToRobot(AppData.dataSendToRobot);
-
-//        }
-
-//    }
-//    public static string getGain()
-//    {
-
-//        value = (MarsComm.desOne * 100).ToString("F0");
-
-//        return value;
-//    }
-//    public static void getSupportCalibrationData()
-//    {
-//        UserData.dTableSupportConfig = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.SupportCalibrationFileName}");
-
-//        DataRow lastRow = UserData.dTableSupportConfig.Rows[UserData.dTableSupportConfig.Rows.Count - 1];
-//        b1 = float.Parse((lastRow.Field<string>("B1")));
-//        b2 = float.Parse((lastRow.Field<string>("B2")));
-//        Debug.Log($"{b1},{b2}b1values");
-//    }
-//    public static void setSupport(float supportCode)
-//    {
-//        if (MarsComm.desThree < MARS_ACTIVATED)
-//            return;
-
-//        MarsComm.controlStatus = MarsComm.CONTROL_STATUS_CODE[1];
-//        MarsComm.SUPPORT = supportCode;
-//        AppData.dataSendToRobot = new float[] { supportCode, 0.0f, ROBOT_ACTIVE_WITH_MARS, MarsComm.controlStatus };
-//        AppData.sendToRobot(AppData.dataSendToRobot);
-
-//    }
-//    public static void UseFullWeightSupport(int ReadyToChangeSupport = 1)
-//    {
-
-//        setsupportstate = supportState.FULLWEIGHTSUPPORT;
-//        changeSupportGradully(ReadyToChangeSupport, MarsComm.SUPPORT_CODE[1]);
-
-
-//    }
-//    public static void UseHalfWeightSupport(int ReadyToChangeSupport = 1)
-//    {
-//        setsupportstate = supportState.HALFWEIGHTSUPPORT;
-//        changeSupportGradully(ReadyToChangeSupport, MarsComm.SUPPORT_CODE[2]);
-
-//    }
-//    public static void UseNoWeightSupport(int ReadyToChangeSupport = 1)
-//    {
-//        setsupportstate = supportState.NOWIGHTSUPPORT;
-//        changeSupportGradully(ReadyToChangeSupport, MarsComm.SUPPORT_CODE[0]);
-
-//    }
-//    public static void changeSupportGradully(int initiate, float targetSupport)
-//    {
-//        if (supportCoroutine != null)
-//            CoroutineRunner.Instance.StopCoroutine(supportCoroutine);
-//        startDecay = initiate;
-//        endSupport = targetSupport;
-//        startSupport = MarsComm.SUPPORT;
-//        supportCoroutine =  CoroutineRunner.Instance.StartCoroutine(GradualSupportCoroutine(initiate, targetSupport));
-//    }
-
-//    private static IEnumerator GradualSupportCoroutine(int initiate, float targetSupport)
-//    {
-//        if (MarsComm.desThree < MARS_ACTIVATED)
-//            yield break;
-
-//        float elapsedTime = 0f;
-//        float initialSupport = MarsComm.SUPPORT;
-
-//        float sendInterval = 0.1f;         // Send data every 0.1s (10 Hz)
-//        float sendTimer = 0f;
-
-//        float lastSentSupport = -999f;     // Arbitrary impossible initial value
-
-//        while (elapsedTime < decayTime && startDecay == initiate)
-//        {
-//            elapsedTime += Time.deltaTime;
-//            sendTimer += Time.deltaTime;
-
-//            float t = elapsedTime / decayTime;
-//            t = t * t * (3f - 2f * t);     // SmoothStep easing
-//            supporti = Mathf.Lerp(initialSupport, targetSupport, t);
-
-//            // Only send if change is significant and send interval passed
-//            if (sendTimer >= sendInterval && Mathf.Abs(supporti - lastSentSupport) > 0.01f)
-//            {
-//                MarsComm.controlStatus = MarsComm.CONTROL_STATUS_CODE[1];
-//                MarsComm.SUPPORT = supporti;
-
-//                setSupport(MarsComm.SUPPORT);
-//                lastSentSupport = supporti;
-//                sendTimer = 0f;
-//            }
-
-//            yield return null;
-//        }
-
-//        // Ensure final target support is sent at the end
-//        MarsComm.SUPPORT = targetSupport;
-//        setSupport(targetSupport);
-//        startDecay = 0;
-//    }
-
-
-//}
-//public static class UserData
-//{
-//    public static bool isExceeded { get; private set; }
-//    public static DataTable dTableConfig = null;
-//    public static DataTable dTableSession = null;
-//    public static DataTable dTableAssessment = null;
-//    public static DataTable dTableSupportConfig = null;
-//    public static string hospNumber;
-//    public static DateTime startDate;
-//    public static Dictionary<string, float> movementMoveTimePrsc { get; private set; } // Prescribed movement time
-//    public static Dictionary<string, float> movementMoveTimeCurr { get; private set; } // Current movement time
-
-//    // Total movement times.
-//    public static float totalMoveTimePrsc
-//    {
-//        get
-//        {
-//            if (movementMoveTimePrsc == null)
-//            {
-//                return -1f;
-//            }
-//            else
-//            {
-//                // Add all entries of the movement move time dictionary
-//                return movementMoveTimePrsc.Values.Sum();
-
-//            }
-//        }
-//    }
-//    public static int totalMoveTimeRemaining  
-//    {
-//        get
-//        {
-//            float _total = 0f;
-//            float _Prsc = 0f;
-//            foreach (string movement in MarsDefs.Movements)
-//            {
-//                _Prsc += movementMoveTimePrsc[movement];
-//                _total +=  SessionDataHandler.movementMoveTimePrev[movement] - movementMoveTimeCurr[movement];
-//            }
-//            Debug.Log(_Prsc+"prescribed");
-//            Debug.Log(_total+ "done");
-//            if (_Prsc < _total)
-//            {
-//                 isExceeded = true;
-//                _total = (_total - _Prsc);
-//                return (int)_total;
-//            }
-//            else
-//            {
-//                isExceeded = false;
-//                _total = (_Prsc -_total);
-//                return (int)_total;
-//            }
-
-//        }
-//    }
-
-//    // Function to read all the user data.
-//    public static void readAllUserData()
-//    {
-
-//        dTableConfig = DataManager.loadCSV(DataManager.filePathforConfig);
-//        dTableSession = DataManager.loadCSV(DataManager.filePathSessionData);
-//        //dTableAssessment = DataManager.loadCSV(DataManager.filePathAssessmentData);
-
-
-//        parseTherapyConfigData();
-
-
-
-//        SessionDataHandler.parseMovementMoveTimePrev();
-//    }
-
-//    public static Dictionary<string, float> createMoveTimeDictionary()
-//    {
-//        Dictionary<string, float> _temp = new Dictionary<string, float>();
-//        for (int i = 0; i < MarsDefs.Movements.Length; i++)
-//        {
-//            _temp.Add(MarsDefs.Movements[i], 0f);
-//        }
-//        return _temp;
-//    }
-
-//    public static int getTodayMoveTimeForMovement(string movement)
-//    {
-//        return (int)SessionDataHandler.movementMoveTimePrev[movement] + (int)movementMoveTimeCurr[movement];
-//    }
-
-//    public static int getCurrentDayOfTraining()
-//    {
-//        TimeSpan duration = DateTime.Now - startDate;
-//        return (int)duration.TotalDays;
-//    }
-
-//    private static void parseTherapyConfigData()
-//    {
-//        //create th dictionary
-//        movementMoveTimeCurr = createMoveTimeDictionary();
-//        movementMoveTimePrsc = createMoveTimeDictionary();
-
-//        DataRow lastRow = dTableConfig.Rows[dTableConfig.Rows.Count - 1];
-//        //patient data
-//        hospNumber = lastRow.Field<string>(hosno);
-//        startDate = DateTime.ParseExact(lastRow.Field<string>(startDateH), dateFormat, CultureInfo.InvariantCulture);
-//        useHand = int.Parse( lastRow.Field<string>(useHandHeader));
-//        lu = int.Parse(lastRow.Field<string>(upperarmLength));
-//        lf = int.Parse(lastRow.Field<string>(forearmLength));
-
-
-//        //parse the prescribed movement time for training
-//        for (int i = 0; i < MarsDefs.Movements.Length; i++)
-//        {
-//            movementMoveTimePrsc[MarsDefs.Movements[i]] = float.Parse(lastRow.Field<string>(MarsDefs.Movements[i]));
-//        }
-//    }
-//}
-
-
-
-
+    public static void Connect(string port)
+    {
+        _port = port;
+        if (_port == null)
+        {
+            _port = "COM13";
+            JediComm.InitSerialComm(_port);
+        }
+        else
+        {
+            JediComm.InitSerialComm(_port);
+        }
+        if (JediComm.serPort != null)
+        {
+            if (JediComm.serPort.IsOpen == false)
+            {
+                UnityEngine.Debug.Log(_port);
+                JediComm.Connect();
+            }
+            isConnected = JediComm.serPort.IsOpen;
+        }
+    }
+    public static void disconnect()
+    {
+        ConnectToRobot.isMARS = false;
+        JediComm.Disconnect();
+    }
+}
 
 
 

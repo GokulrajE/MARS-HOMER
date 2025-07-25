@@ -76,12 +76,12 @@ public class Player_controller_s : MonoBehaviour
             Mathf.Clamp(ySS, yMin, yMax),
             -8.0f);
         playerPos = transform.position;
-        Debug.Log(playerPos+"playerpos");
+        //Debug.Log(playerPos+"playerpos");
         
         if (xSS != previosXss)
         {
             gameData.events = 1;
-            Debug.Log("playerMoveing");
+            //Debug.Log("playerMoveing");
             previosXss = xSS;
         }
         gameData.playerPos = playerPos.x.ToString();

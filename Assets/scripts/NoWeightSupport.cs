@@ -57,7 +57,7 @@ public class NoWeightSupport : MonoBehaviour
             DateTime time = DateTime.Now;
             string data = time.ToString() + "," + max_x + "," + min_x + "," + max_y + "," + min_y;
             //To write assessment data
-           AppData.writeAssessmentData(headerData, data, DataManager.ROMWithSupportFileNames[2], DataManager.directoryAssessmentData);
+           //AppData.writeAssessmentData(headerData, data, DataManager.ROMWithSupportFileNames[2], DataManager.directoryAssessmentData);
         }
        
             AppLogger.LogInfo("NoWeightSupport Done");

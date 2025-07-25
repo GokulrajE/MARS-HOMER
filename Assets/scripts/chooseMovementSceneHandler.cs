@@ -70,8 +70,6 @@ public class MovementSceneHandler : MonoBehaviour
         if(!File.Exists($"{DataManager.directoryAssessmentData}/{DataManager.SupportCalibrationFileName}"))
           SceneManager.LoadScene(assessmentScene);
 
-       
-
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
         {
             SceneManager.LoadScene(assessmentScene);
