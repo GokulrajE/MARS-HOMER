@@ -15,7 +15,7 @@ public class AsteroidEnemySpawner : MonoBehaviour
     public bool[] spawnSequence; // Sequence of spawns: true for asteroid, false for enemy
 
     private GameObject currentSpawnedObject;
-    private GameManagerScript gameManager;
+    private spaceShooterGameContoller ssGameContoller;
     
 
     private int sequenceIndex = 0; // Current index in the spawn sequence
@@ -23,22 +23,22 @@ public class AsteroidEnemySpawner : MonoBehaviour
     
     void Start()
     {
-        gameManager = FindObjectOfType<GameManagerScript>();
+       
         SpawnObject(); // Start spawning
     }
 
     void Update()
     {
-        if (gameManager != null && gameManager.isGameOver)
+        if (ssGameContoller != null && ssGameContoller.isGameFinished)
         {
             return; // Stop spawning when the game is over
         }
         // timer_r += Time.deltaTime;
         // // Debug.Log(timer_r);
         // if (timer_r >= spawnInterval)
-         if (currentSpawnedObject== null)
+        if (currentSpawnedObject== null)
         {
-
+           
             // SpawnAsteroid();
             SpawnObject();
             // timer_r = 0;
@@ -48,6 +48,7 @@ public class AsteroidEnemySpawner : MonoBehaviour
 
     void SpawnObject()
     {
+       
         GameObject prefabToSpawn;
 
         // Determine whether to spawn an asteroid or an enemy based on the sequence

@@ -7,7 +7,7 @@ using UnityEngine;
 public class Unlock_Level_Powerups : MonoBehaviour
 {
     // Start is called before the first frame update
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
 
     private int requiredScore = 1000;
 
@@ -16,14 +16,14 @@ public class Unlock_Level_Powerups : MonoBehaviour
 
     void Start()
     {
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
         playerscore = FindObjectOfType<PlayerScore>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        NewSpaceshipPanel();
+        //NewSpaceshipPanel();
 
     }
     public void NewSpaceshipPanel()

@@ -35,7 +35,7 @@ public class marsUserData
 
     public bool rightHand { private set; get; }
     //File headers
-    static public string movement = "Mechanism";
+    static public string movement = "Movement";
     static public string moveTime = "MoveTime";
     static public string dateTime = "DateTime";
   
@@ -101,7 +101,7 @@ public class marsUserData
 
         }
     }
-    // Constructor
+
     public marsUserData(string configData, string sessionData)
     {
         if (File.Exists(configData))
@@ -117,7 +117,7 @@ public class marsUserData
 
         // Read the therapy configuration data.
         parseTherapyConfigData();
-        if (File.Exists(DataManager.filePathSessionData))
+        if (File.Exists(DataManager.sessionFilePath))
         {
             //parseMovementMoveTimePrev();
             parseMovementMoveTimePrev();
@@ -133,12 +133,13 @@ public class marsUserData
         for (int i = 0; i < MarsDefs.Movements.Length; i++)
         {
             var _totalMoveTime = dTableSession.AsEnumerable()
-                .Where(row => DateTime.ParseExact(row.Field<string>(dateTime), dateFormat, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
+                .Where(row => DateTime.ParseExact(row.Field<string>(dateTime), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
                 .Where(row => row.Field<string>(movement) == MarsDefs.Movements[i])
                 .Sum(row => Convert.ToInt32(row[moveTime]));
             movementMoveTimePrev[MarsDefs.Movements[i]] = _totalMoveTime / 60f;
         }
     }
+
     public static Dictionary<string, float> createMoveTimeDictionary()
     {
         Dictionary<string, float> _temp = new Dictionary<string, float>();
@@ -149,10 +150,7 @@ public class marsUserData
         return _temp;
     }
 
-    public int getTodayMoveTimeForMovement(string movement)
-    {
-        return (int)SessionDataHandler.movementMoveTimePrev[movement] + (int)movementMoveTimeCurr[movement];
-    }
+    
 
     public int getCurrentDayOfTraining()
     {
@@ -184,7 +182,10 @@ public class marsUserData
     }
 
     public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");
-
+    public int getTodayMoveTimeForMovement(string movement)
+    {
+        return (int)movementMoveTimePrev[movement] + (int)movementMoveTimeCurr[movement];
+    }
 
     public DaySummary[] CalculateMoveTimePerDay(int noOfPastDays = 7)
     {
@@ -196,7 +197,7 @@ public class marsUserData
             DateTime _day = today.AddDays(-i);
             // Get the summary data for this date.
             var _moveTime = AppData.Instance.userData.dTableSession.AsEnumerable()
-                .Where(row => DateTime.ParseExact(row.Field<string>(dateTime),DataManager.DATEFORMAT, CultureInfo.InvariantCulture).Date == _day)
+                .Where(row => DateTime.ParseExact(row.Field<string>(dateTime),DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date == _day)
                 .Sum(row => Convert.ToInt32(row[moveTime]));
             // Create the day summary.
             daySummaries[i - 1] = new DaySummary
@@ -209,6 +210,98 @@ public class marsUserData
         }
         return daySummaries;
     }
+    public List<float> GetLastTwoSuccessRates(string mechanism, string gameName)
+    {
+        List<float> lastTwoSuccessRates = new List<float>();
+
+        dTableSession = DataManager.loadCSV(DataManager.sessionFilePath);
+
+        if (dTableSession == null || dTableSession.Rows.Count == 0)
+        {
+            return new List<float> { 0f, 0f };
+        }
+
+        var today = DateTime.Today;
+
+        var filteredRows = dTableSession.AsEnumerable()
+            .Where(row =>
+                row.Field<string>("Mechanism") == mechanism &&
+                row.Field<string>("GameName") == gameName)
+            .OrderByDescending(row => DateTime.ParseExact(row.Field<string>("TrialStartTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture))
+            .ToList();
+  
+        var successRows = dTableSession.AsEnumerable()
+        .Where(row =>
+            row.Field<string>("Mechanism") == mechanism &&
+            row.Field<string>("GameName") == gameName &&
+            !string.IsNullOrWhiteSpace(row.Field<string>("SuccessRate")) &&
+            !string.IsNullOrWhiteSpace(row.Field<string>("CurrentControlBound")))
+        .ToList();
+
+        if (successRows.Any())
+        {
+            Others.highestSuccessRate = successRows
+                .Max(row =>
+                {
+                    float successRate = float.Parse(row.Field<string>("SuccessRate"), CultureInfo.InvariantCulture);
+                    return successRate;
+                    //float controlBound = float.Parse(row.Field<string>("CurrentControlBound"), CultureInfo.InvariantCulture);
+                    //return successRate * (PlutoAANController.MAXCONTROLBOUND - controlBound);
+                });
+
+            Debug.Log(Others.highestSuccessRate);
+        }
+        else
+        {
+            Others.highestSuccessRate = 0f;
+        }
+
+
+        if (!filteredRows.Any())
+        {
+            return null;
+        }
+
+        // Get all success rates from today
+        var todayRates = filteredRows
+            .Where(row => DateTime.ParseExact(row.Field<string>("TrialStartTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date == today)
+            .Select(row => Convert.ToSingle(row["SuccessRate"]))
+            .ToList();
+
+        if (todayRates.Count >= 2)
+        {
+            lastTwoSuccessRates.Add(todayRates[1]);
+            lastTwoSuccessRates.Add(todayRates[0]);
+        }
+        else if (todayRates.Count == 1)
+        {
+
+            var previousDayRate = filteredRows
+                .Where(row => DateTime.ParseExact(row.Field<string>("TrialStartTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date < today)
+                .Select(row => Convert.ToSingle(row["SuccessRate"]))
+                .FirstOrDefault();
+
+            lastTwoSuccessRates.Add(previousDayRate);
+            lastTwoSuccessRates.Add(todayRates[0]);
+
+        }
+        else
+        {
+            var previousDayRate = filteredRows
+                .Where(row => DateTime.ParseExact(row.Field<string>("TrialStartTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date < today)
+                .Select(row => Convert.ToSingle(row["SuccessRate"]))
+                .FirstOrDefault();
+
+            lastTwoSuccessRates.Add(previousDayRate);
+            lastTwoSuccessRates.Add(0f);
+        }
+
+        while (lastTwoSuccessRates.Count < 2)
+            lastTwoSuccessRates.Add(0f);
+
+        return lastTwoSuccessRates;
+    }
+
 }
 public static class Others
 {
@@ -219,6 +312,9 @@ public static class Others
         return dayOfWeek.ToString().Substring(0, 3);
     }
 }
+
+
+
 
 public class MarsMovement
 {
@@ -240,7 +336,7 @@ public class MarsMovement
     //MarsMode - HWS
     public ROM oldRomHWS { get; private set; }
     public ROM newRomHWS { get; private set; }
-    public ROM currRomHS { get => newRomHWS.isaromRomSet ? newRomHWS : (oldRomHWS.isaromRomSet ? oldRomHWS : null); }
+    public ROM currRomHWS { get => newRomHWS.isaromRomSet ? newRomHWS : (oldRomHWS.isaromRomSet ? oldRomHWS : null); }
     public bool aromCompletedHWS { get; private set; }
     
     //MarsMOde - NWS
@@ -291,7 +387,11 @@ public class MarsMovement
         trialNumberSession += 1;
     }
 
-    public float[] CurrentArom => currRomFWS == null ? null : new float[] { currRomFWS.aromMinX, currRomFWS.aromMaxX, currRomFWS.aromMinY, currRomFWS.aromMaxY };
+    public float[] CurrentAromFWS => currRomFWS == null ? null : new float[] { currRomFWS.aromMinX, currRomFWS.aromMaxX, currRomFWS.aromMinY, currRomFWS.aromMaxY };
+    public float[] CurrentAromHWS => currRomHWS == null ? null : new float[] { currRomHWS.aromMinX, currRomHWS.aromMaxX, currRomHWS.aromMinY, currRomHWS.aromMaxY };
+
+    public float[] CurrentAromNWS => currRomNWS == null ? null : new float[] { currRomNWS.aromMinX, currRomNWS.aromMaxX, currRomNWS.aromMinY, currRomNWS.aromMaxY };
+
 
     public void ResetRomValuesFWS()
     {
@@ -374,8 +474,8 @@ public class MarsMovement
     {
         // Get the last row for the today, for the selected MarsSupport.
         var selRows = AppData.Instance.userData.dTableSession.AsEnumerable()?
-            .Where(row => DateTime.ParseExact(row.Field<string>("DateTime"), DataManager.DATEFORMAT, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
-            .Where(row => row.Field<string>("Movment") == this.name);
+            .Where(row => DateTime.ParseExact(row.Field<string>("DateTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
+            .Where(row => row.Field<string>("Movement") == this.name);
 
         // Check if the selected rows is null.
         if (selRows.Count() == 0)
@@ -390,7 +490,7 @@ public class MarsMovement
 
         // Now let's get the session number for the current session.
         selRows = AppData.Instance.userData.dTableSession.AsEnumerable()?
-            .Where(row => DateTime.ParseExact(row.Field<string>("DateTime"), DataManager.DATEFORMAT, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
+            .Where(row => DateTime.ParseExact(row.Field<string>("DateTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
             .Where(row => Convert.ToInt32(row.Field<string>("SessionNumber")) == sessno)
             .Where(row => row.Field<string>("Movement") == this.name);
         if (selRows.Count() == 0)
@@ -423,9 +523,6 @@ public class ROM
 
     public string movement { get; private set; }
 
-   
-  
-    
     // Constructor that reads the file and initializes values based on the mechanism
     public ROM(string movementName,string marsMode, bool readFromFile = true)
     {
@@ -443,7 +540,7 @@ public class ROM
           
         }
     }
-    
+
     public ROM()
     {
         aromMinX = 0;

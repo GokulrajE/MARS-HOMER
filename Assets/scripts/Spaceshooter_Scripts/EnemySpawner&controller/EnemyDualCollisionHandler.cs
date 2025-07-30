@@ -13,7 +13,7 @@ public class EnemyDualCollisionHandler : MonoBehaviour
     private PlayerScore Ps;
     private bool isDestroyed = false; // Track if the Enemy is destroyed
     private Animator animator; // Reference to the Animator component
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
     // public Transform Powerup_Shield; field for powerup prefab shield
     
     private int randomfall;
@@ -24,7 +24,7 @@ public class EnemyDualCollisionHandler : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         Ps = FindObjectOfType<PlayerScore>();
         animator = GetComponent<Animator>();
-        gm=FindObjectOfType<GameManagerScript>();
+        gm=FindObjectOfType<spaceShooterGameContoller>();
     }
 
     // Update is called once per frame

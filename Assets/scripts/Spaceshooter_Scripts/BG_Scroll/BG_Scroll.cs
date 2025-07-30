@@ -8,24 +8,22 @@ public class BG_Scroll : MonoBehaviour
     // Start is called before the first frame update
     public float scroll_speed = 0.5f;
     private MeshRenderer mesh_Renderer;
-    private GameManagerScript gameManager;
+    private spaceShooterGameContoller gameManager;
     private float y_scroll;
-    private bool isPaused = false; // Tracks whether the scrolling is paused
+
 
     void Awake()
     {
         mesh_Renderer = GetComponent<MeshRenderer>();
-        gameManager = FindObjectOfType<GameManagerScript>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameManager != null && gameManager.isGameOver)
-        {
-            isPaused = true; // Pause scrolling
-        }
-        if (!isPaused)
+        if (!spaceShooterGameContoller.Instance.isGamePaused 
+            && !spaceShooterGameContoller.Instance.isGameFinished 
+            && spaceShooterGameContoller.Instance.isGameStarted)
         {
             Scroll();
         }

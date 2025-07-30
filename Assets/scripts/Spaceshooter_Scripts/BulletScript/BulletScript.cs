@@ -6,12 +6,12 @@ using UnityEngine.Scripting.APIUpdating;
 public class BulletScript : MonoBehaviour
 {
     // Start is called before the first frame update
-    public float speed = 4f;
-    private GameManagerScript gm;
+    public float speed = 6f;
+    private spaceShooterGameContoller gm;
     private bool isDestroyed = false;
     void Start()
     {
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
     }
 
     // Update is called once per frame
@@ -21,7 +21,7 @@ public class BulletScript : MonoBehaviour
     }
     void Move()
     {
-        if (gm != null && gm.isGameOver)
+        if (gm != null && gm.isGameFinished)
         {
             return; // Stop spawning when the game is over
 
@@ -33,12 +33,12 @@ public class BulletScript : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("EnemyLaser") && !isDestroyed)
-        {
-            isDestroyed = true;
-            Destroy(gameObject);
-            Destroy(other.gameObject);
+        //if (other.CompareTag("EnemyLaser") && !isDestroyed)
+        //{
+        //    isDestroyed = true;
+        //    Destroy(gameObject);
+        //    Destroy(other.gameObject);
 
-        }
+        //}
     }
 }

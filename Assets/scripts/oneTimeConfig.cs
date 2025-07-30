@@ -145,18 +145,18 @@ public class OneTimeConfig : MonoBehaviour
         }
      
 
-        if (File.Exists(DataManager.filePathforConfig))
+        if (File.Exists(DataManager.configFilePath))
         {
             Debug.Log("Configuration File Already Exists. you can't update Here");
         }
         else {
-            if (!File.Exists(DataManager.filePathforConfig))
+            if (!File.Exists(DataManager.configFilePath))
             {
-                File.Create(DataManager.filePathforConfig).Dispose();
-                File.WriteAllText(DataManager.filePathforConfig, headers + Environment.NewLine);
-                Debug.Log("Data saved to CSV: " + DataManager.filePathforConfig);
+                File.Create(DataManager.configFilePath).Dispose();
+                File.WriteAllText(DataManager.configFilePath, headers + Environment.NewLine);
+                Debug.Log("Data saved to CSV: " + DataManager.configFilePath);
             }
-            File.AppendAllText(DataManager.filePathforConfig, data + Environment.NewLine);
+            File.AppendAllText(DataManager.configFilePath, data + Environment.NewLine);
 
             SceneManager.LoadScene("welcomeScene");
 

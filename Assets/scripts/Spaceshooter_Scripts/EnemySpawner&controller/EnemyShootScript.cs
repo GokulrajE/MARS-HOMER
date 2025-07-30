@@ -18,12 +18,12 @@ public class EnemyShootScript : MonoBehaviour
     public float ShootInterval = 1.5f;
     private float timeSinceLastShot = 1f;  // Timer to track intervals between shots
 
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
 
     // Start is called before the first frame update
     void Start()
     {
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
         audioSource = GetComponent<AudioSource>();
 
     }
@@ -37,7 +37,7 @@ public class EnemyShootScript : MonoBehaviour
 
     void Shoot_time()
     {
-        if (gm != null && gm.isGameOver)
+        if (gm != null && gm.isGameFinished)
         {
             return; // Stop spawning when the game is over
 

@@ -29,22 +29,17 @@ public class DataManager : MonoBehaviour
    
     static string directoryPathRawData;
     public static string directoryAssessmentData;
-    public static string directoryPathSession { get; private set; }
-    public static string filePathforConfig ;
-    public static string filePathSessionData { get; private set; }
-    public static string filePathAssessmentData { get; private set; }
+    public static string sessionDirPath { get; private set; }
+    public static string configFilePath {  get; private set; }
+    public static string sessionFilePath { get; private set; }
+    public static string assessFilePath { get; private set; }
     public static string logDirPath { get; private set; }
     public static string logPath { get; private set; }
 
 
     public static string filePathUploadStatus = Application.dataPath + "/uploadStatus.txt";
-    public static string SupportCalibrationFileName = "SupportCalibration.csv";
-    public static string[] ROMWithSupportFileNames = new string[]
-    {
-      "FullWeightSupport.csv",
-      "HalfWeightSupport.csv",
-      "NoWeightSupport.csv"
-    };
+
+  
     public static string[] SESSIONFILEHEADER = new string[] {
         "SessionNumber", "DateTime",
         "TrialNumberDay", "TrialNumberSession", "TrialType", "TrialStartTime", "TrialStopTime", "TrialRawDataFile",
@@ -61,7 +56,10 @@ public class DataManager : MonoBehaviour
         "GamePlayerX", "GamePlayerY", "GameTargetX", "GameTargetY", "GameState",
         "AanTargetPosition", "AanInitialPosition", "AanState"
     };
-    public static string DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static string[] RAWFILEHEADER_ = new string[] {
+        "angle1","angle2","angle3","angle4","playerx","playery","targetx,targety","gamestate"
+    };
+    public static string DATETIMEFORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static string GetRomFileName(string Movement, string Mode) => FixPath(Path.Combine(directoryAssessmentData, $"{Movement}-{Mode}-rom.csv"));
     public static string GetTrialRawDataFileName(
@@ -72,13 +70,13 @@ public class DataManager : MonoBehaviour
     public static void createFileStructure()
     {
         directoryAssessmentData = basePath+ "/rom";
-        directoryPathSession = basePath + "/sessions";
+        sessionDirPath = basePath + "/sessions";
         directoryPathRawData = basePath + "/rawdata";
         logPath = basePath + "/applog";
-        filePathSessionData = FixPath(Path.Combine(directoryPathSession, "sessions.csv"));
-        filePathAssessmentData = directoryAssessmentData + "/assessment.csv";
+        sessionFilePath = FixPath(Path.Combine(sessionDirPath, "sessions.csv"));
+        assessFilePath = directoryAssessmentData + "/assessment.csv";
         Directory.CreateDirectory(basePath);
-        Directory.CreateDirectory(directoryPathSession);
+        Directory.CreateDirectory(sessionDirPath);
         Directory.CreateDirectory(directoryPathRawData);
         Directory.CreateDirectory(directoryAssessmentData);
         Debug.Log("Directory created at: " + basePath);
@@ -90,17 +88,17 @@ public class DataManager : MonoBehaviour
     public static void setUserId(string userID)
     {
         basePath = FixPath(Path.Combine(Application.dataPath, "data", AppData.Instance.userID, "data"));
-        filePathforConfig = basePath + "/configdata.csv";
+        configFilePath = basePath + "/configdata.csv";
     }
 
     public static void CreateSessionFile(string device, string location, string[] header = null)
     {
 
         // Ensure the Sessions.csv file has headers if it doesn't exist
-        if (!File.Exists(filePathSessionData))
+        if (!File.Exists(sessionFilePath))
         {
             header ??= SESSIONFILEHEADER;
-            using (var writer = new StreamWriter(filePathSessionData, false, Encoding.UTF8))
+            using (var writer = new StreamWriter(sessionFilePath, false, Encoding.UTF8))
             {
                 // Write the preheader details
                 writer.WriteLine($":Device: {device}");

@@ -1,14 +1,7 @@
 
 using System.Text;
-
-using System.IO;
 using System;
-
-
 using Debug = UnityEngine.Debug;
-
-using System.Data;
-using System.Globalization;
 using UnityEngine;
 
 public partial class AppData
@@ -30,30 +23,30 @@ public partial class AppData
     public DateTime trialStartTime { get; set; }
     public DateTime? trialStopTime { get; set; }
 
-    public string selectedGame { get; private set; } = null;
-    static public string trialDataFileLocation;
+  
 
     /*
     * Logging file names.
     */
     public string trialRawDataFile { get; private set; } = null;
+    static public string trialDataFileLocation;
     private StringBuilder rawDataString = null;
     private readonly object rawDataLock = new object();
     private StringBuilder aanExecDataString = null;
 
     public string userID { get; private set; } = null;
 
-   
-    
+    public float successRate { get; private set; } = 0f;
+
 
     /* DO OBJECT CREATION HERE */
+    public string selectedGame { get; private set; } = null;
+
     public MarsMovement selectedMovement {  get; private set; }
 
     public marsUserData userData;
 
-    /* MOVE TO ANOTHER FILE*/
-    //need to change
-    public static string[] selectGame = { "FlappyGame", "space_shooter_home", "pong_menu" };
+    
     public static float[] dataSendToRobot;  //parameters send  to robot
 
     public void Initialize(string scene, bool doNotResetMovement = true)
@@ -73,14 +66,12 @@ public partial class AppData
         InitializeRobotConnection(doNotResetMovement, _dtstr);
         
 
-        // Intialize the Mars AAN logger.
-        //MarsLogger.StartLogging(_dtstr);
-
+      
         // Initialize the user data.
-        UnityEngine.Debug.Log(DataManager.filePathforConfig);
-        UnityEngine.Debug.Log(DataManager.filePathSessionData);
+        UnityEngine.Debug.Log(DataManager.configFilePath);
+        UnityEngine.Debug.Log(DataManager.sessionFilePath);
 
-        userData = new marsUserData(DataManager.filePathforConfig, DataManager.filePathSessionData);
+        userData = new marsUserData(DataManager.configFilePath, DataManager.sessionFilePath);
         // Selected mechanism and game.
         selectedMovement = null;
         selectedGame = null;
@@ -91,7 +82,7 @@ public partial class AppData
         AppLogger.LogWarning($"Session number set to {currentSessionNumber}.");
 
         //set to upload the data to the AWS
-        // awsManager.changeUploadStatus(awsManager.status[0]);
+        //awsManager.changeUploadStatus(awsManager.status[0]);
     }
 
 
@@ -114,32 +105,24 @@ public partial class AppData
             AppLogger.LogError($"Failed to connect to MARS @ {comPort}.");
             throw new Exception($"Failed to connect to MARS @ {comPort}.");
         }
-        AppLogger.LogInfo($"Connected to PLUTO @ {comPort}.");
+        AppLogger.LogInfo($"Connected to MARS @ {comPort}.");
         //// Set control to NONE, calibrate and get version.
-        //PlutoComm.sendHeartbeat();
-        //PlutoComm.setControlType("NONE");
-
+       
         // The following code is to ensure that this can be called from other scenes,
         // without having to go through the calibration scene.
         if (!doNotResetMov)
         {
             //PlutoComm.calibrate("NOMECH");
         }
-        //PlutoComm.getVersion();
-        // Start sensorstream.
-        //PlutoComm.sendHeartbeat();
-        //PlutoComm.setDiagnosticMode();
-        // PlutoComm.startSensorStream();
-        AppLogger.LogInfo($"PLUTO SensorStream started.");
+       
+        AppLogger.LogInfo($"MARS SensorStream started.");
     }
     public void InitializeRobotDiagnostics()
     {
-        //DataManager.createFileStructure();
         ConnectToRobot.Connect(comPort);
 
-        //userData = new marsUserData(DataManager.filePathforConfig, DataManager.filePathSessionData);
-
     }
+
     public static void sendToRobot(float[] data)
     {
         byte[] _data = new byte[16];
@@ -177,142 +160,6 @@ public partial class AppData
     // Check training size.
     public bool IsTrainingSide(string side) => string.Equals(trainingSide, side, StringComparison.OrdinalIgnoreCase);
 
-    public static class Miscellaneous
-    {
-        public static string GetAbbreviatedDayName(DayOfWeek dayOfWeek)
-        {
-            return dayOfWeek.ToString().Substring(0, 3);
-        }
-    }
-   
-
-}
-
-public static class gameData
-{
-    //game
-    public static bool isGameLogging;
-    public static string game;
-    public static int gameScore;
-    public static int reps;
-    public static int playerScore;
-    public static int enemyScore;
-    public static string TargetPos = "0";
-    public static string playerPos = "0";
-    public static string enemyPos = "0";
-    public static string playerHit = "0";
-    public static string enemyHit = "0";
-    public static string wallBounce = "0";
-    public static string enemyFail = "0";
-    public static string playerFail = "0";
-    public static int winningScore = 3;
-    public static float moveTime;
-    public static readonly string[] instructions = new string[] { "1 - moving,2 - collidedWithcolumn,3 - Passedsuccessfully\n", "1 - moving,2 - AstroidHit,3 - playerHit\n", "1 - moving,2 - enemyHit,3 - playerHit\n" };
-    public static int events ;
- 
-    private static DataLogger dataLog;
-    private static string[] gameHeader = new string[] {
-        "time","buttonState","angle1","angle2","angle3","angle4","force1","force2","des1","des2","des3"
-        ,"playerPos","events","playerScore"
-    };
-    public static bool isLogging { get; private set; }
-    static public void StartDataLog(string fname)
-    {
-        if (dataLog != null)
-        {
-            StopLogging();
-            Debug.Log("datalognull");
-        }
-        // Start new logger
-        if (fname != "")
-        {
-            //string instructionLine = instructions[Array.IndexOf(AppData.selectGame,AppData.selectedGame)];
-            //string headerWithInstructions = instructionLine + String.Join(", ", gameHeader) + "\n";
-            //dataLog = new DataLogger(fname, headerWithInstructions);
-            isLogging = true;
-            Debug.Log("logging file name is notempty");
-        }
-        else
-        {
-            Debug.Log("file name is empty");
-            dataLog = null;
-            isLogging = false;
-        }
-    }
-    static public void StopLogging()
-    {
-        if (dataLog != null)
-        {
-            Debug.Log("Null log not");
-            dataLog.stopDataLog(true);
-            dataLog = null;
-            isLogging = false;
-        }
-        else
-            Debug.Log("Null log");
-    }
-
-    static public void LogData()
-    {
-            string[] _data = new string[] {
-               MarsComm.currentTime.ToString(),
-               MarsComm.buttonState.ToString(),
-               MarsComm.angle1.ToString("G17"),
-               MarsComm.angle2.ToString("G17"),
-               MarsComm.angle3.ToString("G17"),
-               MarsComm.angle4.ToString("G17"),
-               MarsComm.force.ToString("G17"),
-               MarsComm.calibBtnState.ToString("G17"),
-               MarsComm.desOne.ToString("G17"),
-               MarsComm.desTwo.ToString("G17"),
-               MarsComm.desThree.ToString("G17"),
-               playerPos,
-               gameData.events.ToString("F2"),
-               gameData.playerScore.ToString("F2"),
-              
-            };
-            string _dstring = String.Join(", ", _data);
-            _dstring += "\n";
-            
-            dataLog.logData(_dstring);
-        
-        Debug.Log("workign data log");
-        
-    }
-}
-public class DataLogger
-{
-    public string currFileName { get; private set; }
-    public StringBuilder fileData;
-    public bool stillLogging
-    {
-        get { return (fileData != null); }
-    }
-
-    public DataLogger(string filename, string header)
-    {
-        currFileName = filename;
-
-        fileData = new StringBuilder(header);
-    }
-
-    public void stopDataLog(bool log = true)
-    {
-        if (log)
-        {
-            File.AppendAllText(currFileName, fileData.ToString());
-        }
-        currFileName = "";
-        fileData = null;
-    }
-
-    public void logData(string data)
-    {
-        if (fileData != null)
-        {
-            fileData.Append(data);
-        }
-    }
 }
 
 public static class ConnectToRobot

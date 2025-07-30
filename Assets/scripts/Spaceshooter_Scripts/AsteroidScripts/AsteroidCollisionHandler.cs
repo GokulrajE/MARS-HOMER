@@ -19,13 +19,13 @@ public class AsteroidCollisionHandler : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        
-       
+
         // Check the other object is tagged as a laser
         if (other.CompareTag("Laser") && !isDestroyed)
         {
-            gameData.events = 3;
-            Debug.Log("player hit");
+            AsteroidSpawner.Instance.currentAsteroid = null;
+            spaceShooterGameContoller.Instance.nSuccess++;
+            spaceShooterGameContoller.Instance.setisSuccess();
             isDestroyed = true; // Mark asteroid as destroyed
             animator.SetTrigger("TriggerDestroy"); // Play destruction animation
              if (audioSource != null && ExplosionSound != null)
@@ -43,6 +43,7 @@ public class AsteroidCollisionHandler : MonoBehaviour
         gameObject.SetActive(false);
         Destroy(gameObject);// Destroy the asteroid
         // Add score after ensuring destruction
+      
         ps.AsteroidScore();
     }
 }

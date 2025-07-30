@@ -62,7 +62,7 @@ public class PongPlayerController : MonoBehaviour
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        gameData.events = 3;
+        
         Debug.Log("playerhit");
         if(collision.gameObject.tag == "Target")
         {
@@ -94,7 +94,7 @@ public class PongPlayerController : MonoBehaviour
             }
             player.GetComponent<SpriteRenderer>().color = new Color32(0, 255, 0, 255);
             if(yValue != previousValue) {
-                gameData.events = 1;
+               
                 Debug.Log("playermoving");
                 previousValue = yValue;
             }
@@ -119,13 +119,13 @@ public class PongPlayerController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            gameData.events = 1;
+           
             direction = Vector2.up;
             this.transform.Translate(direction * speed * Time.deltaTime);
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            gameData.events = 1;
+            
             direction = Vector2.down;
             this.transform.Translate(direction * speed * Time.deltaTime);
         }

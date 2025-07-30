@@ -28,34 +28,12 @@ public class FlappyScrollingObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Application.targetFrameRate = 60;
-        // p_hospno = Welcome.p_hospno;
+        
         rb2d = GetComponent<Rigidbody2D>();
-        // rb2d.velocity = new Vector2(FlappyGameControl.instance.scrollSpeed, 0);
+       
         rb2d.velocity = new Vector2(-1.0f, 0);
 
-        // var lines = File.ReadAllLines(@"C:\Users\BioRehab\Desktop\Sathya\unity-pose\Arebo demo\Data\"+p_hospno+"\\"+"flappy_hits.csv");
-        // var count = lines.Length;
-        // List<string> second_row = new List<string>();
-        // if (count>1)
-        // {
-        //     foreach (var item in lines)
-		// 	{
-		// 		var rowItems = item.Split(',');
-		// 		second_row.Add(rowItems[2]);
-		// 	}
-		// 	auto_speed = float.Parse(second_row[count-1]);
-		// 	start_speed = auto_speed;
-        //     // Debug.Log("start_speed: "+start_speed);
-        // }
-        // else
-		// {
-		// 	auto_speed = -2.0f;
-		// 	start_speed = auto_speed;
-        //     // Debug.Log("start_speed: "+start_speed);
-		// }
-
-        // // start_speed = auto_speed;
+     
 
                
     }

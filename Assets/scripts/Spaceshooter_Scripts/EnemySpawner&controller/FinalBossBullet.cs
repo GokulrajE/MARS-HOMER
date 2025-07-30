@@ -22,10 +22,10 @@ public class FinalBossBullet : MonoBehaviour
     public float ShootInterval = 2.5f;
     private float timeSinceLastShot = 0f;  // Timer to track intervals between shots
 
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
      void Start()
     {
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
         audioSource = GetComponent<AudioSource>();
 
     }
@@ -39,7 +39,7 @@ public class FinalBossBullet : MonoBehaviour
 
     void Shoot_time()
     {
-        if (gm != null && gm.isGameOver)
+        if (gm != null && gm.isGameFinished)
         {
             return; // Stop spawning when the game is over
 

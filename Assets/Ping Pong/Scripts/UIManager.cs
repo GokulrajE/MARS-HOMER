@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using NeuroRehabLibrary;
+
 using TMPro;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
-    private GameSession currentGameSession;
+
     //public RockVR.Video.VideoCapture vdc;
     GameObject[] pauseObjects, finishObjects;
 	public BoundController rightBound;
@@ -25,15 +25,13 @@ public class UIManager : MonoBehaviour {
     public static float playerMoveTime;
     // Use this for initialization
     void Start () {
-        //AppData.InitializeRobot();
-        //SessionManager.Initialize(DataManager.directoryPathSession);
-        //SessionManager.Instance.Login();
+       
         MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
 		finishObjects = GameObject.FindGameObjectsWithTag("ShowOnFinish");
 		hideFinished();
 		
-		StartNewGameSession();
+		
 	}
 	
 	// Update is called once per frame
@@ -49,8 +47,8 @@ public class UIManager : MonoBehaviour {
             
             playAudio(1);
 			playerWon = false;
-            EndCurrentGameSession();
-            gameData.StopLogging();
+          
+           
            
         }
         else if (BoundController.playerScore >= winScore && !isFinished
@@ -62,8 +60,7 @@ public class UIManager : MonoBehaviour {
 			enemyWon = false;
             win = 1;
 			playerWon = true;
-            EndCurrentGameSession();
-            gameData.StopLogging();
+         
 
         }
         
@@ -116,47 +113,11 @@ public class UIManager : MonoBehaviour {
         buttonPressed = true;
       
     }
-    void StartNewGameSession()
-    {
-        currentGameSession = new GameSession
-        {
-            GameName = "ping_pong",
-            Assessment = 0 // Example assessment value, 
-                           //If this script for calibration and assessment then Assessment=1. 
-        };
-        SessionManager.Instance.StartGameSession(currentGameSession);
-        SetSessionDetails();
-    }
 
-    public void SetSessionDetails()
-    {
-        string device = "MARS"; // Set the device name
-        string assistMode = "Null"; // Set the assist mode
-        string assistModeParameters = "Null"; // Set the assist mode parameters
-        string deviceSetupLocation = DataManager.filePathforConfig;
-        SessionManager.Instance.SetDevice(device, currentGameSession);
-        SessionManager.Instance.SetAssistMode(assistMode, assistModeParameters, currentGameSession);
-        SessionManager.Instance.SetDeviceSetupLocation(deviceSetupLocation, currentGameSession);
-        SessionManager.Instance.mechanism(MarsDefs.Movements[2], currentGameSession);
-
-    }
-    void EndCurrentGameSession()
-    {
-        if (currentGameSession != null)
-        {
-            string trialDataFileLocation = AppData.trialDataFileLocation;
-            string gameParameter = "pass_game_parameter";
-            SessionManager.Instance.SetGameParameter(gameParameter, currentGameSession);
-            SessionManager.Instance.SetTrialDataFileLocation(trialDataFileLocation, currentGameSession);
-            mt = (int)playerMoveTime;
-            SessionManager.Instance.moveTime(mt.ToString(), currentGameSession);
-            SessionManager.Instance.EndGameSession(currentGameSession);
-        }
-    }
     //Reloads the Level
     public void LoadScene(string sceneName)
 	{
-        EndCurrentGameSession();
+       
         Application.LoadLevel(sceneName);
 	}
 

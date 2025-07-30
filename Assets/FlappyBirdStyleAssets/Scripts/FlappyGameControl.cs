@@ -1,5 +1,5 @@
 ﻿//using PlutoDataStructures;
-using NeuroRehabLibrary;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ public class FlappyGameControl : MonoBehaviour
     public Text ScoreText;
     //public ProgressBar timerObject;
     public static FlappyGameControl instance;
-    private GameSession currentGameSession;
+    
     //public RockVR.Video.VideoCapture vdc;
     public GameObject GameOverText;
     public GameObject CongratulationsText;
@@ -98,7 +98,7 @@ public class FlappyGameControl : MonoBehaviour
         Time.timeScale = 1;
         ShowGameMenu();
         column_position_flag = false;
-        StartNewGameSession();
+     
         //support.text = "Support: " + Mathf.Round(weightEstimation.support * 100.0f).ToString() + " %";
     }
 
@@ -109,7 +109,7 @@ public class FlappyGameControl : MonoBehaviour
         LevelText.text = "Level: " + auto_speed*(-0.5);
 
 
-        gameTime += Time.deltaTime;
+      
 
         column_position_flag_topass = column_position_flag;
         
@@ -148,30 +148,7 @@ public class FlappyGameControl : MonoBehaviour
         }
 
 
-        //if (Input.GetKeyDown(KeyCode.A))
-        //{
-        //    Debug.Log("increase support");
-        //    weightEstimation.support += 0.05f;
-        //    if(weightEstimation.support > 1)
-        //    {
-        //        weightEstimation.support = 1.0f;
-        //    }
-        //    AppData.PCParam = new float[] { weightEstimation.support, 0.0f, 2006, 0.0f };
-        //    supporti = Mathf.Round(weightEstimation.support * 100.0f);
-        //    support.text = "Support: " + supporti.ToString() + " %";
-        //}
-        //else if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    Debug.Log("Decrease support");
-        //    weightEstimation.support -= 0.05f;
-        //    if (weightEstimation.support < 0)
-        //    {
-        //        weightEstimation.support = 0.0f;
-        //    }
-        //    AppData.PCParam = new float[] { weightEstimation.support, 0.0f, 2006, 0.0f };
-        //    supporti = Mathf.Round(weightEstimation.support * 100.0f);
-        //    support.text = "Support: " + supporti.ToString() + " %";
-        //}
+       
         if (changeScene)
         {
             Debug.Log("button working");
@@ -217,45 +194,8 @@ public class FlappyGameControl : MonoBehaviour
         changeScene = true;
 
     }
-    void StartNewGameSession()
-    {
-        currentGameSession = new GameSession
-        {
-            GameName = "Tuk-Tuk",
-            Assessment = 0 // Example assessment value, 
-                           //If this script for calibration and assessment then Assessment=1. 
-        };
-        SessionManager.Instance.StartGameSession(currentGameSession);
-        SetSessionDetails();
-    }
-
-    public void SetSessionDetails()
-    {
-        string device = "MARS"; // Set the device name
-        string assistMode = "Null"; // Set the assist mode
-        string assistModeParameters = "Null"; // Set the assist mode parameters
-        string deviceSetupLocation = DataManager.filePathforConfig;
-        SessionManager.Instance.SetDevice(device, currentGameSession);
-        SessionManager.Instance.SetAssistMode(assistMode, assistModeParameters, currentGameSession);
-        SessionManager.Instance.SetDeviceSetupLocation(deviceSetupLocation, currentGameSession);
-        SessionManager.Instance.mechanism(MarsDefs.Movements[0], currentGameSession);
-       
-       
-    }
-    void EndCurrentGameSession()
-    {
-        Debug.Log(playerMoveTime + "movetime");
-        if (currentGameSession != null)
-        {
-            string trialDataFileLocation = AppData.trialDataFileLocation;
-            string gameParameter = "pass_game_parameter";
-            SessionManager.Instance.SetGameParameter(gameParameter, currentGameSession);
-            SessionManager.Instance.SetTrialDataFileLocation(trialDataFileLocation, currentGameSession);
-            mt = (int)playerMoveTime;
-            SessionManager.Instance.moveTime(mt.ToString(), currentGameSession);
-            SessionManager.Instance.EndGameSession(currentGameSession);
-        }
-    }
+  
+    
 
    
     //shows objects with ShowOnPause tag
@@ -320,8 +260,7 @@ public class FlappyGameControl : MonoBehaviour
             score += 1;
             
         }
-        gameData.events = 3;
-        gameData.playerScore = score;
+       
         ScoreText.text = "Score: " + score.ToString();
         FlappyColumnPool.instance.spawnColumn();
 
@@ -474,8 +413,7 @@ public class FlappyGameControl : MonoBehaviour
 
     public void quit_pressed()
     {
-        EndCurrentGameSession();
-
+      
         SceneManager.LoadScene("chooseMovementScene");
     }
     private void OnDestroy()

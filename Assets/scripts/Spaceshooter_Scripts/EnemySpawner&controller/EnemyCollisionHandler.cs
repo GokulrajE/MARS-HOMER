@@ -7,7 +7,7 @@ public class EnemyCollisionHandler : MonoBehaviour
     private PlayerScore Ps;
     private bool isDestroyed = false; // Track if the Enemy is destroyed
     private Animator animator; // Reference to the Animator component
-    private GameManagerScript gm;
+    private spaceShooterGameContoller ssGameController;
     public AudioClip ExplosionSound;
     private AudioSource audioSource;
     
@@ -18,7 +18,7 @@ public class EnemyCollisionHandler : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         Ps = FindObjectOfType<PlayerScore>();
         animator = GetComponent<Animator>();
-        gm=FindObjectOfType<GameManagerScript>();
+        ssGameController=FindObjectOfType<spaceShooterGameContoller>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -26,7 +26,8 @@ public class EnemyCollisionHandler : MonoBehaviour
         // Check the other object is tagged as a laser
         if (other.CompareTag("Laser")  && !isDestroyed)
         {
-            
+            spaceShooterGameContoller.Instance.nSuccess++;
+            spaceShooterGameContoller.Instance.setisSuccess();
             animator.SetTrigger("TriggerExplosion"); // Play destruction animation
             if (audioSource != null && ExplosionSound != null)
             {

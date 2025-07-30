@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using NeuroRehabLibrary;
+
 
 public class UIManager1 : MonoBehaviour {
 
-    private GameSession currentGameSession;
     GameObject[] pauseObjects, finishObjects;
 	public BoundController rightBound;
 	public BoundController leftBound;

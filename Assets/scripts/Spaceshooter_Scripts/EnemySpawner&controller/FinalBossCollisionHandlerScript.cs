@@ -13,7 +13,7 @@ public class FinalBossCollisionHandlerScript : MonoBehaviour
     private PlayerScore Ps;
     private bool isDestroyed = false; // Track if the Enemy is destroyed
     private Animator animator; // Reference to the Animator component
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
 
     public Image healthBarFill; // Reference to the health bar fill image
 
@@ -22,7 +22,7 @@ public class FinalBossCollisionHandlerScript : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         Ps = FindObjectOfType<PlayerScore>();
         animator = GetComponent<Animator>();
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
 
         // Ensure the health bar is fully filled at the start
         if (healthBarFill != null)

@@ -26,7 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/assessmentScene.unity
     guid: 547b0a86ddce3864380b06820eb7b926
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/fullWeightSupportScene.unity
     guid: 4e925e4f4d1079d4db75d02dec1fdc6f
   - enabled: 0
@@ -35,10 +35,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Half Weight Support.unity
     guid: ed200b805794f2348bc56fb443a3c143
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/halfWeightSupport.unity
     guid: ff6ca81e97b855243b7414991ec920c9
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/noWeightSupportScene.unity
     guid: bd78a6db371bf5f4dbd88cba4d428bb2
   - enabled: 0

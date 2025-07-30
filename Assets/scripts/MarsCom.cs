@@ -382,6 +382,7 @@ public static class MarsComm
             {
                 OnMarsButtonReleased?.Invoke();
             }
+            OnNewMarsData?.Invoke();
 
         }
         catch (Exception ex)

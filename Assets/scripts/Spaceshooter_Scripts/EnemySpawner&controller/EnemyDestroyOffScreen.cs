@@ -18,6 +18,7 @@ public class EnemyDestroyOffScreen : MonoBehaviour
         // Check if the asteroid has fallen below the specified threshold
         if (transform.position.y <= yThreshold)
         {
+            spaceShooterGameContoller.Instance.nFailure++;
             gameObject.SetActive(false);
             Destroy(gameObject);
         }

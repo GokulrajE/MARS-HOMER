@@ -24,7 +24,7 @@ public class EnemyController : MonoBehaviour {
 	}
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        gameData.events = 2;
+     
         Debug.Log("enemy hit");
     }
     

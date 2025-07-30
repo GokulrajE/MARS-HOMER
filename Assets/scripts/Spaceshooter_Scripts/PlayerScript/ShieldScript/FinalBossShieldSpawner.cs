@@ -10,16 +10,16 @@ public class FinalBossShieldSpawner : MonoBehaviour
     public float minX = -8f;
     public float maxX = 8f;
     public float spawnY = 4f;
-    private GameManagerScript gameManager;
+    private spaceShooterGameContoller gameManager;
     private float timer_r = 10;
     void Start()
     {
-        gameManager = FindObjectOfType<GameManagerScript>();
+        gameManager = FindObjectOfType<spaceShooterGameContoller>();
     }
 
     void Update()
     {
-        if (gameManager != null && gameManager.isGameOver)
+        if (gameManager != null && gameManager.isGameFinished)
         {
             return; // Stop spawning when the game is over
 

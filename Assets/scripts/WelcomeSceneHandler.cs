@@ -21,7 +21,7 @@ public class welcomSceneHandler : MonoBehaviour
     public bool piChartUpdated = false;
     private DaySummary[] daySummaries;
     public static bool changeScene = false;
-    public readonly string nextScene = "ASSESSROM";
+    public readonly string nextScene = "CHOOSEMOVEMENT";
 
     public bool attachMarsButtonEvent = false;
 
@@ -50,7 +50,7 @@ public class welcomSceneHandler : MonoBehaviour
             DataManager.setUserId(AppData.Instance.userID);
         }
 
-        if (!File.Exists(DataManager.filePathforConfig))
+        if (!File.Exists(DataManager.configFilePath))
         {
             
             SceneManager.LoadScene("getConfig");
@@ -66,6 +66,7 @@ public class welcomSceneHandler : MonoBehaviour
         UpdateUserData();
         UpdatePieChart();
         AppData.Instance.SetMovement("SABDU");
+        //AppData.Instance.SetGame("spaceshooter");
 
         //Task.Run(() =>  // Run in a background task
         //{

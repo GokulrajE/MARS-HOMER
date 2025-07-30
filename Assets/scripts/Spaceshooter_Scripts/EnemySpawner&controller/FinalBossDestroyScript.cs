@@ -10,10 +10,10 @@ public class FinalBossDestroyScript : MonoBehaviour
     private string F_path = Path.Combine(Application.dataPath, "Patient_Data", "ScoreManager.csv");
     private int currentLevel;
     private int currentScore;
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
    
    void Start(){
-       gm=FindObjectOfType<GameManagerScript>();
+       gm=FindObjectOfType<spaceShooterGameContoller>();
    }
 
 

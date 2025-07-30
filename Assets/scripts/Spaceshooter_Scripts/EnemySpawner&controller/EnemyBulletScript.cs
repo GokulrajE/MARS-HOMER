@@ -7,10 +7,10 @@ public class EnemyBulletScript : MonoBehaviour
     
     public float speed = 2f;
     
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
     void Start()
     {
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
     }
 
     // Update is called once per frame
@@ -20,7 +20,7 @@ public class EnemyBulletScript : MonoBehaviour
     }
     void Move()
     {
-        if (gm != null && gm.isGameOver)
+        if (gm != null && gm.isGameFinished)
         {
             return; // Stop spawning when the game is over
 

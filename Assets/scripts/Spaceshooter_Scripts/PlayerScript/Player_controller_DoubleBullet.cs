@@ -21,23 +21,23 @@ public class Player_controller_DoubleBullet : MonoBehaviour
     private float timeSinceLastShot = 0f; // Timer to track intervals between shots
     public float doubleBulletInterval = 0.2f; // Time between two bullets in a single attack
 
-    private GameManagerScript gm;
+    private spaceShooterGameContoller gm;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        gm = FindObjectOfType<GameManagerScript>();
+        gm = FindObjectOfType<spaceShooterGameContoller>();
     }
 
     void Update()
     {
-        MovePlayer();
+        //MovePlayer();
         Shoot_time();
     }
 
     void MovePlayer()
     {
-        if (gm != null && gm.isGameOver)
+        if (gm != null && gm.isGameFinished)
         {
             return; // Stop movement when the game is over
         }
@@ -82,7 +82,7 @@ public class Player_controller_DoubleBullet : MonoBehaviour
 
     void Shoot_time()
     {
-        if (gm != null && gm.isGameOver)
+        if (gm != null && gm.isGameFinished)
         {
             return; // Stop shooting when the game is over
         }

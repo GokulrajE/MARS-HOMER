@@ -8,7 +8,7 @@ using Unity.VisualScripting;
 
 
 /*
- * HOMER PLUTO Application Data Class.
+ * HOMER MARS Application Data Class.
  * Implements all the functions for running game trials.
  */
 public partial class AppData
@@ -22,8 +22,6 @@ public partial class AppData
         trialStopTime = null;
         selectedMovement.NextTrail();
         
-       
-
         // Set the trial data files.
         StartRawAndAanExecDataLogging();
 
@@ -43,12 +41,12 @@ public partial class AppData
 
     public void StopTrial(int nTargets, int nSuccess, int nFailure)
     {
-        //NEED TO CHECK WITH MARS
-        // Dettach the event handler for data logging.
-        // PlutoComm.OnNewPlutoData -= OnNewPlutoDataDataLogging;
+        
 
         trialStopTime = DateTime.Now;
-  
+        nTargets = (nTargets == 0) ? 1 : nTargets;
+        successRate = 100 * nSuccess / nTargets;
+
         // Write trial information to the session details file.
         WriteTrialToSessionsFile();
        
@@ -63,7 +61,7 @@ public partial class AppData
                 $"NSuccess: {nSuccess}",
                 $"NFailure: {nFailure}",
                 $"Desired SR: ",
-                $"Trial SR: ", 
+                $"Trial SR:{successRate} ", 
                 $"Current CB:",//CHANGE FOR MARS
                 $"Next CB: ",//CHANGE FOR MARS
                 $"TrialRawDataFile: {trialRawDataFile.Split('/').Last()}"
@@ -74,7 +72,7 @@ public partial class AppData
         MarsComm.OnNewMarsData -= OnNewMarsDataDataLogging;
         trialRawDataFile = null;
         //set to upload the data to the AWS
-        awsManager.changeUploadStatus(awsManager.status[0]);
+        //awsManager.changeUploadStatus(awsManager.status[0]);
     }
 
     private void WriteTrialToSessionsFile()
@@ -84,7 +82,7 @@ public partial class AppData
             // "SessionNumber"
             $"{currentSessionNumber}",
             // "DateTime"
-            startTime.ToString(DataManager.DATEFORMAT),
+            startTime.ToString(DataManager.DATETIMEFORMAT),
             // "TrialNumberDay"
             $"{selectedMovement.trialNumberDay}",
             // "TrialNumberSession"
@@ -92,9 +90,9 @@ public partial class AppData
             // "TrialType"
             $"{""}",
             // "TrialStartTime"
-            trialStartTime.ToString(DataManager.DATEFORMAT),
+            trialStartTime.ToString(DataManager.DATETIMEFORMAT),
             // "TrialStopTime"
-            trialStopTime?.ToString(DataManager.DATEFORMAT),
+            trialStopTime?.ToString(DataManager.DATETIMEFORMAT),
             // "TrialRawDataFile"
             trialRawDataFile.Split("/data/")[1],
             // "Mechanism"
@@ -111,7 +109,7 @@ public partial class AppData
             // "DesiredSuccessRate"
             $"",
             // "SuccessRate"
-            $"",
+            $"{successRate}",
             // "CurrentControlBound"
             "",//trialType == HomerTherapy.TrialType.SR85PCCATCH ? "0" : $"{_currControlBound:F3}",
             // "NextControlBound"
@@ -121,7 +119,7 @@ public partial class AppData
         };
 
         // Write the trial row to the session file.
-        using (StreamWriter sw = new StreamWriter(DataManager.filePathSessionData, true, Encoding.UTF8))
+        using (StreamWriter sw = new StreamWriter(DataManager.sessionFilePath, true, Encoding.UTF8))
         {
             // Write the trial row to the session file.
             sw.WriteLine(string.Join(",", trialRow));
@@ -139,24 +137,24 @@ public partial class AppData
             Instance.selectedMovement.name);
 
         //// Initialize the string builders.
-        //rawDataString = new StringBuilder();
-        //// Write pre-header and header information
-        //rawDataString.AppendLine($":Device: PLUTO");
-        //rawDataString.AppendLine($":Location: {userData.GetDeviceLocation()}");
-        //rawDataString.AppendLine($":Mechanism: {selectedMovement.name}");
-        //rawDataString.AppendLine($":Game: {selectedGame}");
-        ////rawDataString.AppendLine($":TrialType: {trialType}");
-        //rawDataString.AppendLine($":TrialStartTime: {trialStartTime:yyyy-MM-ddTHH:mm:ss}");
-        //rawDataString.AppendLine($":TrialNumberDay: {selectedMovement.trialNumberDay}");
-        //rawDataString.AppendLine($":AROM: [{selectedMovement.CurrentArom[0]:F3},{selectedMovement.CurrentArom[1]:F3}]");
-        //rawDataString.AppendLine($":PROM: [{selectedMovement.CurrentProm[0]:F3},{selectedMovement.CurrentProm[1]:F3}]");
-        //rawDataString.AppendLine($":APROM: [{selectedMovement.CurrentAProm[0]:F3},{selectedMovement.CurrentAProm[1]:F3}]");
-        ////rawDataString.AppendLine($":DesiredSuccessRate: {desiredSuccessRate:F3}");
-        ////rawDataString.AppendLine($":ControlBound: {_currControlBound:F3}");
-        //rawDataString.AppendLine(string.Join(",", DataManager.RAWFILEHEADER));
+        rawDataString = new StringBuilder();
+        // Write pre-header and header information
+        rawDataString.AppendLine($":Device: PLUTO");
+        rawDataString.AppendLine($":Location: {userData.GetDeviceLocation()}");
+        rawDataString.AppendLine($":Mechanism: {selectedMovement.name}");
+        rawDataString.AppendLine($":Game: {selectedGame}");
+        rawDataString.AppendLine($":TrialType: ");
+        rawDataString.AppendLine($":TrialStartTime: {trialStartTime:yyyy-MM-ddTHH:mm:ss}");
+        rawDataString.AppendLine($":TrialNumberDay: {selectedMovement.trialNumberDay}");
+        rawDataString.AppendLine($":FWS-ROM: X-[{selectedMovement.CurrentAromFWS[0]:F3},{selectedMovement.CurrentAromFWS[1]:F3}],Y-[{selectedMovement.CurrentAromFWS[2]:F3},{selectedMovement.CurrentAromFWS[3]:F3}]");
+        rawDataString.AppendLine($":HWS-ROM: X-[{selectedMovement.CurrentAromHWS[0]:F3},{selectedMovement.CurrentAromHWS[1]:F3}],Y-[{selectedMovement.CurrentAromHWS[2]:F3},{selectedMovement.CurrentAromHWS[3]:F3}]");
+        rawDataString.AppendLine($":FWS-ROM: X-[{selectedMovement.CurrentAromNWS[0]:F3},{selectedMovement.CurrentAromNWS[1]:F3}],Y-[{selectedMovement.CurrentAromNWS[2]:F3},{selectedMovement.CurrentAromNWS[3]:F3}]");
+        rawDataString.AppendLine($":DesiredSuccessRate: ");
+        rawDataString.AppendLine($":ControlBound: ");
+        rawDataString.AppendLine(string.Join(",", DataManager.RAWFILEHEADER_));
 
-        //// Attach the event handler for data logging.
-        //PlutoComm.OnNewPlutoData += OnNewPlutoDataDataLogging;
+        // Attach the event handler for data logging.
+        MarsComm.OnNewMarsData += OnNewMarsDataDataLogging;
     }
 
     public void OnNewMarsDataDataLogging()
@@ -166,9 +164,13 @@ public partial class AppData
             if (rawDataString == null)
             {
                 UnityEngine.Debug.LogWarning("rawDataString is null, skipping logging.");
+
                 return;
             }
-
+            rawDataString.Append($"{MarsComm.angle1},");
+            rawDataString.Append($"{MarsComm.angle2},");
+            rawDataString.Append($"{MarsComm.angle3},");
+            rawDataString.Append($"{MarsComm.angle4},");
             // Device data
             //rawDataString.Append($"{MarsComm.runTime:F6},");
             //rawDataString.Append($"{MarsComm.packetNumber},");
@@ -207,7 +209,7 @@ public partial class AppData
     {
         AppLogger.LogInfo($"Writing to: {trialRawDataFile}");
         AppLogger.LogInfo($"File exists before write? {File.Exists(trialRawDataFile)}");
-        
+
         string _dir = Path.GetDirectoryName(trialRawDataFile);
         if (!Directory.Exists(_dir)) Directory.CreateDirectory(_dir);
 
@@ -228,10 +230,10 @@ public partial class AppData
     private string GetGamePlayerPosition()
     {
         // Get the game target X position.
-        //if (selectedGame == "HAT")
-        //{
-        //    return $"{HatGameController.Instance.PlayerPosition.x:F3},{HatGameController.Instance.PlayerPosition.y:F3}";
-        //}
+        if (selectedGame == "space_shooter_home")
+        {
+            return $"{spaceShooterGameContoller.Instance.playerPosition.x:F3},{spaceShooterGameContoller.Instance.playerPosition.y:F3}";
+        }
         //else if (selectedGame == "PONG")
         //{
         //    return $"{PongGameController.Instance.PlayerPosition.x:F3},{PongGameController.Instance.PlayerPosition.y:F3}";
@@ -246,13 +248,13 @@ public partial class AppData
     private string GetGameTargetPosition()
     {
         //// Get the game target X position.
-        //if (selectedGame == "HAT")
-        //{
-        //    if (HatGameController.Instance.TargetPosition.HasValue)
-        //    {
-        //        return $"{HatGameController.Instance.TargetPosition.Value.x:F3},{HatGameController.Instance.TargetPosition.Value.y:F3}";
-        //    }
-        //}
+        if (selectedGame == "space_shooter_home")
+        {
+            if (spaceShooterGameContoller.Instance.targetPosition.HasValue)
+            {
+                return $"{spaceShooterGameContoller.Instance.targetPosition.Value.x:F3},{spaceShooterGameContoller.Instance.targetPosition.Value.y:F3}";
+            }
+        }
         //else if (selectedGame == "PONG")
         //{
         //    if (PongGameController.Instance.TargetPosition.HasValue) return $"{PongGameController.Instance.TargetPosition.Value.x:F3},{PongGameController.Instance.TargetPosition.Value.y:F3}";
@@ -267,10 +269,10 @@ public partial class AppData
     private string GetGameState()
     {
         //// Get the game state.
-        //if (selectedGame == "HAT")
-        //{
-        //    return $"{HatGameController.Instance.gameState}";
-        //}
+        if (selectedGame == "space_shooter_home")
+        {
+            return $"{spaceShooterGameContoller.Instance.gameState}";
+        }
         //else if (selectedGame == "PONG")
         //{
         //    return $"{PongGameController.Instance.gameState}";

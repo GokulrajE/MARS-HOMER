@@ -7,7 +7,7 @@ public class Player_collision_handler : MonoBehaviour
 {
     private Animator animator;
     private bool isDestroyed = false; // To ensure animation plays only once
-    private GameManagerScript gameManager;
+
     public AudioClip ExplosionSound;
     private AudioSource audioSource;
     private PlayerScore ps;
@@ -22,7 +22,6 @@ public class Player_collision_handler : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
-        gameManager = FindObjectOfType<GameManagerScript>();
         ps=FindObjectOfType<PlayerScore>();
         playerRenderer = GetComponent<Renderer>();
         
@@ -32,26 +31,29 @@ public class Player_collision_handler : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         // Check if the player is hit by an asteroid
-        if ((other.CompareTag("Asteroid") && !isDestroyed)||(other.CompareTag("Enemy")&&!isDestroyed)||(other.CompareTag("EnemyLaser")&&!isDestroyed))//check if any asteroid or enemy hit the player 
+        //if ((other.CompareTag("Asteroid") && !isDestroyed) || (other.CompareTag("Enemy") && !isDestroyed) || (other.CompareTag("EnemyLaser") && !isDestroyed))
+        if ((other.CompareTag("Asteroid") && !isDestroyed))//check if any asteroid or enemy hit the player 
         {
-            // Trigger the explosion animation , 
-            // animator.SetTrigger("TriggerExplosion");
+          
+            StartCoroutine(Blink());
+            ps.DeductScore();
+            spaceShooterGameContoller.Instance.nFailure++;
+            spaceShooterGameContoller.Instance.setisFailure();
+                       
+            Destroy(other.gameObject); //  destroy  the asteroid
+
+
+            // Trigger the explosion animation,NEED TO IMPLEMENT TO LIFE COUNT PLAYER
+            //animator.SetTrigger("TriggerExplosion");
             // if (audioSource != null && ExplosionSound != null)
             // {
             //     audioSource.PlayOneShot(ExplosionSound);
             // }
-            StartCoroutine(Blink());
-            ps.DeductScore();
-            gameData.events = 2;
-            Debug.Log("enemy hit or astroid it");
             // destroy the player GameObject after the animation 
             // isDestroyed = true;
-
             // gameManager.GameOver(); // Trigger game over
-                                    //  destroy  the asteroid
-            Destroy(other.gameObject);
         }
-       
+
     }
      IEnumerator Blink()
     {

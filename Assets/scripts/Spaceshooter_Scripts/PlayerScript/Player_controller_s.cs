@@ -1,8 +1,9 @@
-using NeuroRehabLibrary;
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static AppData;
 
 public class Player_controller_s : MonoBehaviour
@@ -23,15 +24,16 @@ public class Player_controller_s : MonoBehaviour
     [SerializeField]
     private Transform Spawn_point;
     public int[] DEPENDENT = new int[] { 0, -1, 1 };
+
     public static float xMin, yMin, xMax, yMax;
     public float threshold;
-    public float ShootInterval = 2f;
+    public float ShootInterval = 10f;
     private float timeSinceLastShot = 0f;  // Timer to track intervals between shots
-    private GameManagerScript gm;
+  
     float th1, th2, th3, yMARS, zMARS;
     float xSS, ySS,previosXss;
     public float tilt;
-
+    public float[] currRom;
     public static float yMinMars = 175;
     public static float yMaxMars = 775;
     public static float zMinMars = 291 - 300;
@@ -46,106 +48,46 @@ public class Player_controller_s : MonoBehaviour
         xMax = 0.9f * screenBounds.x;//changed into x from y
         yMin = -screenBounds.y / 1 + 0.2f;//change into 1 from 4
         yMax = screenBounds.y - screenBounds.y / 1.5f;
-        //threshold = MarsComm.OFFSET[AppData.useHand];
-        getAssessmentData();
         audioSource = GetComponent<AudioSource>();
-        gm = FindObjectOfType<GameManagerScript>();
+        
+        //GET ROM DATA
+        currRom = AppData.Instance.selectedMovement.CurrentAromFWS;
+        zMinMars = currRom[0];
+        zMaxMars = currRom[1];
+        yMinMars = currRom[2];
+        yMaxMars = currRom[3];
+
     }
-    public static void getAssessmentData()
-    {
-        //AppData.Instance._userData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
-        //DataRow lastRow = AppData.Instance.userData.dTableAssessment.Rows[AppData.Instance.userData.dTableAssessment.Rows.Count - 1];
-        //zMinMars = float.Parse((lastRow.Field<string>(AppData.minx)));
-        //zMaxMars = float.Parse((lastRow.Field<string>(AppData.maxx)));
-        //yMinMars = float.Parse((lastRow.Field<string>(AppData.miny)));
-        //yMaxMars = float.Parse((lastRow.Field<string>(AppData.maxy)));
-        //Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars+"possistion Rom");
-        //Debug.Log("working");
-    }
+   
     public void FixedUpdate()
     {
-        
+        //need to check for dynamic limbchange
         th1 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle1;
-        th2 = MarsComm.OFFSET[AppData.Instance.userData.uaLength] * MarsComm.angle2;
-        th3 = MarsComm.OFFSET[AppData.Instance.userData.uaLength] * MarsComm.angle3;
+        th2 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle2;
+        th3 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle3;
         yMARS = Mathf.Sin(th1) * (475.0f * Mathf.Cos(th2) + 291.0f * Mathf.Cos(th2 + th3));
         zMARS = (-475.0f * Mathf.Sin(th2) - 291.0f * Mathf.Sin(th2 + th3));
-        xSS = DEPENDENT[AppData.Instance.userData.uaLength] * -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
-        ySS = ((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yMARS - ((yMinMars + yMaxMars) / 2.0f)));
+        xSS = ((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
+        ySS = -((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yMARS - ((yMinMars + yMaxMars) / 2.0f)));
+
         transform.position = new Vector3(Mathf.Clamp(xSS, xMin, xMax),
             Mathf.Clamp(ySS, yMin, yMax),
             -8.0f);
-        playerPos = transform.position;
-        //Debug.Log(playerPos+"playerpos");
-        
-        if (xSS != previosXss)
-        {
-            gameData.events = 1;
-            //Debug.Log("playerMoveing");
-            previosXss = xSS;
-        }
-        gameData.playerPos = playerPos.x.ToString();
-        //MovePlayer();
-        Shoot_time();
-    }
-    void MovePlayer()
-    {
-        if (gm != null && gm.isGameOver)
-        {
-            return; // Stop spawning when the game is over
 
-        }
+        //Initiate Bullet
+        shootTime();
        
-        if (Input.GetAxisRaw("Horizontal") > 0f)
-        {
-             temp = transform.position;
-            temp.x += speed * Time.deltaTime;
-
-            if (temp.x > max_x)
-                temp.x = max_x;
-            transform.position = temp;
-            gameData.events = 1;
-            Debug.Log("playerMoveing");
-
-        }
-        else if (Input.GetAxisRaw("Horizontal") < 0f)
-        {
-             temp = transform.position;
-             temp.x -= speed * Time.deltaTime;
-
-            if (temp.x < min_x)
-                temp.x = min_x;
-            transform.position = temp;
-            gameData.events = 1;
-            Debug.Log("playerMoveing");
-        }
-        if (Input.GetAxisRaw("Vertical") > 0f)
-        {
-             temp = transform.position;
-            temp.y += speed * Time.deltaTime;
-
-            if (temp.y > max_y)
-                temp.y = max_y;
-            transform.position = temp;
-            gameData.events = 1;
-            Debug.Log("playerMoveing");
-        }
-        else if (Input.GetAxisRaw("Vertical") < 0f)
-        {
-            temp = transform.position;
-            temp.y -= speed * Time.deltaTime;
-
-            if (temp.y < min_y)
-                temp.y = min_y;
-            transform.position = temp;
-            gameData.events = 1;
-            Debug.Log("playerMoveing");
-        }
     }
-    void Shoot_time()
+ 
+    void shootTime()
     {
-        if (gm != null && gm.isGameOver)
+       
+        if (spaceShooterGameContoller.Instance == null 
+            || spaceShooterGameContoller.Instance.isGameFinished
+            || !spaceShooterGameContoller.Instance.isGameStarted
+            )
         {
+           
             return; // Stop spawning when the game is over
 
         }
@@ -173,5 +115,5 @@ public class Player_controller_s : MonoBehaviour
     {
         Destroy(gameObject);
     }
-
+   
 }

@@ -6,42 +6,44 @@ using UnityEngine;
 
 public class AsteroidSpawner : MonoBehaviour
 {
+    public static AsteroidSpawner Instance;
     public GameObject asteroidPrefab;
     public Transform spawnArea;
+
     // public float spawnInterval = 5f;
     public float minX = -8f;
     public float maxX = 8f;
     public float spawnY = 6f;
-    private GameManagerScript gameManager;
+ 
     // private float timer_r = 5;
-    private GameObject currentAsteroid;
+    public GameObject currentAsteroid;
+    private void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
-        gameManager = FindObjectOfType<GameManagerScript>();
-        SpawnAsteroid();
+        
+        
     }
 
     void Update()
     {
-        if (gameManager != null && gameManager.isGameOver)
-        {
-            return; // Stop spawning when the game is over
-
-        }
-        // timer_r += Time.deltaTime;
-        // // Debug.Log(timer_r);
-        // if (timer_r >= spawnInterval)
-         if (currentAsteroid == null)
-        {
-            SpawnAsteroid();
-            // timer_r = 0;
-
-        }
-
+       
+    }
+    private void FixedUpdate()
+    {
+        
     }
 
-    void SpawnAsteroid()
+    public void SpawnAsteroid()
     {
+        if (currentAsteroid != null)
+        {
+            return;
+        }
+          
+           
         // Generate a random X position within specified bounds
         float randomX = Random.Range(minX, maxX);
 
@@ -50,5 +52,6 @@ public class AsteroidSpawner : MonoBehaviour
 
         // Instantiate the asteroid prefab 
         currentAsteroid=Instantiate(asteroidPrefab, spawnPosition, Quaternion.identity);
+      
     }
 }

@@ -16,7 +16,7 @@ public class PointCounter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		gameData.playerScore = BoundController.playerScore;
+	
 		text.text = BoundController.enemyScore + "\t\t" + 
 			BoundController.playerScore;
 	}

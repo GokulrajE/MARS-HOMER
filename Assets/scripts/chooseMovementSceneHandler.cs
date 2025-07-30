@@ -17,7 +17,7 @@ public class MovementSceneHandler : MonoBehaviour
     public static float initialAngle;
     private string nextScene = "calibratioScene";
     private string exitScene = "SummaryScene";
-    private string assessmentScene = "weightCalibrationScene";
+    private string assessmentScene = "ASSESSROM";
     public static float shAng;
     //flags
     private static bool changeScene = false;
@@ -30,28 +30,14 @@ public class MovementSceneHandler : MonoBehaviour
     public bool ACTIVATE = false;
     public bool DEACTIVATE = false;
 
+    public static string[] selectGame = { "FlappyGame", "space_shooter_home", "pong_menu" };
     void Start()
     {
 
-        // Initialize if needed
-        if (AppData.Instance.userData.dTableConfig == null)
-        {
-            // Inialize the logger
-            AppLogger.StartLogging(SceneManager.GetActiveScene().name);
-            // Initialize.
-            Debug.Log("calling");
-            //AppData.InitializeRobot();
-        }
+    
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
-       
-        
-
-        //checking time scale 
-        if (Time.timeScale == 0)
-        {
-            Time.timeScale = 1;
-        }
+ 
 
         AttachCallbacks();
 
@@ -59,22 +45,24 @@ public class MovementSceneHandler : MonoBehaviour
 
         StartCoroutine(DelayedAttachListeners());
 
-        nextButton.gameObject.SetActive(false); // Hide
-        //supportIndicator.value = 0;
+        nextButton.gameObject.SetActive(false); 
+
 
     }
 
     void Update()
     {
         //NEED TO CHECK
-        if(!File.Exists($"{DataManager.directoryAssessmentData}/{DataManager.SupportCalibrationFileName}"))
+        if(AppData.Instance.selectedMovement.oldRomFWS == null 
+            ||AppData.Instance.selectedMovement.oldRomHWS == null
+            ||AppData.Instance.selectedMovement.oldRomFWS == null 
+            ||AppData.Instance.selectedMovement.oldRomNWS == null
+            )
           SceneManager.LoadScene(assessmentScene);
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
         {
             SceneManager.LoadScene(assessmentScene);
-
-            
         }
         //Check if a scene change is needed.
         if (changeScene == true)
@@ -83,7 +71,6 @@ public class MovementSceneHandler : MonoBehaviour
             LoadNextScene();
             changeScene = false;
         }
-
 
     }
   
@@ -158,7 +145,7 @@ public class MovementSceneHandler : MonoBehaviour
                 //initialAngle = MarsComm.angle1;
                 toggleSelected = true;
                 AppData.Instance.SetMovement(child.name);
-                nextScene = AppData.selectGame[MarsDefs.getMovementIndex(AppData.Instance.selectedMovement.name)];
+                nextScene = selectGame[MarsDefs.getMovementIndex(AppData.Instance.selectedMovement.name)];
                 AppData.Instance.SetGame(nextScene);
                 Debug.Log(nextScene);
                 AppLogger.LogInfo($"Selected '{AppData.Instance.selectedMovement.name}'.");
@@ -166,39 +153,20 @@ public class MovementSceneHandler : MonoBehaviour
             }
         }
     }
-    public void onclickActivateMarsWithFullSupport()
-    {
-        //AppData.ArmSupportController.UseFullWeightSupport();
-    }
-    public void onclickActivateMarsWithHalfSupport()
-    {
-        //AppData.ArmSupportController.UseHalfWeightSupport();
-    }
-    public void onclickActivateMarsWithNoSupport()
-    {
-        //AppData.ArmSupportController.UseNoWeightSupport();
-    }
-    public void initiateSupportSystem()
-    {
-        ACTIVATE = true;
-    }
+  
     public void OnMarsButtonReleased()
     {
-        // check support is activated or not
-        //if (MarsComm.desThree != AppData.ArmSupportController.ROBOT_ACTIVE_WITH_MARS)
-        //    return;
+        if (toggleSelected)
+        {
 
-        //if (toggleSelected)
-        //{
-           
 
-        //    changeScene = true;
-        //    toggleSelected = false;
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("Select at least one toggle to proceed.");
-        //}
+            changeScene = true;
+            toggleSelected = false;
+        }
+        else
+        {
+            Debug.LogWarning("Select at least one toggle to proceed.");
+        }
     }
 
     void LoadNextScene()
@@ -229,12 +197,7 @@ public class MovementSceneHandler : MonoBehaviour
     }
     private void OnExitButtonClicked()
     {
-        //if (MarsComm.desThree>=AppData.ArmSupportController.MARS_ACTIVATED)
-        //{
-        //    DeactivateMessageText.text = "To quit, Deactivate Mars...";
-        //    return;
-        //}
-           
+
         StartCoroutine(LoadSummaryScene());
     }
     private void OnNextButtonClicked()
@@ -247,10 +210,9 @@ public class MovementSceneHandler : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (JediComm.isMars) 
-        {
+      
             MarsComm.OnMarsButtonReleased -= OnMarsButtonReleased;
-        }
+        
     }
     private void OnApplicationQuit()
     {
