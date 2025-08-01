@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 638611dbcb862124eb0021b5bc34da6c
+guid: 533c5308bb957db44a222831d2dac09c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5979042432758432178
-    second: start_e_0
+      213: -2109668071375288651
+    second: Mask group 4x 833815812_0
+  - first:
+      213: 5092739520739781607
+    second: Mask group 4x 833815812_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +99,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Windows Store Apps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: start_e_0
+      name: Mask group 4x 833815812_0
       rect:
         serializedVersion: 2
-        x: 48
-        y: 47
-        width: 545
-        height: 543
+        x: 0
+        y: 0
+        width: 6084
+        height: 792
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,8 +117,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e4e3272f59c260da0800000000000000
-      internalID: -5979042432758432178
+      spriteID: 5b641bb0114f8b2e0800000000000000
+      internalID: -2109668071375288651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mask group 4x 833815812_1
+      rect:
+        serializedVersion: 2
+        x: 7575
+        y: 0
+        width: 105
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eba9439c9b0da640800000000000000
+      internalID: 5092739520739781607
       vertices: []
       indices: 
       edges: []
@@ -144,7 +155,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      start_e_0: -5979042432758432178
+      Mask group 4x 833815812_0: -2109668071375288651
+      Mask group 4x 833815812_1: 5092739520739781607
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

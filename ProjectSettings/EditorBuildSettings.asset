@@ -36,7 +36,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Half Weight Support.unity
     guid: ed200b805794f2348bc56fb443a3c143
   - enabled: 0
-    path: Assets/Scenes/halfWeightSupport.unity
+    path: Assets/Scenes/halfWeightSupportScene.unity
     guid: ff6ca81e97b855243b7414991ec920c9
   - enabled: 0
     path: Assets/Scenes/noWeightSupportScene.unity
@@ -138,7 +138,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CONFIG.unity
     guid: a2ba4a851b035334aa6baf3d2f143627
   - enabled: 1
-    path: Assets/Scenes/GETCONFIG.unity
+    path: Assets/Scenes/getConfig.unity
     guid: 96c617e643758dd43bc7511e43abb0df
   - enabled: 1
     path: Assets/Scenes/ASSESSROM.unity
