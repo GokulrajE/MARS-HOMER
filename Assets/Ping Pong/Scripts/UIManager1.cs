@@ -28,15 +28,9 @@ public class UIManager1 : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		//Debug.Log(AppData.inputPressed());
-
-
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-
-         
-
             LoadLevel("pong_game");
         }
 
@@ -126,7 +120,7 @@ public class UIManager1 : MonoBehaviour {
 
 	public void Exit()
     {
-		SceneManager.LoadScene("chooseMovementScene");
+		SceneManager.LoadScene("CHOOSEMOVEMENT");
 	}
     private void OnDestroy()
     {

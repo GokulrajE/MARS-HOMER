@@ -72,7 +72,8 @@ public partial class AppData
         UnityEngine.Debug.Log(DataManager.sessionFilePath);
 
         userData = new marsUserData(DataManager.configFilePath, DataManager.sessionFilePath);
-        // Selected mechanism and game.
+
+        // Selected movement and game.
         selectedMovement = null;
         selectedGame = null;
 

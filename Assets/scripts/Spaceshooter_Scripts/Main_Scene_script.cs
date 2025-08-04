@@ -48,7 +48,7 @@ public class Main_Scene_script : MonoBehaviour
     }
     public void onclick_gotochoose()
     {
-        SceneManager.LoadScene("chooseMovementScene");
+        SceneManager.LoadScene("CHOOSEMOVEMENT");
     }
     private void OnDestroy()
     {

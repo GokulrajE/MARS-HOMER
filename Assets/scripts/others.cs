@@ -45,7 +45,7 @@ public class marsUserData
     static public string useHandHeader = "TrainingSide";
     static public string forearmLength = "forearmLength";
     static public string upperarmLength = "upperarmLength";
-    static public string maxx = "Max_x", minx = "Min_x", maxy = "Max_y", miny = "Min_y";
+
 
     public int useHand;
     public int faLength;
@@ -119,14 +119,13 @@ public class marsUserData
         parseTherapyConfigData();
         if (File.Exists(DataManager.sessionFilePath))
         {
-            //parseMovementMoveTimePrev();
+            
             parseMovementMoveTimePrev();
         }
      
        
     }
 
-   
     public  void parseMovementMoveTimePrev()
     {
         movementMoveTimePrev = createMoveTimeDictionary();
@@ -149,8 +148,6 @@ public class marsUserData
         }
         return _temp;
     }
-
-    
 
     public int getCurrentDayOfTraining()
     {
@@ -178,7 +175,7 @@ public class marsUserData
         }
         faLength = int.Parse(lastRow.Field<string>("forearmLength"));
         uaLength = int.Parse(lastRow.Field<string>("upperarmLength"));
-        Debug.Log($"{useHand},{faLength}, {uaLength}");
+        //Debug.Log($"{useHand},{faLength}, {uaLength}");
     }
 
     public string GetDeviceLocation() => dTableConfig.Rows[dTableConfig.Rows.Count - 1].Field<string>("Location");
@@ -210,7 +207,7 @@ public class marsUserData
         }
         return daySummaries;
     }
-    public List<float> GetLastTwoSuccessRates(string mechanism, string gameName)
+    public List<float> GetLastTwoSuccessRates(string movement, string gameName)
     {
         List<float> lastTwoSuccessRates = new List<float>();
 
@@ -225,14 +222,14 @@ public class marsUserData
 
         var filteredRows = dTableSession.AsEnumerable()
             .Where(row =>
-                row.Field<string>("Mechanism") == mechanism &&
+                row.Field<string>("Movement") == movement &&
                 row.Field<string>("GameName") == gameName)
             .OrderByDescending(row => DateTime.ParseExact(row.Field<string>("TrialStartTime"), DataManager.DATETIMEFORMAT, CultureInfo.InvariantCulture))
             .ToList();
   
         var successRows = dTableSession.AsEnumerable()
         .Where(row =>
-            row.Field<string>("Mechanism") == mechanism &&
+            row.Field<string>("Mechanism") == movement &&
             row.Field<string>("GameName") == gameName &&
             !string.IsNullOrWhiteSpace(row.Field<string>("SuccessRate")) &&
             !string.IsNullOrWhiteSpace(row.Field<string>("CurrentControlBound")))

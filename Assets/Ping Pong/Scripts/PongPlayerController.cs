@@ -25,29 +25,20 @@ public class PongPlayerController : MonoBehaviour
   
 
     public static int reps;
-    int hand_use_pong;
-    private string hospno;
+  
     public int PongGameCount;
 
     public GameObject player;
-    public float y_max, y_min,previousValue,yValue;
+    public float yMax, yMin,previousValue,yValue;
     public float time;
 
     void Start () {
         playSize = topBound - bottomBound;
         PongGameCount++;
-        getAssessmentData();
+      
     }
 
-    public void getAssessmentData()
-    {
-        //marsUserData.dTableAssessment = DataManager.loadCSV($"{DataManager.directoryAssessmentData}/{DataManager.ROMWithSupportFileNames[(int)AppData.ArmSupportController.setsupportstate]}");
-        //DataRow lastRow = marsUserData.dTableAssessment.Rows[marsUserData.dTableAssessment.Rows.Count - 1];
-        //y_min = float.Parse((lastRow.Field<string>(AppData.miny)));
-        //y_max = float.Parse((lastRow.Field<string>(AppData.maxy)));
-        ////Debug.Log(zMaxMars + "," + zMaxMars + "," + yMaxMars + "," + yMinMars);
-        //Debug.Log("working");
-    }
+   
 
     // Update is called once per frame
     void Update ()
@@ -63,17 +54,10 @@ public class PongPlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         
-        Debug.Log("playerhit");
-        if(collision.gameObject.tag == "Target")
-        {
-            //AppData.reps += 1;
-            //Debug.Log(AppData.reps);
-            
-        }
+       
     }
     private void OntriggerEnter2D(Collision2D collision)
     {
-        Debug.Log("hello");
     }
     public void Game()
     {
@@ -81,7 +65,7 @@ public class PongPlayerController : MonoBehaviour
 
         if (Mathf.Abs(MarsComm.angle1) > (Mathf.Abs(MovementSceneHandler.initialAngle) - 20))
         {
-            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle1) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle2) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle2 + 3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle3))), y_min, y_max);
+            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle1) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle2) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle2 + 3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle3))), yMin, yMax);
             this.transform.position = new Vector2(this.transform.position.x,yValue );
             //Debug.Log(Angle2ScreenZ((Mathf.Sin(3.14f / 180 * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleThree))), y_min, y_max));
             if (transform.position.y > topBound)

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    //public RockVR.Video.VideoCapture vdc;
     GameObject[] pauseObjects, finishObjects;
 	public BoundController rightBound;
 	public BoundController leftBound;
@@ -47,12 +46,8 @@ public class UIManager : MonoBehaviour {
             
             playAudio(1);
 			playerWon = false;
-          
-           
-           
         }
-        else if (BoundController.playerScore >= winScore && !isFinished
-            ){
+        else if (BoundController.playerScore >= winScore && !isFinished){
             Camera.main.GetComponent<AudioSource>().Stop();
            
             playAudio(0);
@@ -60,8 +55,6 @@ public class UIManager : MonoBehaviour {
 			enemyWon = false;
             win = 1;
 			playerWon = true;
-         
-
         }
         
         if (isFinished){

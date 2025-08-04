@@ -15,20 +15,19 @@ public class assessROM : MonoBehaviour
     public GameObject fws;
     public GameObject hws;
     public GameObject nws;
-    public Image fwstick;
-    public Image hwstick;
-    public Image nwstick;
-    public Text fwstext;
-    public Text hwstext;
-    public Text nwstext;
+    public Image fwsTick;
+    public Image hwsTick;
+    public Image nwsTick;
+    public Text fwsText;
+    public Text hwsText;
+    public Text nwsText;
     public Text message;
-    Image panelfws;
-    Image panelhws;
-    Image panelnws;
-    public bool changeScene = false;
-    public bool attachMarsButtonEvent = false;
-    // Start is called before the first frame update
-  
+    Image panelFWS;
+    Image panelHWS;
+    Image panelNWS;
+    public bool changeScene = false,
+                isFinished = false;
+   
 
     void Start()
     {
@@ -52,7 +51,13 @@ public class assessROM : MonoBehaviour
             SceneManager.LoadScene("DRAWAREA");
             changeScene = false;
         }
-    }
+        if (isFinished)
+        {
+            isFinished = false;
+            SceneManager.LoadScene("CHOOSEMOVEMENT");
+        }
+
+        }
     public void OnMarsButtonReleased()
     {
      
@@ -63,36 +68,37 @@ public class assessROM : MonoBehaviour
         else
         {
           AppData.Instance.selectedMovement.SaveAssessmentData();     
+          isFinished = true;
         }
 
     }
     public void initUI()
     {
 
-        panelfws = fws.GetComponent<Image>();
-        panelhws = hws.GetComponent<Image>();
-        panelnws = nws.GetComponent<Image>();
+        panelFWS = fws.GetComponent<Image>();
+        panelHWS = hws.GetComponent<Image>();
+        panelNWS = nws.GetComponent<Image>();
 
-        panelfws.color = new Color32(89, 77, 77, 238); ; // grey
-        panelhws.color = new Color32(89, 77, 77, 238); ; // grey
-        panelnws.color = new Color32(89, 77, 77, 238); ; // grey
+        panelFWS.color = new Color32(89, 77, 77, 238); ; // grey
+        panelHWS.color = new Color32(89, 77, 77, 238); ; // grey
+        panelNWS.color = new Color32(89, 77, 77, 238); ; // grey
       
-        fwstext.text = "";
-        hwstext.text = "";
-        nwstext.text = "";
+        fwsText.text = "";
+        hwsText.text = "";
+        nwsText.text = "";
     }
     public void checkMarsMode()
     {
         if (!AppData.Instance.selectedMovement.aromCompletedFWS)
         {
-            panelfws.color = new Color32(251, 139, 30, 255);  // Orange
+            panelFWS.color = new Color32(251, 139, 30, 255);  // Orange
             AppData.Instance.selectedMovement.setMode("FWS");
             message.text = "press mars button to access ROM for FWS";
             return;
         }
         else if (!AppData.Instance.selectedMovement.aromCompletedHWS)
         {
-            panelhws.color = new Color32(251, 139, 30, 255);  // Orange
+            panelHWS.color = new Color32(251, 139, 30, 255);  // Orange
             AppData.Instance.selectedMovement.setMode("HWS");
             message.text = "press mars button to access ROM for HWS";
             return;
@@ -100,7 +106,7 @@ public class assessROM : MonoBehaviour
         }
         else if (!AppData.Instance.selectedMovement.aromCompletedNWS)
         {
-            panelnws.color = new Color32(251, 139, 30, 255);  // Orange
+            panelNWS.color = new Color32(251, 139, 30, 255);  // Orange
             AppData.Instance.selectedMovement.setMode("NWS");
             message.text = "press mars button to access ROM for NWS";
             return;
@@ -116,20 +122,32 @@ public class assessROM : MonoBehaviour
     {
         if (AppData.Instance.selectedMovement.aromCompletedFWS)
         {
-            fwstick.enabled = true;
-           
+            fwsTick.enabled = true;
+            fwsText.text = $"MIN-X : {AppData.Instance.selectedMovement.CurrentAromFWS[0]}\n" +
+                           $"MAX-X : {AppData.Instance.selectedMovement.CurrentAromFWS[1]}\n" +
+                           $"MIN-Y : {AppData.Instance.selectedMovement.CurrentAromFWS[2]}\n" +
+                           $"MAX-Y : {AppData.Instance.selectedMovement.CurrentAromFWS[3]}";
+
         }
         if (AppData.Instance.selectedMovement.aromCompletedHWS)
         {
            
-            hwstick.enabled = true;
+            hwsTick.enabled = true;
+            hwsText.text = $"MIN-X : {AppData.Instance.selectedMovement.CurrentAromHWS[0]}\n" +
+                           $"MAX-X : {AppData.Instance.selectedMovement.CurrentAromHWS[1]}\n" +
+                           $"MIN-Y : {AppData.Instance.selectedMovement.CurrentAromHWS[2]}\n" +
+                           $"MAX-Y : {AppData.Instance.selectedMovement.CurrentAromHWS[3]}";
 
         }
         if (AppData.Instance.selectedMovement.aromCompletedNWS)
         {
            
-            nwstick.enabled = true;
-          
+            nwsTick.enabled = true;
+            nwsText.text = $"MIN-X : {AppData.Instance.selectedMovement.CurrentAromNWS[0]}\n" +
+                           $"MAX-X : {AppData.Instance.selectedMovement.CurrentAromNWS[1]}\n" +
+                           $"MIN-Y : {AppData.Instance.selectedMovement.CurrentAromNWS[2]}\n" +
+                           $"MAX-Y : {AppData.Instance.selectedMovement.CurrentAromNWS[3]}";
+
         }
     }
     public void OnDestroy()

@@ -14,7 +14,7 @@ public class Player_controller_s : MonoBehaviour
 
     // Start is called before the first frame update
     public float speed = 4f;
-    public float min_x, max_x, min_y, max_y;
+
     [SerializeField]
     private GameObject Player_bullet;
 
@@ -26,27 +26,29 @@ public class Player_controller_s : MonoBehaviour
     public int[] DEPENDENT = new int[] { 0, -1, 1 };
 
     public static float xMin, yMin, xMax, yMax;
-    public float threshold;
+
     public float ShootInterval = 10f;
     private float timeSinceLastShot = 0f;  // Timer to track intervals between shots
   
-    float th1, th2, th3, yMARS, zMARS;
-    float xSS, ySS,previosXss;
+    float th1, th2, th3, yEndPoint, zEndPoing;
+    float xPoint, yPoint;
     public float tilt;
     public float[] currRom;
+
+    //default values
     public static float yMinMars = 175;
     public static float yMaxMars = 775;
     public static float zMinMars = 291 - 300;
     public static float zMaxMars = 291 + 300;
-    public static new Vector3 playerPos;
+ 
     Vector3 temp;
     void Start()
     {
         mainCamera = Camera.main;
         screenBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, mainCamera.transform.position.z));
         xMin = -0.9f * screenBounds.x;
-        xMax = 0.9f * screenBounds.x;//changed into x from y
-        yMin = -screenBounds.y / 1 + 0.2f;//change into 1 from 4
+        xMax = 0.9f * screenBounds.x;
+        yMin = -screenBounds.y + 0.2f;//change into 1 from 4
         yMax = screenBounds.y - screenBounds.y / 1.5f;
         audioSource = GetComponent<AudioSource>();
         
@@ -65,13 +67,13 @@ public class Player_controller_s : MonoBehaviour
         th1 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle1;
         th2 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle2;
         th3 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle3;
-        yMARS = Mathf.Sin(th1) * (475.0f * Mathf.Cos(th2) + 291.0f * Mathf.Cos(th2 + th3));
-        zMARS = (-475.0f * Mathf.Sin(th2) - 291.0f * Mathf.Sin(th2 + th3));
-        xSS = ((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zMARS - ((zMinMars + zMaxMars) / 2.0f)));
-        ySS = -((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yMARS - ((yMinMars + yMaxMars) / 2.0f)));
+        yEndPoint = Mathf.Sin(th1) * (475.0f * Mathf.Cos(th2) + 291.0f * Mathf.Cos(th2 + th3));
+        zEndPoing = (-475.0f * Mathf.Sin(th2) - 291.0f * Mathf.Sin(th2 + th3));
+        xPoint = -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zEndPoing - ((zMinMars + zMaxMars) / 2.0f)));
+        yPoint = ((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yEndPoint - ((yMinMars + yMaxMars) / 2.0f)));
 
-        transform.position = new Vector3(Mathf.Clamp(xSS, xMin, xMax),
-            Mathf.Clamp(ySS, yMin, yMax),
+        transform.position = new Vector3(Mathf.Clamp(xPoint, xMin, xMax),
+            Mathf.Clamp(yPoint, yMin, yMax),
             -8.0f);
 
         //Initiate Bullet
@@ -88,7 +90,7 @@ public class Player_controller_s : MonoBehaviour
             )
         {
            
-            return; // Stop spawning when the game is over
+            return; // Stop shooting when the game is over
 
         }
         // Track time passed

@@ -1,18 +1,16 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using JetBrains.Annotations;
-using System;
+
 public class DrawArea : MonoBehaviour
 {
-    float max_x, max_y, min_x, min_y;
+    float maxX, maxY, minX, minY;
     List<Vector3> paths;
-    public assessROM ass;
+
     public bool changeScene = false;
-    // Start is called before the first frame update
+   
     void Start()
     {
         
@@ -42,23 +40,23 @@ public class DrawArea : MonoBehaviour
     {
         
         paths = Drawlines.paths_pass;
-        max_x = paths.Max(v => v.x);
-        min_x = paths.Min(v => v.x);
-        max_y = paths.Max(v => v.y);
-        min_y = paths.Min(v => v.y);
+        maxX = paths.Max(v => v.x);
+        minX = paths.Min(v => v.x);
+        maxY = paths.Max(v => v.y);
+        minY = paths.Min(v => v.y);
 
         //save Assessment data 
       
         switch (AppData.Instance.selectedMovement.MarsMode)
         {
             case "FWS" :
-                AppData.Instance.selectedMovement.SetNewRomValuesFWS(max_x, min_x, max_y, min_y);
+                AppData.Instance.selectedMovement.SetNewRomValuesFWS(minX, maxX, minY, maxY);
                 break;
             case "HWS":
-                AppData.Instance.selectedMovement.SetNewRomValuesHWS(max_x, min_x, max_y, min_y);
+                AppData.Instance.selectedMovement.SetNewRomValuesHWS(minX, maxX, minY, maxY);
                 break;
             case "NWS":
-                AppData.Instance.selectedMovement.SetNewRomValuesNWS(max_x, min_x, max_y, min_y);
+                AppData.Instance.selectedMovement.SetNewRomValuesNWS(minX, maxX, minY, maxY);
                 break;
 
         }
