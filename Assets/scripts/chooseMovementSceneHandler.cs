@@ -30,7 +30,7 @@ public class MovementSceneHandler : MonoBehaviour
     public bool ACTIVATE = false;
     public bool DEACTIVATE = false;
 
-    public static string[] selectGame = { "FlappyGame", "space_shooter_home", "pong_menu" };
+    public static string[] selectGame = { "FlappyGame", "space_shooter_home", "pong_game" };
     void Start()
     {
 
@@ -52,14 +52,8 @@ public class MovementSceneHandler : MonoBehaviour
 
     void Update()
     {
-        //NEED TO CHECK
-        if(AppData.Instance.selectedMovement.oldRomFWS == null 
-            ||AppData.Instance.selectedMovement.oldRomHWS == null
-            ||AppData.Instance.selectedMovement.oldRomFWS == null 
-            ||AppData.Instance.selectedMovement.oldRomNWS == null
-            )
-          SceneManager.LoadScene(assessmentScene);
-
+      
+      
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
         {
             SceneManager.LoadScene(assessmentScene);
@@ -141,12 +135,21 @@ public class MovementSceneHandler : MonoBehaviour
             Toggle toggleComponent = child.GetComponent<Toggle>();
             if (toggleComponent != null && toggleComponent.isOn)
             {
-                //for tuk-tuk only
-                //initialAngle = MarsComm.angle1;
                 toggleSelected = true;
                 AppData.Instance.SetMovement(child.name);
                 nextScene = selectGame[MarsDefs.getMovementIndex(AppData.Instance.selectedMovement.name)];
                 AppData.Instance.SetGame(nextScene);
+                if(AppData.Instance.selectedGame != selectGame[0])
+                {
+                    if (AppData.Instance.selectedMovement.CurrentAromFWS == null
+                       || AppData.Instance.selectedMovement.CurrentAromHWS == null
+                       || AppData.Instance.selectedMovement.CurrentAromNWS == null
+                       )nextScene = assessmentScene;
+                }
+                else
+                {
+                    initialAngle = MarsComm.angle1;
+                }
                 Debug.Log(nextScene);
                 AppLogger.LogInfo($"Selected '{AppData.Instance.selectedMovement.name}'.");
                 break;

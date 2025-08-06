@@ -81,24 +81,23 @@ public class FlappyGameControl : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        //AppData.game = "FLAPPY BIRD";
-
+    
     }
 
 
     // Start is called before the first frame update
     void Start()
     {
-        playerMoveTime = 0;
+      
         MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         path_to_data = Application.dataPath;
-        flappyGameCount++;
+     
         LevelText.enabled = false;
         scrollSpeed = -(PlayerPrefs.GetFloat("ScrollSpeed"));
         Time.timeScale = 1;
         ShowGameMenu();
         column_position_flag = false;
-     
+        
         //support.text = "Support: " + Mathf.Round(weightEstimation.support * 100.0f).ToString() + " %";
     }
 
@@ -108,12 +107,8 @@ public class FlappyGameControl : MonoBehaviour
 
         LevelText.text = "Level: " + auto_speed*(-0.5);
 
-
-      
-
         column_position_flag_topass = column_position_flag;
-        
-       
+
         //uses the p button to pause and unpause the game
         if ((Input.GetKeyDown(KeyCode.P)))
         {
@@ -151,8 +146,7 @@ public class FlappyGameControl : MonoBehaviour
        
         if (changeScene)
         {
-            Debug.Log("button working");
-            //reStartGame();
+           
             if (!gameOver && gamestarted)
             {
                 if (Time.timeScale == 1)
@@ -168,7 +162,7 @@ public class FlappyGameControl : MonoBehaviour
             }
             else if (gameOver && gamestarted)
             {
-                Debug.Log("playagain");
+               
                 hidePaused();
                 playAgain();
 
@@ -221,36 +215,14 @@ public class FlappyGameControl : MonoBehaviour
     {
         GameOverText.SetActive(true);
         gameOver = true;
-        end_time = DateTime.Now.ToString("HH:mm:ss tt");  
-        System.DateTime today = System.DateTime.Today;
-        float start_speed_csv = start_speed;
-        float end_speed = auto_speed;
-        string duration_played = (DateTime.Parse(end_time)-DateTime.Parse(start_time)).ToString();
-        hit_count = BirdControl.hit_count;
-        Debug.Log(today + ".." + start_time + ".." + end_time + ".." + start_speed_csv + ".." + end_speed + ".." + duration_played + ".." + hit_count);
-
-        //string newFileName = @"C:\Users\BioRehab\Desktop\Sathya\unity-pose\Arebo demo\Data\" + p_hospno + "\\" + "flappy_hits.csv";
-        string newFileName = path_to_data + "\\" + "Patient_Data" + "\\" + p_hospno + "\\" + "flappy_hits.csv";
-        string data_csv = today.ToString() + "," + start_speed_csv + "," + end_speed + "," + start_time + "," + end_time + "," + duration_played + "," + hit_count + "\n";
-        File.AppendAllText(newFileName, data_csv);
+      
     }
 
     public void Birdalive()
     {
         CongratulationsText.SetActive(true);
         gameOver = true;
-        end_time = DateTime.Now.ToString("HH:mm:ss tt");  
-        System.DateTime today = System.DateTime.Today;
-        float start_speed_csv = start_speed;
-        float end_speed = auto_speed;
-        string duration_played = (DateTime.Parse(end_time)-DateTime.Parse(start_time)).ToString();
-        hit_count = BirdControl.hit_count;
-        Debug.Log(today + ".." + start_time + ".." + end_time + ".." + start_speed_csv + ".." + end_speed + ".." + duration_played + ".." + hit_count);
-
-        //string newFileName = @"C:\Users\BioRehab\Desktop\Sathya\unity-pose\Arebo demo\Data\" + p_hospno + "\\" + "flappy_hits.csv";
-        string newFileName = path_to_data + "\\" + "Patient_Data" + "\\" + p_hospno + "\\" + "flappy_hits.csv";
-        string data_csv = today.ToString() + "," + start_speed_csv + "," + end_speed + "," + start_time + "," + end_time + "," + duration_played + "," + hit_count + "\n";
-        File.AppendAllText(newFileName, data_csv);
+       
     }
 
     public void BirdScored()
@@ -315,7 +287,6 @@ public class FlappyGameControl : MonoBehaviour
 
     public void ShowGameMenu()
     {
-        
         menuCanvas.SetActive(true);
         Canvas.SetActive(false);
         Time.timeScale = 0;
@@ -331,45 +302,9 @@ public class FlappyGameControl : MonoBehaviour
         timecoRoutine = SpawnTimer();
         duration = 60;
         StartCoroutine(timecoRoutine);
-      
-        // var lines = File.ReadAllLines(@"C:\Users\BioRehab\Desktop\Sathya\unity-pose\Arebo demo\Data\"+p_hospno+"\\"+"flappy_hits.csv");
-        var lines = File.ReadAllLines(path_to_data+"\\"+"Patient_Data"+"\\"+p_hospno+"\\"+"flappy_hits.csv");
-        
-        var count = lines.Length;
-        List<string> second_row = new List<string>();
-        List<string> fifth_row = new List<string>();
-        List<string> sixth_row = new List<string>();
-        //if (count>1)
-        //{
-        //    foreach (var item in lines)
-        //    {
-        //        var rowItems = item.Split(',');
-        //        second_row.Add(rowItems[2]);
-        //        fifth_row.Add(rowItems[5]);
-        //        sixth_row.Add(rowItems[6]);
-        //    }
-            
-        //    auto_speed = float.Parse(second_row[count-1]);
-        //    if(auto_speed<0)
-        //    {
-        //        start_speed = auto_speed;
-        //    }
-        //    else
-        //    {
-        //        auto_speed = -2.0f;
-        //        start_speed = auto_speed;
-        //    }
+        FlappyColumnPool.instance.prevSpawnTime = 2;
+        FlappyColumnPool.instance.spawnColumn();
 
-            
-            
-        //}
-        //else
-        //{
-        //    auto_speed = -2.0f;
-        //    start_speed = auto_speed;
-        //}
-
-        
     }
 
     private IEnumerator SpawnTimer() {
@@ -377,7 +312,6 @@ public class FlappyGameControl : MonoBehaviour
 
 			duration = duration-1;
 			UpdateDuration ();
-
 			if(duration == 0){
                 gameOver = true;
                 duration = 60;
@@ -414,7 +348,7 @@ public class FlappyGameControl : MonoBehaviour
     public void quit_pressed()
     {
       
-        SceneManager.LoadScene("chooseMovementScene");
+        SceneManager.LoadScene("CHOOSEMOVEMENT");
     }
     private void OnDestroy()
     {

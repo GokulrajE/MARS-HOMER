@@ -4,7 +4,7 @@ using System.Collections;
 public class BallController : MonoBehaviour {
 
 	//speed of the ball
-	public static float speed = 3.1F;
+	public static float speed = 1.5F;
      
 	//the initial direction of the ball
 	private Vector2 spawnDir;

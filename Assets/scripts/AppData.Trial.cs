@@ -234,10 +234,10 @@ public partial class AppData
         {
             return $"{spaceShooterGameContoller.Instance.playerPosition.x:F3},{spaceShooterGameContoller.Instance.playerPosition.y:F3}";
         }
-        //else if (selectedGame == "PONG")
-        //{
-        //    return $"{PongGameController.Instance.PlayerPosition.x:F3},{PongGameController.Instance.PlayerPosition.y:F3}";
-        //}
+        else if (selectedGame == "pong_game")
+        {
+            return $"{pongGameController.instance.PlayerPosition.x:F3},{pongGameController.instance.PlayerPosition.y:F3}";
+        }
         //else if (selectedGame == "TUK")
         //{
         //    return $"{FlappyGameControl.Instance.PlayerPosition.x:F3},{FlappyGameControl.Instance.PlayerPosition.y:F3}";
@@ -255,10 +255,10 @@ public partial class AppData
                 return $"{spaceShooterGameContoller.Instance.targetPosition.Value.x:F3},{spaceShooterGameContoller.Instance.targetPosition.Value.y:F3}";
             }
         }
-        //else if (selectedGame == "PONG")
-        //{
-        //    if (PongGameController.Instance.TargetPosition.HasValue) return $"{PongGameController.Instance.TargetPosition.Value.x:F3},{PongGameController.Instance.TargetPosition.Value.y:F3}";
-        //}
+        else if (selectedGame == "pong_game")
+        {
+            if (pongGameController.instance.TargetPosition.HasValue) return $"{pongGameController.instance.TargetPosition.Value.x:F3},{pongGameController.instance.TargetPosition.Value.y:F3}";
+        }
         //else if (selectedGame == "TUK")
         //{
         //    if (FlappyGameControl.Instance.TargetPosition.HasValue) return $"{FlappyGameControl.Instance.TargetPosition.Value.x:F3},{FlappyGameControl.Instance.TargetPosition.Value.y:F3}";
@@ -273,10 +273,10 @@ public partial class AppData
         {
             return $"{spaceShooterGameContoller.Instance.gameState}";
         }
-        //else if (selectedGame == "PONG")
-        //{
-        //    return $"{PongGameController.Instance.gameState}";
-        //}
+        else if (selectedGame == "pong_game")
+        {
+            return $"{pongGameController.instance.gameState}";
+        }
         //else if (selectedGame == "TUK")
         //{
         //    return $"{FlappyGameControl.Instance.gameState}";

@@ -13,27 +13,15 @@ public static class SessionDataHandler
     public static string DATEFORMAT = "dd/MM";
 
     //SESSION FILE  HEADER FORMAT AND DATETIME FORMAT
-    public static string DATEFORMAT_INFILE = "dd-MM-yyyy HH:mm:ss";
+    public static string DATEFORMAT_INFILE = "yyyy-MM-dd HH:mm:ss";
     public static string DATETIME = "DateTime";
     public static string MOVETIME = "moveTime";
     public static string STARTTIME = "StartTime";
     public static string STOPTIME = "StopTime";
-    public static string MOVEMENT = "Mechanism";
+    public static string MOVEMENT = "Movement";
     public static Dictionary<string, float> movementMoveTimePrev { get; private set; } // Previous movement time 
   
-    //public static void parseMovementMoveTimePrev()
-    //{
-    //    movementMoveTimePrev = marsUserData.createMoveTimeDictionary();
-    //    for (int i = 0; i < MarsDefs.Movements.Length; i++)
-    //    {
-    //        var _totalMoveTime = marsUserData.dTableSession.AsEnumerable()
-    //            .Where(row => DateTime.ParseExact(row.Field<string>(dateTime), dateTimeFormat, CultureInfo.InvariantCulture).Date == DateTime.Now.Date)
-    //            .Where(row => row.Field<string>(movement) == MarsDefs.Movements[i])
-    //            .Sum(row => Convert.ToInt32(row[moveTime]));
-    //        movementMoveTimePrev[MarsDefs.Movements[i]] = _totalMoveTime / 60f;
-    //    }
-    //}
-
+    
     //CALCULATE MOVETIME PER DAY FOR ALL MOVEMENTS
     public static  void MovTimePerDay()
     {
@@ -90,30 +78,4 @@ public static class SessionDataHandler
         }
     }
 
-    /*
-    * Calculate the movement time for each training day.
-    */
-    public static DaySummary[] CalculateMoveTimePerDay(int noOfPastDays = 7)
-    {
-        DateTime today = DateTime.Now.Date;
-        DaySummary[] daySummaries = new DaySummary[noOfPastDays];
-        // Find the move times for the last seven days excluding today. If the date is missing, then the move time is set to zero.
-        for (int i = 1; i <= noOfPastDays; i++)
-        {
-            DateTime _day = today.AddDays(-i);
-            // Get the summary data for this date.
-            var _moveTime = AppData.Instance.userData.dTableSession.AsEnumerable()
-                .Where(row => DateTime.ParseExact(row.Field<string>(DATETIME), DATEFORMAT_INFILE, CultureInfo.InvariantCulture).Date == _day)
-                .Sum(row => Convert.ToInt32(row[MOVETIME]));
-            // Create the day summary.
-            daySummaries[i - 1] = new DaySummary
-            {
-                Day = Miscellaneous.GetAbbreviatedDayName(_day.DayOfWeek),
-                Date = _day.ToString(DATEFORMAT),
-                MoveTime = _moveTime / 60f
-            };
-            //Debug.Log($"{i} | {daySummaries[i - 1].Day} | {daySummaries[i - 1].Date} | {daySummaries[i - 1].MoveTime}");
-        }
-        return daySummaries;
-    }
 }

@@ -19,9 +19,11 @@ public class BoundController : MonoBehaviour {
 		if(other.gameObject.tag == "Target"){
 			if(other.gameObject.GetComponent<Rigidbody2D>().velocity.x > 0){
              playAudio(1);
-				enemyScore++;
+
+		    pongGameController.instance.BallMissed();
 			} else {
-				playerScore++;
+				
+
                playAudio(0);
             }
 

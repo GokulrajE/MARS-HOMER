@@ -37,17 +37,15 @@ public class BirdControl : MonoBehaviour
     Animator anime;
     // player controls
 
-    public int controlValue;
+  
     public static float playSize;
-    public static int FlipAngle = 1;
-    public static float tempRobot, tempBird;
-    public bool set = false;
-    public TMPro.TMP_Dropdown ControlMethod;
+   
+   
+ 
     public float angle1;
 
-    int totalLife = 5;
-    int currentLife = 0;
-    bool columnHit;
+    int currentLife;
+
     public Image life1;
     public Image life2;
     public Image life3;
@@ -75,28 +73,18 @@ public class BirdControl : MonoBehaviour
 
     float startTime;
     float endTime;
-    float loadcell;
-    // Start is called before the first frame update
-
-    float targetAngle;
 
     public FlappyGameControl FGC;
 
-    //flappybird style for hand grip
-    private Vector3 Direction;
+   
     public float gravity = -9.8f;
     public float strength;
 
-    long temp_ms = 0;
 
     public static int collision_count;
     public int total_life = 3;
     public int overall_life = 3;
 
-    string date_now;
-    string hospno;
-    int hand_use;
-    int count_session;
 
     public static int hit_count = 0;
 
@@ -156,26 +144,23 @@ public class BirdControl : MonoBehaviour
             else
             {
                 overall_life = overall_life - 1;
-                // Debug.Log(overall_life+" :gameOver__");
                 FlappyGameControl.instance.BirdDied();
-                // Debug.Log("over!");
                 collision_count = 0;
                 life1.enabled = true;
                 life2.enabled = true;
                 life3.enabled = true;
-                // Destroy(gameObject);
-                // gameObject.SetActive (false);
+           
                 if (overall_life == 0)
                 {
-                    // FlappyGameControl.instance.BirdDied();
+               
                     reduce_speed = true;
                     overall_life = 3;
-                    // Debug.Log(overall_life + ".." +reduce_speed+" :reduce_speed");
+              
                 }
                 else
                 {
                     reduce_speed = false;
-                    // Debug.Log(reduce_speed+" :reduce_speed");
+                
                 }
 
             }
@@ -199,7 +184,7 @@ public class BirdControl : MonoBehaviour
         //Debug.Log(y_value);
         GetComponent<Rigidbody2D>().position = new Vector3
         (
-            0.0f,
+            -6f,
             (float)y_value,
             0.0f
         );

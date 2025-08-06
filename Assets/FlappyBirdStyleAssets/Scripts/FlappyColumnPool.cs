@@ -31,7 +31,7 @@ public class FlappyColumnPool : MonoBehaviour
     public  int difficultyLevel =10;
     bool setup;
 
-    float prevSpawnTime;
+    public float prevSpawnTime;
 
     void Awake()
     {

@@ -4,7 +4,7 @@ using System.Collections;
 public class EnemyController : MonoBehaviour {
 
 	//Speed of the enemy
-	public static float speed = 2.9f;
+	public static float speed = 10f;
  
     //the ball
     Transform ball;
@@ -24,15 +24,17 @@ public class EnemyController : MonoBehaviour {
 	}
     private void OnCollisionEnter2D(Collision2D collision)
     {
-     
-        Debug.Log("enemy hit");
+		pongGameController.instance.enemyScore++;
+        //Debug.Log("enemy hit");
     }
     
     // Movement for the paddle
     void Move () {
 
 		//finding the ball
+		if(!pongGameController.instance.IsGamePlaying())return;
 		if(ball == null){
+		
 			ball = GameObject.FindGameObjectWithTag("Target").transform;
 		}
 

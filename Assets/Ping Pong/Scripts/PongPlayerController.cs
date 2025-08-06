@@ -1,73 +1,65 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
-using System.IO;
-using Unity.VisualScripting.Antlr3.Runtime;
-using static AppData;
-using System.Data;
-
-
 
 public class PongPlayerController : MonoBehaviour
 {
     public static PongPlayerController instance;
 
 	public float speed = 10;
-   
     static float topBound = 3.6F;
 	static float bottomBound = -3.6F;
     Vector2 direction;
-
-   
     public static float playSize;
-    public static float[] rom;
+   
     public static int[] DEPENDENT = new int[] {0,-1,1};
-  
-
-    public static int reps;
-  
-    public int PongGameCount;
-
+    public float[] currRom;
     public GameObject player;
-    public float yMax, yMin,previousValue,yValue;
-    public float time;
+
+    public float yMax, yMin,unityValY;
+
 
     void Start () {
+
         playSize = topBound - bottomBound;
-        PongGameCount++;
-      
+       
+        //THIS SHOULD FETCH BASED ON THE MARSMODE
+        currRom = AppData.Instance.selectedMovement.CurrentAromFWS;
+        yMin = currRom[2];
+        yMax = currRom[3];
     }
 
-   
+
 
     // Update is called once per frame
     void Update ()
     {
-        
-        Game();
-        time += Time.deltaTime;
-        //recordData();
-        
+        updatePlayerPosition();
+       
     }
 
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        pongGameController.instance.BallHitted();
+        pongGameController.instance.playerScore++;
        
     }
-    private void OntriggerEnter2D(Collision2D collision)
-    {
-    }
-    public void Game()
+    
+    public void updatePlayerPosition()
     {
         
 
         if (Mathf.Abs(MarsComm.angle1) > (Mathf.Abs(MovementSceneHandler.initialAngle) - 20))
         {
-            yValue = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle1) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle2) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle2 + 3.14f / 180 * DEPENDENT[AppData.Instance.userData.uaLength] * MarsComm.angle3))), yMin, yMax);
-            this.transform.position = new Vector2(this.transform.position.x,yValue );
-            //Debug.Log(Angle2ScreenZ((Mathf.Sin(3.14f / 180 * MarsComm.angleOne) * (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo) + 291 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleTwo + 3.14f / 180 * DEPENDENT[AppData.useHand] * MarsComm.angleThree))), y_min, y_max));
+            unityValY = -Angle2ScreenZ((Mathf.Sin(3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle1) * 
+                                       (475 * Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] *
+                                       MarsComm.angle2) + 291 * 
+                                       Mathf.Cos(3.14f / 180 * DEPENDENT[AppData.Instance.userData.useHand] * 
+                                       MarsComm.angle2 + 3.14f / 180 * 
+                                       DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle3))),
+                                       yMin, 
+                                       yMax);
+            this.transform.position = new Vector2(this.transform.position.x,unityValY );
+            
             if (transform.position.y > topBound)
             {
                 transform.position = new Vector3(transform.position.x, topBound, 0);
@@ -77,18 +69,13 @@ public class PongPlayerController : MonoBehaviour
                 transform.position = new Vector3(transform.position.x, bottomBound, 0);
             }
             player.GetComponent<SpriteRenderer>().color = new Color32(0, 255, 0, 255);
-            if(yValue != previousValue) {
-               
-                Debug.Log("playermoving");
-                previousValue = yValue;
-            }
+         
         }
         else
         {
             player.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 0, 255);
         }
-        //PongData();
-        //KeyboardControl();
+      
 
     }
 
