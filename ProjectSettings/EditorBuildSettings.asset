@@ -138,7 +138,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CONFIG.unity
     guid: a2ba4a851b035334aa6baf3d2f143627
   - enabled: 1
-    path: Assets/Scenes/GETCONFIG.unity
+    path: Assets/Scenes/getConfig.unity
     guid: 96c617e643758dd43bc7511e43abb0df
   - enabled: 1
     path: Assets/Scenes/ASSESSROM.unity

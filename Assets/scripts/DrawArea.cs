@@ -82,7 +82,7 @@ public class DrawArea : MonoBehaviour
 
     public void onclick_recalibrate()
     {
-        SceneManager.LoadScene("ASSROM");
+        SceneManager.LoadScene("DRAWAREA");
 
     }
     public void OnDestroy()
