@@ -30,7 +30,8 @@ public class MovementSceneHandler : MonoBehaviour
     public bool ACTIVATE = false;
     public bool DEACTIVATE = false;
 
-    public static string[] selectGame = { "FlappyGame", "space_shooter_home", "pong_game" };
+    
+    public static string[] selectGame = { "space_shooter_home", "pong_game", "FlappyGame" };
     void Start()
     {
 

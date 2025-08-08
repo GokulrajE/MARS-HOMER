@@ -15,7 +15,7 @@ using System.Text;
 
 public static class MarsDefs
 {
-    public static readonly string[] Movements = new string[] { "SFE", "SABDU", "ELFE" };
+    public static readonly string[] Movements = new string[] {"SABDU","ELFE","SFE"};
    
     public static int getMovementIndex(string Movement)
     {

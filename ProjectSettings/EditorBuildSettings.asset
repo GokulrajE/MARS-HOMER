@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/weightcalibrationScene.unity
     guid: d7780cab2ec8f474cb47263b3c82e608
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/assessmentScene.unity
     guid: 547b0a86ddce3864380b06820eb7b926
   - enabled: 0
@@ -81,7 +81,7 @@ EditorBuildSettings:
     path: Assets/Scenes/SpaceShooter/SpaceShooter_Level10.unity
     guid: 6b039c561ae238a4d83acb9da5b28c91
   - enabled: 1
-    path: Assets/FlappyBirdStyleAssets/Scenes/FlappyGame.unity
+    path: Assets/FlappyGame/Scenes/FlappyGame.unity
     guid: 071352bb11a2bdd49a617f0ddbee8565
   - enabled: 0
     path: Assets/Ping_Pong/pong_game.unity

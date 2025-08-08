@@ -146,9 +146,13 @@ public partial class AppData
         rawDataString.AppendLine($":TrialType: ");
         rawDataString.AppendLine($":TrialStartTime: {trialStartTime:yyyy-MM-ddTHH:mm:ss}");
         rawDataString.AppendLine($":TrialNumberDay: {selectedMovement.trialNumberDay}");
-        rawDataString.AppendLine($":FWS-ROM: X-[{selectedMovement.CurrentAromFWS[0]:F3},{selectedMovement.CurrentAromFWS[1]:F3}],Y-[{selectedMovement.CurrentAromFWS[2]:F3},{selectedMovement.CurrentAromFWS[3]:F3}]");
-        rawDataString.AppendLine($":HWS-ROM: X-[{selectedMovement.CurrentAromHWS[0]:F3},{selectedMovement.CurrentAromHWS[1]:F3}],Y-[{selectedMovement.CurrentAromHWS[2]:F3},{selectedMovement.CurrentAromHWS[3]:F3}]");
-        rawDataString.AppendLine($":FWS-ROM: X-[{selectedMovement.CurrentAromNWS[0]:F3},{selectedMovement.CurrentAromNWS[1]:F3}],Y-[{selectedMovement.CurrentAromNWS[2]:F3},{selectedMovement.CurrentAromNWS[3]:F3}]");
+        if(selectedMovement.name != "SFE")
+        {
+            rawDataString.AppendLine($":FWS-ROM: X-[{selectedMovement.CurrentAromFWS[0]:F3},{selectedMovement.CurrentAromFWS[1]:F3}],Y-[{selectedMovement.CurrentAromFWS[2]:F3},{selectedMovement.CurrentAromFWS[3]:F3}]");
+            rawDataString.AppendLine($":HWS-ROM: X-[{selectedMovement.CurrentAromHWS[0]:F3},{selectedMovement.CurrentAromHWS[1]:F3}],Y-[{selectedMovement.CurrentAromHWS[2]:F3},{selectedMovement.CurrentAromHWS[3]:F3}]");
+            rawDataString.AppendLine($":FWS-ROM: X-[{selectedMovement.CurrentAromNWS[0]:F3},{selectedMovement.CurrentAromNWS[1]:F3}],Y-[{selectedMovement.CurrentAromNWS[2]:F3},{selectedMovement.CurrentAromNWS[3]:F3}]");
+        }
+        
         rawDataString.AppendLine($":DesiredSuccessRate: ");
         rawDataString.AppendLine($":ControlBound: ");
         rawDataString.AppendLine(string.Join(",", DataManager.RAWFILEHEADER_));
@@ -238,10 +242,10 @@ public partial class AppData
         {
             return $"{pongGameController.instance.PlayerPosition.x:F3},{pongGameController.instance.PlayerPosition.y:F3}";
         }
-        //else if (selectedGame == "TUK")
-        //{
-        //    return $"{FlappyGameControl.Instance.PlayerPosition.x:F3},{FlappyGameControl.Instance.PlayerPosition.y:F3}";
-        //}
+        else if (selectedGame == "FlappyGame")
+        {
+            return $"{FlappyGameControl.instance.PlayerPosition.x:F3},{FlappyGameControl.instance.PlayerPosition.y:F3}";
+        }
         return ",";
     }
 
@@ -259,10 +263,10 @@ public partial class AppData
         {
             if (pongGameController.instance.TargetPosition.HasValue) return $"{pongGameController.instance.TargetPosition.Value.x:F3},{pongGameController.instance.TargetPosition.Value.y:F3}";
         }
-        //else if (selectedGame == "TUK")
-        //{
-        //    if (FlappyGameControl.Instance.TargetPosition.HasValue) return $"{FlappyGameControl.Instance.TargetPosition.Value.x:F3},{FlappyGameControl.Instance.TargetPosition.Value.y:F3}";
-        //}
+        else if (selectedGame == "FlappyGame")
+        {
+            if (FlappyGameControl.instance.TargetPosition.HasValue) return $"{FlappyGameControl.instance.TargetPosition.Value.x:F3},{FlappyGameControl.instance.TargetPosition.Value.y:F3}";
+        }
         return ",";
     }
 
@@ -277,10 +281,10 @@ public partial class AppData
         {
             return $"{pongGameController.instance.gameState}";
         }
-        //else if (selectedGame == "TUK")
-        //{
-        //    return $"{FlappyGameControl.Instance.gameState}";
-        //}
+        else if (selectedGame == "FlappyGame")
+        {
+            return $"{FlappyGameControl.instance.gameState}";
+        }
         return "";
     }
 }
