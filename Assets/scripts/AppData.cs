@@ -12,7 +12,7 @@ public partial class AppData
     public static AppData Instance => _instance.Value;
 
 
-    static public readonly string comPort = "COM15";
+    static public readonly string COMPort = "COM32";
 
     /*
    * SESSION DETAILS
@@ -46,6 +46,8 @@ public partial class AppData
 
     public marsUserData userData;
 
+    public MarsTransitionControl transitionControl { get; private set; }
+
     
     public static float[] dataSendToRobot;  //parameters send  to robot
 
@@ -72,7 +74,7 @@ public partial class AppData
         UnityEngine.Debug.Log(DataManager.sessionFilePath);
 
         userData = new marsUserData(DataManager.configFilePath, DataManager.sessionFilePath);
-
+       transitionControl = new MarsTransitionControl();
         // Selected movement and game.
         selectedMovement = null;
         selectedGame = null;
@@ -93,20 +95,23 @@ public partial class AppData
         //Initialize the MARS Comm logger.
         if (datetimestr != null)
         {
-            MarsComLogger.StartLogging(datetimestr);
+            MarsCommLogger.StartLogging(datetimestr);
         }
 
         if (!ConnectToRobot.isMARS)
         {
-            ConnectToRobot.Connect(comPort);
+            ConnectToRobot.Connect(COMPort);
         }
+        MarsComm.getVersion();
+        MarsComm.startSensorStream();
+
         //// Check if the connection is successful.
         if (!ConnectToRobot.isConnected)
         {
-            AppLogger.LogError($"Failed to connect to MARS @ {comPort}.");
-            throw new Exception($"Failed to connect to MARS @ {comPort}.");
+            AppLogger.LogError($"Failed to connect to MARS @ {COMPort}.");
+            throw new Exception($"Failed to connect to MARS @ {COMPort}.");
         }
-        AppLogger.LogInfo($"Connected to MARS @ {comPort}.");
+        AppLogger.LogInfo($"Connected to MARS @ {COMPort}.");
         //// Set control to NONE, calibrate and get version.
        
         // The following code is to ensure that this can be called from other scenes,
@@ -120,7 +125,7 @@ public partial class AppData
     }
     public void InitializeRobotDiagnostics()
     {
-        ConnectToRobot.Connect(comPort);
+        ConnectToRobot.Connect(COMPort);
 
     }
 

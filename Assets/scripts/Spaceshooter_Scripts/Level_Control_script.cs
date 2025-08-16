@@ -28,6 +28,7 @@ public class Level_Control_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MarsComm.sendHeartbeat();
      // Check if it time to switch to the next scene
             if (changeScene == true)
             {

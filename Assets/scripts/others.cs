@@ -10,6 +10,7 @@ using static AppData;
 using System.IO;
 using Unity.VisualScripting;
 using System.Text;
+using System.Diagnostics.Eventing.Reader;
 
 
 
@@ -167,11 +168,11 @@ public class marsUserData
         }
         if (rightHand)
         {
-            useHand = 2;
+            useHand = 1;
         }
         else
         {
-            useHand = 1;
+            useHand = 2;
         }
         faLength = int.Parse(lastRow.Field<string>("forearmLength"));
         uaLength = int.Parse(lastRow.Field<string>("upperarmLength"));
@@ -609,6 +610,180 @@ public class ROM
         aromMinY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MinY"));
         aromMaxY = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("MaxY"));
 
+    }
+}
+public class MarsTransitionControl
+{
+    public DynLimParameters oldLimbDynWeights { get; private set; }
+    public DynLimParameters newhLimbDynWeights { get; private set; }
+    public DynLimParameters currhLimbDynWeights { get => newhLimbDynWeights.isParamSet ? newhLimbDynWeights : (oldLimbDynWeights.isParamSet ? oldLimbDynWeights : null); }
+    public MarsTransitionControl()
+    {
+        oldLimbDynWeights = new DynLimParameters(true);
+        newhLimbDynWeights = new DynLimParameters();
+      
+    }
+    public float hlimbDynUAWeight => currhLimbDynWeights == null ? 0 : currhLimbDynWeights.hLimbDynUAWeight;
+    public float hlimbDynFAWeight => currhLimbDynWeights == null ? 0 : currhLimbDynWeights.hLimbDynFAWeight;
+    public bool isDynLimbParamExist { get => hlimbDynUAWeight != 0 && hlimbDynFAWeight != 0; }
+    public bool isEnable { get => MarsComm.LIMBDYNPARAM[MarsComm.limbDynParam] != "NOLIMBDYNPARAM"
+                                  && (MarsComm.CONTROLTYPE[MarsComm.controlType] == "POSITION"|| MarsComm.CONTROLTYPE[MarsComm.controlType] == "AWS")
+                                  &&MarsComm.target == -90f || MarsComm.target == 1.0f; }
+    //public bool isEnable { get => MarsComm.LIMBDYNPARAM[MarsComm.limbDynParam] != "NOLIMBDYNPARAM" && MarsComm.CONTROLTYPE[MarsComm.controlType] == "POSITION"; }
+    //check Limb is fixed with mars or not
+    public bool readyToChange { get => MarsComm.force > 6f; }
+  
+    public bool isDynLimParamSet()
+    {
+        if(MarsComm.limbDynParam != 0x01 || MarsComm.uaWeight != hlimbDynUAWeight || MarsComm.faWeight != hlimbDynFAWeight)
+          return false;
+        return true;
+    }
+    private void setDynLimParams()
+    {
+        if (!isDynLimbParamExist) return;
+        MarsComm.setHumanLimbDynParams(hlimbDynUAWeight, hlimbDynFAWeight);
+        MarsComm.getHumanLimbDynParams();
+    }
+    public void restParameters()
+    {
+        newhLimbDynWeights.resetValues();
+        //hlimbDynFAWeight = 0;
+        //hlimbDynUAWeight = 0;
+
+    }
+    public void saveParameters(float uaweight, float faweight)
+    {
+        newhLimbDynWeights.setDynLimParameters(uaweight, faweight);
+        if (newhLimbDynWeights.isParamSet)
+        {
+            newhLimbDynWeights.WritelimbDynPara();
+        }
+    }
+    public void enable()
+    {
+        if(isEnable)return;
+        if (MarsComm.LIMBDYNPARAM[MarsComm.limbDynParam] == "NOLIMBDYNPARAM")
+        {
+            setDynLimParams();
+            return;
+        }
+        else if(MarsComm.CONTROLTYPE[MarsComm.controlType] != "POSITION" && isDynLimParamSet())
+        {
+
+            MarsComm.transitionControl("POSITION", -90f, 5.0f);
+            return;
+        }
+        else if (MarsComm.target != -90f)
+        {
+            MarsComm.setControlTarget(-90f);
+            return;
+        }
+        else if (MarsComm.LIMBDYNPARAM[MarsComm.limbDynParam] == "NOLIMBDYNPARAM")
+        {
+            setDynLimParams();
+            return;
+        }
+    }
+   public void setFWS()
+   {
+        if (MarsComm.CONTROLTYPE[MarsComm.controlType] != "AWS" && isEnable && readyToChange)
+        {
+            // Set the control mode to AWS.
+            Debug.Log("AWS set full");
+            MarsComm.transitionControl("AWS", 1.0f, 5.0f);
+        }
+
+    }
+    public void setHWS()
+    {
+        if (MarsComm.CONTROLTYPE[MarsComm.controlType] == "AWS")
+        {
+            // Set the control mode to AWS.
+            Debug.Log("AWS set half");
+            MarsComm.setControlTarget(0.5f, dur: 6f);
+        }
+    }
+    public void setNWS()
+    {
+        Debug.Log(readyToChange);
+        if (MarsComm.CONTROLTYPE[MarsComm.controlType] == "AWS")
+        {
+            // Set the control mode to AWS.
+            Debug.Log("AWS set no");
+            MarsComm.setControlTarget(0.0f, dur:6f);
+            //MarsComm.transitionControl("AWS", 0.0f, 5.0f);
+        }
+    }
+
+}
+public class DynLimParameters{
+    public float hLimbDynUAWeight { get; private set; }
+    public  float hLimbDynFAWeight { get; private set; }
+
+    public  bool isParamSet  {get => hLimbDynUAWeight!=0 && hLimbDynUAWeight!=0 ;}
+
+    public DynLimParameters()
+    {
+        hLimbDynUAWeight = 0;
+        hLimbDynFAWeight = 0;
+    }
+    public DynLimParameters(bool readFromFile)
+    {
+        if(readFromFile)ReadFromFile();
+        else
+        {
+            hLimbDynUAWeight = 0;
+            hLimbDynFAWeight = 0;
+        }
+    }
+    public void setDynLimParameters(float uaWeight, float faWeight)
+    {
+        hLimbDynUAWeight = uaWeight;
+        hLimbDynFAWeight = faWeight;
+       
+    }
+    private void ReadFromFile()
+    {
+        string datetime;
+        string fileName = DataManager.dynLimParaFilePath;
+        if (!File.Exists(fileName))
+            return;
+        DataTable romData = DataManager.loadCSV(fileName);
+        // Check the number of rows.
+        if (romData.Rows.Count == 0)
+        {
+            // Set default values for the mechanism.
+            datetime = null;
+           
+            return;
+        }
+        // Assign ROM from the last row.
+        datetime = romData.Rows[romData.Rows.Count - 1].Field<string>("DateTime");
+        hLimbDynUAWeight = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("hLimbDynUAWeight"));
+        hLimbDynFAWeight = float.Parse(romData.Rows[romData.Rows.Count - 1].Field<string>("hLimbDynFAWeight"));
+       
+    }
+    public void resetValues()
+    {
+        hLimbDynUAWeight = 0; 
+        hLimbDynFAWeight = 0;
+    }
+    public void WritelimbDynPara()
+    {
+        string[] FILEHEADER = new string[] { "DateTIme", "hLimbDynUAWeight", "hLimbDynFAWeight" };
+
+        if (!File.Exists(DataManager.dynLimParaFilePath))
+        {
+            using (var writer = new StreamWriter(DataManager.dynLimParaFilePath, false, Encoding.UTF8))
+            {
+                writer.WriteLine(string.Join(",", FILEHEADER));
+            }
+        }
+        using (StreamWriter file = new StreamWriter(DataManager.dynLimParaFilePath, true))
+        {
+            file.WriteLine(string.Join(",", new string[] { DateTime.Now.ToString(), hLimbDynUAWeight.ToString(), hLimbDynFAWeight.ToString() }));
+        }
     }
 }
 //public class MarsController

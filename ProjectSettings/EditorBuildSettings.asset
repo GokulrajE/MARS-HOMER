@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/summaryScene.unity
     guid: 30a7fb6ffffe3a647af9025b934fe098
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/weightcalibrationScene.unity
     guid: d7780cab2ec8f474cb47263b3c82e608
   - enabled: 0
@@ -146,5 +146,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DRAWAREA.unity
     guid: 39136515ba527ee47be39a423a1d8bf9
+  - enabled: 1
+    path: Assets/Scenes/WEIGHTEST.unity
+    guid: 873379b4e24d8c54aa8978fed016276a
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -1,43 +1,31 @@
-
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition.Primitives;
-using System.IO;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
 using System.Threading;
-//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.Rendering;
 
 /*
- * JediComm
+ * JediCom
  * Class to handle serial communication with a device using the JEDI (Jolly sErial Data Interface)
  * format for data communication.
  */
 public static class JediComm
 {
-    public static SerialPort serPort { get; private set; }
-    private static Thread reader;
-
-    //payLoad related variables
-    static public byte[] payLoadBytes = new byte[256] ;
+    private static readonly bool OUTDEBUG = false; // Set this to true or false based on your debugging needs
+    static public bool stop;
+    static public bool pause;
+    static public SerialPort serPort { get; private set; }
+    static private Thread reader;
+    static private int plCount = 0;
+    // static public double HOCScale = 3.97 * Math.PI / 180;
+    static private byte[] rawBytes = new byte[256];
+    static private DateTime plTime;
 
     // Headers for Rx and Tx.
     static public byte HeaderIn = 0xFF;
-    static public byte[] HeaderOut = new byte[] { 0xFF, 0xFE };
-
-    static private DateTime plTime;
-    //flags
-    private static bool stop = false;
-    private static bool pause = false;
-    public static volatile bool isMars = false;
-    public static int plcount;
-
-    // Headers for Rx and Tx.
-    //static public byte HeaderIn = 0xFF;
-    //static public byte HeaderOut = 0xAA;
+    static public byte HeaderOut = 0xAA;
 
     static public void InitSerialComm(string port)
     {
@@ -76,120 +64,136 @@ public static class JediComm
         }
     }
 
-
-    public static void Disconnect()
+    static public void Disconnect()
     {
+        stop = true;
         if (serPort.IsOpen)
         {
-            stop = true;
-            reader.Join(); // Ensure the reader thread has exited
+            reader.Abort();
             serPort.Close();
-            Debug.Log("Serial port closed.");
         }
     }
 
-
-    public static void serialreaderthread()
+    static private void serialreaderthread()
     {
-        while (!stop)
-        {
-            if (pause) continue;
+        byte[] _floatbytes = new byte[4];
 
+        // start stop watch.
+        while (stop == false)
+        {
+            // Do nothing if paused
+            if (pause)
+            {
+                continue;
+            }
+            // Check if the serial port is open.
+            if (serPort.IsOpen == false)
+            {
+                Debug.Log("Serial port is not open.");
+                stop = true;
+                continue;
+            }
             try
             {
-                //DebugReadBytes();
-                if (ReadFullSerialPacket())
+                // Read full packet.
+                if (readFullSerialPacket())
                 {
                     plTime = DateTime.Now;
-                    isMars = true;
-                    MarsComm.initalizeDataLength((int)plcount);
-                    MarsComm.parseRawBytes(payLoadBytes, (uint)plcount, plTime);
+                    ConnectToRobot.isMARS = true;
+                    MarsComm.parseByteArray(rawBytes, plCount, plTime);
                 }
-                ////AppData.sendToRobot();
+                else
+                {
+                    ConnectToRobot.isMARS = false;
+                }
             }
             catch (TimeoutException)
             {
-                isMars = false; 
-                continue;        
+                continue;
             }
-        }
-        serPort.Close();  
-    }
-    private static void DebugReadBytes()
-    {
-        int availableBytes = serPort.BytesToRead;
-        if (availableBytes > 0)
-        {
-            byte[] buffer = new byte[availableBytes];
-            serPort.Read(buffer, 0, availableBytes);
 
-            Debug.Log("Raw Bytes: " + BitConverter.ToString(buffer));
         }
+        serPort.Close();
     }
-   
-    private static bool ReadFullSerialPacket()
+
+
+    // Read a full serial packet.
+    static private bool readFullSerialPacket()
     {
-        int checksum = 0;
-        int receivedChecksum;
-        plcount = 0;
-        
-        if (serPort.ReadByte() == HeaderIn && serPort.ReadByte() == HeaderIn)
+        plCount = 0;
+        int chksum = 0;
+        int _chksum;
+
+        if ((serPort.ReadByte() == HeaderIn) && (serPort.ReadByte() == HeaderIn))
         {
-            checksum += HeaderIn + HeaderIn;
-            // Read payload size
-            payLoadBytes[plcount++] = (byte)serPort.ReadByte();
-            //Debug.Log(payLoadBytes[0]);
-            checksum += payLoadBytes[0];
-            if (payLoadBytes[0] != HeaderIn) 
-            { 
-                for (int i = 0; i < payLoadBytes[0]-1; i++)
+            plCount = 0;
+            chksum = HeaderIn + HeaderIn;
+            // Number of bytes to read.
+            rawBytes[plCount++] = (byte)serPort.ReadByte();
+            chksum += rawBytes[0];
+            // Debug.Log($"No. of Byte: {rawBytes[0]}");
+            if (rawBytes[0] != 255)
+            {
+                // Read all the payload bytes.
+                for (int i = 0; i < rawBytes[0] - 1; i++)
                 {
-                    payLoadBytes[plcount++] = (byte)serPort.ReadByte();
-                    checksum += payLoadBytes[plcount-1];
+                    rawBytes[plCount++] = (byte)serPort.ReadByte();
+                    chksum += rawBytes[plCount - 1];
                 }
-                // Read the transmitted checksum
-                receivedChecksum = serPort.ReadByte();
-               
-                return (receivedChecksum == (checksum & 0xFF));
+                // Print Rawbytes
+                // Debug.Log("Raw Byte: " + string.Join(",", rawBytes));
+                _chksum = serPort.ReadByte();
+                return (_chksum == (chksum & 0xFF));
             }
             else
             {
+                Debug.Log("Data Error. The number of data packets cannot be 255.");
                 return false;
             }
         }
-        else{
+        else
+        {
+            //Disconnect();
             return false;
         }
-        
     }
 
     public static void SendMessage(byte[] outBytes)
     {
-        List<byte> outPayload = new List<byte>
-        {
-            HeaderOut[0], // Header byte 1
-            HeaderOut[1], // Header byte 2
-            (byte)(outBytes.Length + 1) // Length of the message (+1 for checksum)
+        // Prepare the payload (with the header, length, message, and checksum)
+        List<byte> outPayload = new List<byte> {
+            HeaderOut,                     // Header byte 1
+            HeaderOut,                     // Header byte 2
+            (byte)(outBytes.Length + 1)    // Length of the message (+1 for checksum)
         };
 
+        // Add the message bytes to the payload
         outPayload.AddRange(outBytes);
+
+        // Calculate checksum (sum of all bytes modulo 256)
         byte checksum = (byte)(outPayload.Sum(b => b) % 256);
+
+        // Add the checksum at the end of the payload
         outPayload.Add(checksum);
 
-        bool outDebug = false; // Set this to true for debugging
-        if (outDebug)
+        // If debugging is enabled, print the outgoing data
+        if (OUTDEBUG)
         {
-            Debug.Log("Out data: " + string.Join(" ", outPayload.Select(b => b.ToString("X2"))));
+            Debug.Log("Out data: ");
+            foreach (var elem in outPayload)
+            {
+                Debug.Log($"{elem} ");
+            }
         }
 
+        // Send the message to the serial port
         try
         {
             serPort.Write(outPayload.ToArray(), 0, outPayload.Count);
-            Debug.Log("Message sent to device.");
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error sending message: {ex.Message}");
+            Console.WriteLine($"Error sending message: {ex.Message}");
         }
     }
 }

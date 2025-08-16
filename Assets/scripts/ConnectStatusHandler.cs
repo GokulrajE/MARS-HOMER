@@ -29,30 +29,30 @@ public class connectStatusHandler : MonoBehaviour
     {
         connectStatus = GetComponent<Image>(); // Uncomment if connectStatus is on the same GameObject
         loading = transform.Find("loading").gameObject; // Assuming loading is a child GameObject
-        //statusText = transform.Find("statusText").GetComponent<TextMeshProUGUI>();
+        statusText = transform.Find("statusText").GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
     void Update()
     {
         // Update connection status
-        if (JediComm.isMars)
+        if (ConnectToRobot.isMARS)
         {
             connectStatus.color = Color.green;
             loading.SetActive(false);
-            //statusText.text = $"{MarsComm.version}\n[{MarsComm.frameRate:F1}Hz]";
+            statusText.text = $"{MarsComm.version}\n[{MarsComm.frameRate:F1}Hz]";
         } 
         else
         {
             connectStatus.color = Color.red;
             loading.SetActive(true);
-            //statusText.text = "Not connected";
+            statusText.text = "Not connected";
         }
     }
     private void CloseAppLogger()
     {
         AppLogger.StopLogging();
-        MarsComLogger.StopLogging();
+        MarsCommLogger.StopLogging();
 
         //Need to change
         //MarsAanLogger.StopLogging();

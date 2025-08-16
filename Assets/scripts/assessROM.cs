@@ -28,6 +28,14 @@ public class assessROM : MonoBehaviour
     public bool changeScene = false,
                 isFinished = false;
    
+    public enum MARSMODE
+    {
+        NONE,
+        FWS,
+        HWS,
+        NWS,
+    }
+    public MARSMODE transCtrlMode = MARSMODE.NONE;
 
     void Start()
     {
@@ -46,9 +54,41 @@ public class assessROM : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (AppData.Instance.selectedMovement.MarsMode!= null && changeScene)
+        MarsComm.sendHeartbeat();
+       
+        if (AppData.Instance.selectedMovement.MarsMode != null && changeScene)
         {
-            SceneManager.LoadScene("DRAWAREA");
+            switch (transCtrlMode)
+            {
+                case MARSMODE.NONE:
+                    break;
+                case MARSMODE.FWS:
+                    if (MarsComm.target != 1.0f)
+                    {
+                        AppData.Instance.transitionControl.setFWS();
+                        return;
+                    }
+                    SceneManager.LoadScene("DRAWAREA");
+                    break;
+                case MARSMODE.HWS:
+                    if (MarsComm.target != 0.5f)
+                    {
+                        AppData.Instance.transitionControl.setHWS();
+                        return;
+                    }
+                    SceneManager.LoadScene("DRAWAREA");
+                    break;
+                case MARSMODE.NWS:
+                    if (MarsComm.target != 0.0f)
+                    {
+
+                        AppData.Instance.transitionControl.setNWS();
+                        return;
+                    }
+                    SceneManager.LoadScene("DRAWAREA");
+                    break;
+            }
+            //SceneManager.LoadScene("DRAWAREA");
             changeScene = false;
         }
         if (isFinished)
@@ -57,7 +97,7 @@ public class assessROM : MonoBehaviour
             SceneManager.LoadScene("CHOOSEMOVEMENT");
         }
 
-        }
+    }
     public void OnMarsButtonReleased()
     {
      
@@ -79,9 +119,9 @@ public class assessROM : MonoBehaviour
         panelHWS = hws.GetComponent<Image>();
         panelNWS = nws.GetComponent<Image>();
 
-        panelFWS.color = new Color32(89, 77, 77, 238); ; // grey
-        panelHWS.color = new Color32(89, 77, 77, 238); ; // grey
-        panelNWS.color = new Color32(89, 77, 77, 238); ; // grey
+        panelFWS.color = new Color32(60, 60, 60, 255); ; // grey
+        panelHWS.color = new Color32(60, 60, 60, 255); ; // grey
+        panelNWS.color = new Color32(60, 60, 60, 255); ; // grey
       
         fwsText.text = "";
         hwsText.text = "";
@@ -92,14 +132,18 @@ public class assessROM : MonoBehaviour
         if (!AppData.Instance.selectedMovement.aromCompletedFWS)
         {
             panelFWS.color = new Color32(251, 139, 30, 255);  // Orange
+            transCtrlMode = MARSMODE.FWS;
             AppData.Instance.selectedMovement.setMode("FWS");
+          
             message.text = "press mars button to access ROM for FWS";
             return;
         }
         else if (!AppData.Instance.selectedMovement.aromCompletedHWS)
         {
             panelHWS.color = new Color32(251, 139, 30, 255);  // Orange
+            transCtrlMode = MARSMODE.HWS;
             AppData.Instance.selectedMovement.setMode("HWS");
+        
             message.text = "press mars button to access ROM for HWS";
             return;
 
@@ -107,7 +151,9 @@ public class assessROM : MonoBehaviour
         else if (!AppData.Instance.selectedMovement.aromCompletedNWS)
         {
             panelNWS.color = new Color32(251, 139, 30, 255);  // Orange
+            transCtrlMode = MARSMODE.NWS;
             AppData.Instance.selectedMovement.setMode("NWS");
+      
             message.text = "press mars button to access ROM for NWS";
             return;
         }

@@ -54,10 +54,10 @@ public class Player_controller_s : MonoBehaviour
         
         //GET ROM DATA
         currRom = AppData.Instance.selectedMovement.CurrentAromFWS;
-        zMinMars = currRom[0];
-        zMaxMars = currRom[1];
-        yMinMars = currRom[2];
-        yMaxMars = currRom[3];
+        zMinMars = currRom[0] * 1000;
+        zMaxMars = currRom[1] * 1000;
+        yMinMars = currRom[2] * 1000;
+        yMaxMars = currRom[3] * 1000;
 
     }
    

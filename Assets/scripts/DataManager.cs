@@ -27,15 +27,15 @@ public class DataManager : MonoBehaviour
     public static readonly string directoryPath = Application.dataPath + "/data";
 
    
-    static string directoryPathRawData;
-    public static string directoryAssessmentData;
+    static string dirPathRawData;
+    public static string dirPathROMData;
     public static string sessionDirPath { get; private set; }
     public static string configFilePath {  get; private set; }
     public static string sessionFilePath { get; private set; }
     public static string assessFilePath { get; private set; }
     public static string logDirPath { get; private set; }
     public static string logPath { get; private set; }
-
+    public static string dynLimParaFilePath { get; private set; }
 
     public static string filePathUploadStatus = Application.dataPath + "/uploadStatus.txt";
 
@@ -61,24 +61,25 @@ public class DataManager : MonoBehaviour
     };
     public static string DATETIMEFORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static string GetRomFileName(string Movement, string Mode) => FixPath(Path.Combine(directoryAssessmentData, $"{Movement}-{Mode}-rom.csv"));
+    public static string GetRomFileName(string Movement, string Mode) => FixPath(Path.Combine(dirPathROMData, $"{Movement}-{Mode}-rom.csv"));
     public static string GetTrialRawDataFileName(
         int sessNo,
         int trialNo,
         string game,
-        string movement) => FixPath(Path.Combine(directoryPathRawData, $"raw-sess{sessNo:D2}-trial{trialNo:D3}-{game}-{movement}.csv"));
+        string movement) => FixPath(Path.Combine(dirPathRawData, $"raw-sess{sessNo:D2}-trial{trialNo:D3}-{game}-{movement}.csv"));
     public static void createFileStructure()
     {
-        directoryAssessmentData = basePath+ "/rom";
+        dirPathROMData = basePath + "/rom";
         sessionDirPath = basePath + "/sessions";
-        directoryPathRawData = basePath + "/rawdata";
+        dirPathRawData = basePath + "/rawdata";
         logPath = basePath + "/applog";
+        dynLimParaFilePath = FixPath(Path.Combine(dirPathROMData, "DYNLIMPARAM.csv"));
         sessionFilePath = FixPath(Path.Combine(sessionDirPath, "sessions.csv"));
-        assessFilePath = directoryAssessmentData + "/assessment.csv";
+        assessFilePath = dirPathROMData + "/assessment.csv";
         Directory.CreateDirectory(basePath);
         Directory.CreateDirectory(sessionDirPath);
-        Directory.CreateDirectory(directoryPathRawData);
-        Directory.CreateDirectory(directoryAssessmentData);
+        Directory.CreateDirectory(dirPathRawData);
+        Directory.CreateDirectory(dirPathROMData);
         Debug.Log("Directory created at: " + basePath);
         
     }

@@ -21,7 +21,7 @@ public class welcomSceneHandler : MonoBehaviour
     public bool piChartUpdated = false;
     private DaySummary[] daySummaries;
     public static bool changeScene = false;
-    public readonly string nextScene = "CHOOSEMOVEMENT";
+    public readonly string nextScene = "CALIB";
 
     public bool attachMarsButtonEvent = false;
 
@@ -65,7 +65,16 @@ public class welcomSceneHandler : MonoBehaviour
        
         UpdateUserData();
         UpdatePieChart();
-        AppData.Instance.SetMovement("SABDU");
+        //if (AppData.Instance.transitionControl.currhLimbDynWeights == null)
+        //{
+        //    //Do dynamic limb parameter set
+        //}
+        //else
+        //{
+        //    Debug.Log(AppData.Instance.transitionControl.hlimbDynFAWeight + "," + AppData.Instance.transitionControl.hlimbDynUAWeight+"weights");
+        //    //Activate Mars with full weight support
+        //}
+        //AppData.Instance.SetMovement("SABDU");
         //AppData.Instance.SetGame("spaceshooter");
 
         //Task.Run(() =>  // Run in a background task
@@ -83,6 +92,9 @@ public class welcomSceneHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        MarsComm.sendHeartbeat();
+
         if (!attachMarsButtonEvent && Time.timeSinceLevelLoad > 1)
         {
             attachMarsButtonEvent = true;

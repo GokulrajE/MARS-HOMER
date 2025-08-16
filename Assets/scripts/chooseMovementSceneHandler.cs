@@ -12,25 +12,22 @@ public class MovementSceneHandler : MonoBehaviour
 {
     //ui related variables
     public GameObject movementSelectGroup;
+    public GameObject marsActivation;
     public Button nextButton;
     public Button exit;
     public static float initialAngle;
-    private string nextScene = "calibratioScene";
+    private string nextScene;
     private string exitScene = "SummaryScene";
     private string assessmentScene = "ASSESSROM";
     public static float shAng;
     //flags
     private static bool changeScene = false;
     private bool toggleSelected = false;
-    public GameObject MessageBox;
-    //public TMP MesssageText;
-    public TextMeshProUGUI gainMessageText;
-    public TextMeshProUGUI DeactivateMessageText;
-    public Slider supportIndicator;
-    public bool ACTIVATE = false;
-    public bool DEACTIVATE = false;
-
-    
+    public Text message;
+    public Text SetAWSMessage;
+   
+       
+    //Game names
     public static string[] selectGame = { "space_shooter_home", "pong_game", "FlappyGame" };
     void Start()
     {
@@ -53,10 +50,21 @@ public class MovementSceneHandler : MonoBehaviour
 
     void Update()
     {
-      
-      
+        MarsComm.sendHeartbeat();
+        AppData.Instance.transitionControl.enable();
+        marsActivation.SetActive(AppData.Instance.transitionControl.isEnable);
+        message.gameObject.SetActive(MarsComm.CONTROLTYPE[MarsComm.controlType] == "AWS");
+        SetAWSMessage.gameObject.SetActive(MarsComm.CONTROLTYPE[MarsComm.controlType] != "AWS");
+       
+     
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
         {
+            if (AppData.Instance.selectedMovement == null)
+            {
+                message.text = "Please Select the Movement !!..";
+                return;
+            }
+
             SceneManager.LoadScene(assessmentScene);
         }
         //Check if a scene change is needed.
@@ -68,6 +76,7 @@ public class MovementSceneHandler : MonoBehaviour
         }
 
     }
+    
   
     public void AttachCallbacks()
     {
@@ -140,17 +149,19 @@ public class MovementSceneHandler : MonoBehaviour
                 AppData.Instance.SetMovement(child.name);
                 nextScene = selectGame[MarsDefs.getMovementIndex(AppData.Instance.selectedMovement.name)];
                 AppData.Instance.SetGame(nextScene);
-                if(AppData.Instance.selectedGame != selectGame[0])
+                if(AppData.Instance.selectedGame != selectGame[2])
                 {
                     if (AppData.Instance.selectedMovement.CurrentAromFWS == null
                        || AppData.Instance.selectedMovement.CurrentAromHWS == null
                        || AppData.Instance.selectedMovement.CurrentAromNWS == null
                        )nextScene = assessmentScene;
+                   
                 }
                 else
                 {
                     initialAngle = MarsComm.angle1;
                 }
+                message.text = "Press Mars Button to move Next Scene";
                 Debug.Log(nextScene);
                 AppLogger.LogInfo($"Selected '{AppData.Instance.selectedMovement.name}'.");
                 break;
@@ -160,16 +171,20 @@ public class MovementSceneHandler : MonoBehaviour
   
     public void OnMarsButtonReleased()
     {
-        if (toggleSelected)
+        if (toggleSelected && MarsComm.CONTROLTYPE[MarsComm.controlType]=="AWS")
         {
-
-
             changeScene = true;
             toggleSelected = false;
         }
         else
         {
+            //message.text = "Please Select the Movement !!..";
             Debug.LogWarning("Select at least one toggle to proceed.");
+        }
+
+        if (AppData.Instance.transitionControl.readyToChange)
+        {
+            AppData.Instance.transitionControl.setFWS();
         }
     }
 
@@ -189,16 +204,7 @@ public class MovementSceneHandler : MonoBehaviour
             yield return null;
         }
     }
-    public void onclickDeactivateMars()
-    {
-        if (MarsComm.SUPPORT > 0.10f)
-        {
-            DeactivateMessageText.text = "To Deacitvate, Activate NS 0%...";
-            return;
-        }
-        DEACTIVATE = true;
-        
-    }
+   
     private void OnExitButtonClicked()
     {
 

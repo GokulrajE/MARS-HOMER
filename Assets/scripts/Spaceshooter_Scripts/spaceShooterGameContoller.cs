@@ -116,6 +116,7 @@ public class spaceShooterGameContoller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MarsComm.sendHeartbeat();
         if (isGamePaused && gameState != GameStates.PAUSED) PauseGame();
         else if (!isGamePaused && gameState == GameStates.PAUSED) ResumeGame();
 
