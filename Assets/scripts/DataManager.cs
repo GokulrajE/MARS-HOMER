@@ -4,7 +4,7 @@ using System.IO;
 using System.Data;
 using UnityEngine;
 using System.Text;
-using UnityEditor.VersionControl;
+
 /*
  * Summary Data Class
  */
@@ -45,17 +45,23 @@ public class DataManager : MonoBehaviour
         "TrialNumberDay", "TrialNumberSession", "TrialType", "TrialStartTime", "TrialStopTime", "TrialRawDataFile",
         "Movement",
         "GameName", "GameParameter", "GameSpeed",
-        "AssistMode", "DesiredSuccessRate", "SuccessRate", "CurrentControlBound", "NextControlBound","MoveTime"
+        "AssistMode", "DesiredSuccessRate", "SuccessRate","","","MoveTime"
     };
-    // Raw data header.    
-    public static string[] RAWFILEHEADER = new string[] {
-        "DeviceRunTime", "PacketNumber", "Status", "DataType", "ErrorStatus",
-        "ControlType", "Calibration",  "Mechanism",
-        "Button", "Angle", "Torque", "Desired", "Control", "ControlBound", "ControlDir", "Target",
-        "Error", "ErrorDiff", "ErrorSum",
-        "GamePlayerX", "GamePlayerY", "GameTargetX", "GameTargetY", "GameState",
-        "AanTargetPosition", "AanInitialPosition", "AanState"
+    // Raw data header.
+    public static string[] RAWFILEHEADER = new string[]
+    {
+        "DeviceRunTime", "PacketNumber", "Status", "ErrorString",
+        "Limb", "Calibration", "LimbKinParam", "limbDynParam",
+        "Target", "Desired", "Control",
+        "Angle1", "Angle2", "Angle3", "Angle4",
+        "ImuAngle1", "ImuAngle2", "ImuAngle3","ImuAngle4",
+        "Force", "Torque",
+        "EndPointX", "EndPointY", "EndPointZ",
+        "Phi1", "Phi2", "Phi3",
+        "GamePlayerX", "GamePlayerY", "GameTargetX", "GameTargetY", "GameState"
+
     };
+   
     public static string[] RAWFILEHEADER_ = new string[] {
         "angle1","angle2","angle3","angle4","playerx","playery","targetx,targety","gamestate"
     };
@@ -194,12 +200,11 @@ public static class AppLogger
         }
         string _dtstr = DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
         logFilePath = Path.Combine(DataManager.logPath, $"{_dtstr}-application.log");
-        // if (!File.Exists(logFilePath)) File.Create(logFilePath);
-
+      
         // Create the log file and write the header.
         logWriter = new StreamWriter(logFilePath, true, Encoding.UTF8);
         currentScene = scene;
-        LogInfo("Created PLUTO log file.");
+        LogInfo("Created MARS log file.");
         return _dtstr;
     }
 

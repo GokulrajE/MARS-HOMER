@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MAIN.unity
     guid: c7ef89ba1b51639479466d34da35d7a4
   - enabled: 1
-    path: Assets/Scenes/marsDiagnostics.unity
+    path: Assets/Scenes/DIAGNOSTICS.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/CALIB.unity
@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CHOOSEMOVEMENT.unity
     guid: ba90e3adfd6d86942946bea3547bf51e
   - enabled: 1
-    path: Assets/Scenes/summaryScene.unity
+    path: Assets/Scenes/SUMMARY.unity
     guid: 30a7fb6ffffe3a647af9025b934fe098
   - enabled: 0
     path: Assets/Scenes/weightcalibrationScene.unity
@@ -138,7 +138,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CONFIG.unity
     guid: a2ba4a851b035334aa6baf3d2f143627
   - enabled: 1
-    path: Assets/Scenes/getConfig.unity
+    path: Assets/Scenes/GETCONFIG.unity
     guid: 96c617e643758dd43bc7511e43abb0df
   - enabled: 1
     path: Assets/Scenes/ASSESSROM.unity

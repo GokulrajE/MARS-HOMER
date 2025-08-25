@@ -110,7 +110,7 @@ public class BirdControl : MonoBehaviour
 
         //move the game object based on MarsAngle
 
-        unityValY = -Mathf.Clamp(Angle2ScreenZ(DEPENDENT[AppData.Instance.userData.useHand] * MarsComm.angle1), minYUnity, maxYUnity);
+        unityValY = -Mathf.Clamp(Angle2ScreenZ(MarsComm.angle1), minYUnity, maxYUnity);
       
         GetComponent<Rigidbody2D>().position = new Vector3
         (

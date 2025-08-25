@@ -1010,7 +1010,7 @@ public static class MarsCommLogger
 
         // Create the log file writer.
         logWriter = new StreamWriter(logFilePath, true);
-        LogInfo("Created PLUTO log file.");
+        LogInfo("Created MARS log file.");
     }
 
     public static void StopLogging()

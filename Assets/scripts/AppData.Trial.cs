@@ -92,17 +92,18 @@ public partial class AppData
             trialStopTime?.ToString(DataManager.DATETIMEFORMAT),
             // "TrialRawDataFile"
             trialRawDataFile.Split("/data/")[1],
-            // "Mechanism"
-            selectedMovement.name, 
+            // "Movement"
+             $"{selectedMovement.name}",
             // "GameName"
-            selectedGame,
+            $"{selectedGame}",
             // "GameParameter"
             null,
             // "GameSpeed"
             "",//speedData.gameSpeed.ToString(),
             // "AssistMode"
+            
             //trialType == HomerTherapy.TrialType.SR85PCCATCH ? "ACTIVE" : "AAN",
-            "",
+            $"{selectedMovement.MarsMode}",//need to change to transition control
             // "DesiredSuccessRate"
             $"",
             // "SuccessRate"
@@ -157,7 +158,15 @@ public partial class AppData
         // Attach the event handler for data logging.
         MarsComm.OnNewMarsData += OnNewMarsDataDataLogging;
     }
-
+    //"DeviceRunTime","PacketNumber","Status","ErrorString",
+    //    "Limb","Calibration","LimbKinParam","limbDynParam",
+    //    "Target","Desired","Control",
+    //    "Angle1","Angle2","Angle3","Angle4",
+    //    "ImuAngle1","ImuAngle2","ImuAngle3",
+    //    "Force","Torque",
+    //    "EndPointX","EndPointY","EndPointZ",
+    //    "Phi1","Phi2","Phi3",
+    //    "GamePlayerX","GamePlayerY","GameTargetX","GameTargetY","GameState"
     public void OnNewMarsDataDataLogging()
     {
         lock (rawDataLock)
@@ -168,40 +177,39 @@ public partial class AppData
 
                 return;
             }
+            rawDataString.Append($"{MarsComm.runTime},");
+            rawDataString.Append($"{MarsComm.packetNumber},");
+            rawDataString.Append($"{MarsComm.status},");
+            rawDataString.Append($"{MarsComm.errorString},");
+            rawDataString.Append($"{MarsComm.limb},");
+            rawDataString.Append($"{MarsComm.calibration},");
+            rawDataString.Append($"{MarsComm.limbKinParam},");
+            rawDataString.Append($"{MarsComm.limbDynParam},");
+            rawDataString.Append($"{MarsComm.target},");
+            rawDataString.Append($"{MarsComm.desired},");
+            rawDataString.Append($"{MarsComm.control},");
             rawDataString.Append($"{MarsComm.angle1},");
             rawDataString.Append($"{MarsComm.angle2},");
             rawDataString.Append($"{MarsComm.angle3},");
             rawDataString.Append($"{MarsComm.angle4},");
-            // Device data
-            //rawDataString.Append($"{MarsComm.runTime:F6},");
-            //rawDataString.Append($"{MarsComm.packetNumber},");
-            //rawDataString.Append($"{MarsComm.status},");
-            //rawDataString.Append($"{MarsComm.dataType},");
-            //rawDataString.Append($"{MarsComm.errorStatus},");
-            //rawDataString.Append($"{MarsComm.controlType},");
-            //rawDataString.Append($"{MarsComm.calibration},");
-            //rawDataString.Append($"{MarsComm.MOVEMENT[MarsComm.mechanism]},");
-            //rawDataString.Append($"{MarsComm.button},");
-            //rawDataString.Append($"{MarsComm.angle},");
-            //rawDataString.Append($"{MarsComm.torque},");
-            //rawDataString.Append($"{MarsComm.desired},");
-            //rawDataString.Append($"{MarsComm.control},");
-            //rawDataString.Append($"{MarsComm.controlBound},");
-            //rawDataString.Append($"{MarsComm.controlDir},");
-            //rawDataString.Append($"{MarsComm.target},");
-            //rawDataString.Append($"{MarsComm.err},");
-            //rawDataString.Append($"{MarsComm.errDiff},");
-            //rawDataString.Append($"{MarsComm.errSum},");
-
+            rawDataString.Append($"{MarsComm.imu1Angle},");
+            rawDataString.Append($"{MarsComm.imu2Angle},");
+            rawDataString.Append($"{MarsComm.imu3Angle},");
+            rawDataString.Append($"{MarsComm.imu4Angle},");
+            rawDataString.Append($"{MarsComm.force},");
+            rawDataString.Append($"{MarsComm.torque},");
+            rawDataString.Append($"{MarsComm.xEndpoint},");
+            rawDataString.Append($"{MarsComm.yEndpoint},");
+            rawDataString.Append($"{MarsComm.zEndpoint},");
+            rawDataString.Append($"{MarsComm.phi1},");
+            rawDataString.Append($"{MarsComm.phi2},");
+            rawDataString.Append($"{MarsComm.phi3},");
+         
             // Game Data
             rawDataString.Append($"{GetGamePlayerPosition()},");
             rawDataString.Append($"{GetGameTargetPosition()},");
             rawDataString.Append($"{GetGameState()},");
-            //rawDataString.Append($"{aanController.targetPosition:F3},");
-            //rawDataString.Append($"{aanController.initialPosition:F3},");
-            //rawDataString.Append($"{aanController.state}");
-
-            // End of line
+        
             rawDataString.Append("\n");
         }
     }

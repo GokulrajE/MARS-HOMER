@@ -65,17 +65,7 @@ public class welcomSceneHandler : MonoBehaviour
        
         UpdateUserData();
         UpdatePieChart();
-        //if (AppData.Instance.transitionControl.currhLimbDynWeights == null)
-        //{
-        //    //Do dynamic limb parameter set
-        //}
-        //else
-        //{
-        //    Debug.Log(AppData.Instance.transitionControl.hlimbDynFAWeight + "," + AppData.Instance.transitionControl.hlimbDynUAWeight+"weights");
-        //    //Activate Mars with full weight support
-        //}
-        //AppData.Instance.SetMovement("SABDU");
-        //AppData.Instance.SetGame("spaceshooter");
+     
 
         //Task.Run(() =>  // Run in a background task
         //{

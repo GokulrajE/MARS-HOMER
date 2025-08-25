@@ -11,8 +11,11 @@ public class weightEstimation : MonoBehaviour
     private byte stateMachineFlags = 0x00;
     public Text hlbDynParamSetText;
     public Text messageText;
-    public Image limDynParaTick;
-   
+    public Image limDynParaTickImg;
+    public Image limDynParaWrongImg;
+    public GameObject setUpMars;
+    public GameObject attatchArm;
+    public GameObject doEstimation;
     public Slider AWSTest;
     public Text sliderVal;
     // Dynamic parameter estimation variables.
@@ -26,7 +29,9 @@ public class weightEstimation : MonoBehaviour
         WAITFORHOLDTEST = 0x05,
         HOLDTEST = 0x06,
         ALLDONE = 0x07,
-        CHANGESECNE = 0x08
+        CHANGESECNE = 0x08,
+        SETDYNLIMPARA =0x09,
+        FAILD = 0x10
     }
     private LimbDynEstState hLimbDynEstState = LimbDynEstState.WAITFORSTART;
    
@@ -43,10 +48,14 @@ public class weightEstimation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
+        AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
+
         MarsComm.onHumanLimbDynParamData += OnHumanLimbDynParamData;
         MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
-        messageText.text = "HIT Mars BUtton To SetUp";
-        limDynParaTick.enabled = false;
+        messageText.text = "Tap the MARS button to start the setup process.";
+        limDynParaTickImg.enabled = false;
+        limDynParaWrongImg.enabled = false;
       
     }
 
@@ -56,8 +65,14 @@ public class weightEstimation : MonoBehaviour
       
         MarsComm.sendHeartbeat();
         RunHumanLimbDynParamEstimation();
+
+        //change Instruction GIF Based on the state
+        setUpMars.SetActive(hLimbDynEstState == LimbDynEstState.WAITFORSTART || hLimbDynEstState == LimbDynEstState.SETUPFORESTIMATION);
+        attatchArm.SetActive(hLimbDynEstState == LimbDynEstState.WAITFORESTIMATION && !AppData.Instance.transitionControl.readyToChange);
+        doEstimation.SetActive(hLimbDynEstState == LimbDynEstState.WAITFORESTIMATION && AppData.Instance.transitionControl.readyToChange || hLimbDynEstState == LimbDynEstState.ESTIMATE);
        
     }
+    
    
     private void RunHumanLimbDynParamEstimation()
     {
@@ -75,14 +90,14 @@ public class weightEstimation : MonoBehaviour
                 }
                 break;
             case LimbDynEstState.WAITFORESTIMATION:
-                messageText.text = "HIT BUTTON TO START ESTIMATION";
+             
                 if (AppData.Instance.transitionControl.readyToChange)
                 {
-                    messageText.text = "HIT BUTTON TO START ESTIMATION";
+                    messageText.text = "Tap the MARS button to begin estimation.";
                 }
                 else
                 {
-                    messageText.text = "Please fit the Arm with Mars";
+                    messageText.text = "Ensure the arm is correctly fitted to the MARS device.";
                 }
                 // Check statemachine flag
                 if ((stateMachineFlags & 0x02) == 0x02)
@@ -99,14 +114,17 @@ public class weightEstimation : MonoBehaviour
                 // Check if we need to change state.
                 if (computeMeanAndStdev())
                 {
-                    hLimbDynEstState = LimbDynEstState.ESTIMATIONDONE;
+                    hLimbDynEstState = LimbDynEstState.SETDYNLIMPARA;
+                    messageText.text = "Tap MARS Button to Set DynLimb Parameters";
                 }
                 break;
+         
             case LimbDynEstState.ESTIMATIONDONE:
                
                 if ((stateMachineFlags & 0x04) == 0x04)
                 {
-                    limDynParaTick.enabled = true;
+                    limDynParaTickImg.enabled = true;
+                    limDynParaWrongImg.enabled = false;  
                     // Check statemachine flag
                     hLimbDynEstState = LimbDynEstState.WAITFORHOLDTEST;
                 }
@@ -122,8 +140,14 @@ public class weightEstimation : MonoBehaviour
                     MarsComm.getHumanLimbDynParams();
                 }
                 break;
+            case LimbDynEstState.FAILD:
+                limDynParaWrongImg.enabled = true;
+                limDynParaTickImg.enabled = false;
+                messageText.text = " FAILD TO SET, Press REDO to start again";
+               
+                break;
             case LimbDynEstState.WAITFORHOLDTEST:
-                messageText.text = "HIT BUTTON TO TEST MARS HOLD ARM WITH FWS";
+                messageText.text = "Tap the MARS button to start the MARS arm-hold test using FWS.";
                 // Check statemachine flag
                 if ((stateMachineFlags & 0x08) == 0x08)
                 {
@@ -134,7 +158,7 @@ public class weightEstimation : MonoBehaviour
                 // Perform hold testing with the estimated weights.
                 // Check the current control type.
                 onSliderValueChange();
-                messageText.text = "HIT BUTTON TO FINISH AWS WEIGHT TEST";
+                messageText.text = "Tap the MARS button to complete the AWS weight test.";
                 if (MarsComm.CONTROLTYPE[MarsComm.controlType] != "AWS")
                 {
                     // Set the control mode to AWS.
@@ -149,7 +173,7 @@ public class weightEstimation : MonoBehaviour
                 break;
             case LimbDynEstState.ALLDONE:
                 // Handle all done.
-                messageText.text = "HIT BUTTON TO CHANGE THE SCENE OR CLICK REDO";
+                messageText.text = "Tap the MARS button to proceed, or select Redo to start again.";
                 // Wait for the start of the estimation.
                 if (MarsComm.CONTROLTYPE[MarsComm.controlType] != "POSITION")
                 {
@@ -182,6 +206,10 @@ public class weightEstimation : MonoBehaviour
                 {
                     stateMachineFlags = (byte)(stateMachineFlags | 0x02);
                 }
+                break;
+            case LimbDynEstState.SETDYNLIMPARA:
+
+                hLimbDynEstState = LimbDynEstState.ESTIMATIONDONE;
                 break;
             case LimbDynEstState.WAITFORHOLDTEST:
                 // Check if we are in the appropriate state.
@@ -266,8 +294,11 @@ public class weightEstimation : MonoBehaviour
         if (MarsComm.limbDynParam != 0x01 || MarsComm.uaWeight != setHLimbDynUAWeight || MarsComm.faWeight != setHLimbDynFAWeight)
         {
             Debug.LogWarning("Human limb dynamic parameters are not set correctly.");
-            MarsComm.resetHumanLimbDynParams();
-            stateMachineFlags = (byte)(stateMachineFlags & 0xFB);
+           
+            hLimbDynEstState = LimbDynEstState.FAILD;
+            stateMachineFlags = 0x00;
+
+            //stateMachineFlags = (byte)(stateMachineFlags & 0xFB);
         }
         else
         {
@@ -279,13 +310,18 @@ public class weightEstimation : MonoBehaviour
     }
     public void redoDynLimbEstimation()
     {
-        if (hLimbDynEstState != LimbDynEstState.ALLDONE && MarsComm.LIMBDYNPARAM[MarsComm.limbDynParam]!= "YESLIMBKINPARAM") return;
-        //Reset states
-        hLimbDynEstState = LimbDynEstState.SETUPFORESTIMATION;
-        MarsComm.resetHumanLimbDynParams();
-        AppData.Instance.transitionControl.restParameters();
-        stateMachineFlags = 0x00;
-        limDynParaTick.enabled = false;
+        if (hLimbDynEstState == LimbDynEstState.ALLDONE || hLimbDynEstState == LimbDynEstState.FAILD)
+        {
+            //Reset states
+            hLimbDynEstState = LimbDynEstState.SETUPFORESTIMATION;
+            MarsComm.resetHumanLimbDynParams();
+            AppData.Instance.transitionControl.restParameters();
+            stateMachineFlags = 0x00;
+            limDynParaTickImg.enabled = false;
+            limDynParaWrongImg.enabled = false;
+        }
+           
+       
     }
    
    public void onClickCheckTc()

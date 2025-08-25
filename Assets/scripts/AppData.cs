@@ -12,7 +12,7 @@ public partial class AppData
     public static AppData Instance => _instance.Value;
 
 
-    static public readonly string COMPort = "COM32";
+    static public readonly string COMPort = "COM35";
 
     /*
    * SESSION DETAILS
@@ -22,8 +22,6 @@ public partial class AppData
     public DateTime? stopTime { get; private set; }
     public DateTime trialStartTime { get; set; }
     public DateTime? trialStopTime { get; set; }
-
-  
 
     /*
     * Logging file names.
@@ -45,7 +43,6 @@ public partial class AppData
     public MarsMovement selectedMovement {  get; private set; }
 
     public marsUserData userData;
-
     public MarsTransitionControl transitionControl { get; private set; }
 
     
@@ -68,13 +65,13 @@ public partial class AppData
         InitializeRobotConnection(doNotResetMovement, _dtstr);
         
 
-      
+     
         // Initialize the user data.
         UnityEngine.Debug.Log(DataManager.configFilePath);
         UnityEngine.Debug.Log(DataManager.sessionFilePath);
 
         userData = new marsUserData(DataManager.configFilePath, DataManager.sessionFilePath);
-       transitionControl = new MarsTransitionControl();
+        transitionControl = new MarsTransitionControl();
         // Selected movement and game.
         selectedMovement = null;
         selectedGame = null;
@@ -114,13 +111,6 @@ public partial class AppData
         AppLogger.LogInfo($"Connected to MARS @ {COMPort}.");
         //// Set control to NONE, calibrate and get version.
        
-        // The following code is to ensure that this can be called from other scenes,
-        // without having to go through the calibration scene.
-        if (!doNotResetMov)
-        {
-            //PlutoComm.calibrate("NOMECH");
-        }
-       
         AppLogger.LogInfo($"MARS SensorStream started.");
     }
     public void InitializeRobotDiagnostics()
@@ -129,13 +119,6 @@ public partial class AppData
 
     }
 
-    public static void sendToRobot(float[] data)
-    {
-        byte[] _data = new byte[16];
-        Buffer.BlockCopy(data, 0, _data, 0, _data.Length);
-        Debug.Log(_data.Length + "length");
-        JediComm.SendMessage(_data);
-    }
     public void setUser(string user)
     {
         userID = user;

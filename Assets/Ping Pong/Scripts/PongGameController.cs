@@ -80,7 +80,12 @@ public class pongGameController : MonoBehaviour {
 	
 	void Update () {
 
+
         pointCounter.text = enemyScore + "\t\t\t" +playerScore;
+        if (timerTxt != null)
+        {
+            timerTxt.text = "Time:" + Mathf.CeilToInt(trialTimeLeft).ToString() + "s"; // Show remaining time
+        }
 
         //uses p or marsButton to pause and unpause the game
 
@@ -113,6 +118,7 @@ public class pongGameController : MonoBehaviour {
 	}
     public void FixedUpdate()
     {
+        MarsComm.sendHeartbeat();
         RunStateMachine();
         if (IsGamePlaying())
         {
@@ -125,10 +131,7 @@ public class pongGameController : MonoBehaviour {
         if (isGamePaused) pauseGame();
         else if (gameState == GameStates.PAUSED) resumeGame();
         if (IsGamePlaying())trialTimeLeft -= Time.deltaTime;
-        if (timerTxt != null)
-        {
-            timerTxt.text = "Time:" + Mathf.CeilToInt(trialTimeLeft).ToString() + "s"; // Show remaining time
-        }
+      
         bool isTimeUp = trialTimeLeft < 0;
         switch (gameState)
         {
@@ -197,7 +200,7 @@ public class pongGameController : MonoBehaviour {
             Debug.Log(nFailure);
             showFinished();
             float gameTime = trialDuration - trialTimeLeft;
-            Others.gameTime = (gameTime < trialDuration) ? gameTime : trialDuration;
+            Others.gameTime = (gameTime < trialDuration) ?(int) gameTime : trialDuration;
             AppData.Instance.StopTrial(nTargets, nSuccess, nFailure);
         }
      
@@ -237,8 +240,7 @@ public class pongGameController : MonoBehaviour {
         isPaused = false;
         hidePaused();
         exitBtn.SetActive(true);
-       //sendHeartBeat
-       //check controlType
+       
     }
     public bool IsGamePlaying()
     {

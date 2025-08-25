@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-//using Michsky.UI.ModernUIPack;
+
 public class FlappyGameControl : MonoBehaviour
 {
     public static FlappyGameControl instance;
@@ -111,6 +111,7 @@ public class FlappyGameControl : MonoBehaviour
     }
     public void FixedUpdate()
     {
+        MarsComm.sendHeartbeat();
         RunGameStateMachine();
         if(!isGameFinished) UpdateDuration();
         PlayerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
@@ -240,11 +241,7 @@ public class FlappyGameControl : MonoBehaviour
         hidePaused();
         isGamePaused = false;
         gameState = _prevGameState;
-        Time.timeScale = 1;
-     
-        // Send Mars heartbeat
-        //Set controlType
-       
+        Time.timeScale = 1;  
     }
     public void targetHit()
     {

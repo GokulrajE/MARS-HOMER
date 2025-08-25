@@ -21,6 +21,7 @@ public class Main_Scene_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MarsComm.sendHeartbeat();
 
         if (changeScene == true)
         {

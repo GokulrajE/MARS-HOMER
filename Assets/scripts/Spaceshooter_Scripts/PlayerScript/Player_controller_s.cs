@@ -11,6 +11,7 @@ public class Player_controller_s : MonoBehaviour
     // Start is called before the first frame update
     Camera mainCamera;
     private Vector2 screenBounds;
+    private Vector3 endPoint;
 
     // Start is called before the first frame update
     public float speed = 4f;
@@ -40,6 +41,7 @@ public class Player_controller_s : MonoBehaviour
     public static float yMaxMars = 775;
     public static float zMinMars = 291 - 300;
     public static float zMaxMars = 291 + 300;
+    public int OFFSET;
  
     Vector3 temp;
     void Start()
@@ -51,25 +53,26 @@ public class Player_controller_s : MonoBehaviour
         yMin = -screenBounds.y + 0.2f;//change into 1 from 4
         yMax = screenBounds.y - screenBounds.y / 1.5f;
         audioSource = GetComponent<AudioSource>();
-        
+
         //GET ROM DATA
         currRom = AppData.Instance.selectedMovement.CurrentAromFWS;
-        zMinMars = currRom[0] * 1000;
-        zMaxMars = currRom[1] * 1000;
-        yMinMars = currRom[2] * 1000;
-        yMaxMars = currRom[3] * 1000;
+        zMinMars = currRom[0];
+        zMaxMars = currRom[1];
+        yMinMars = currRom[2];
+        yMaxMars = currRom[3];
+
+        OFFSET = AppData.Instance.userData.useHand == 1 ? -1 : 1;
 
     }
    
     public void FixedUpdate()
     {
-        //need to check for dynamic limbchange
-        th1 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle1;
-        th2 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle2;
-        th3 = MarsComm.OFFSET[AppData.Instance.userData.useHand] * MarsComm.angle3;
-        yEndPoint = Mathf.Sin(th1) * (475.0f * Mathf.Cos(th2) + 291.0f * Mathf.Cos(th2 + th3));
-        zEndPoing = (-475.0f * Mathf.Sin(th2) - 291.0f * Mathf.Sin(th2 + th3));
-        xPoint = -((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zEndPoing - ((zMinMars + zMaxMars) / 2.0f)));
+        endPoint = MarsKinDynamics.ForwardKinematicsExtended(MarsComm.angle1, MarsComm.angle2, MarsComm.angle3, MarsComm.angle4);
+
+      
+        yEndPoint = endPoint.y;
+        zEndPoing = endPoint.z;
+        xPoint = OFFSET*((xMin + xMax) / 2.0f + (xMax - xMin) / (zMaxMars - zMinMars) * (zEndPoing - ((zMinMars + zMaxMars) / 2.0f)));
         yPoint = ((yMin + yMax) / 2.0f - (yMax - yMin) / (yMaxMars - yMinMars) * (yEndPoint - ((yMinMars + yMaxMars) / 2.0f)));
 
         transform.position = new Vector3(Mathf.Clamp(xPoint, xMin, xMax),
@@ -111,7 +114,7 @@ public class Player_controller_s : MonoBehaviour
         {
             audioSource.PlayOneShot(laserSound);
         }
-        Destroy(Laser, 3.5f);
+        Destroy(Laser, 1.0f);
     }
     public void DestroyPlayer()
     {

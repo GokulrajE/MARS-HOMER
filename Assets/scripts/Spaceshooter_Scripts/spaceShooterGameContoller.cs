@@ -242,7 +242,6 @@ public class spaceShooterGameContoller : MonoBehaviour
         {
             changeScene = true;
         }
-        
 
     }
     public void PauseGame()
@@ -262,9 +261,7 @@ public class spaceShooterGameContoller : MonoBehaviour
         gameState = _prevGameState;
         Time.timeScale = 1f;
         PauseImage.SetActive(false);
-        // Send MARS heartbeat
-        //set control type again
-
+       
     }
 
     private void savedata()

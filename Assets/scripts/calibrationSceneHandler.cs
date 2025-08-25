@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,15 +12,19 @@ public class calibrationSceneHandler : MonoBehaviour
     public TMP_Text messageBox;
     public readonly string nextScene = "CHOOSEMOVEMENT";
     public GameObject panel;
-    Image panelImage;
-    public Text limbTxt;
-    public Image limbTick;
+   
+  
     public Image calibTick;
     public Text calibTxt;
     public Text kinParaTxt;
     public Image kinTick;
     public Text messageTxt;
-
+    public GameObject CalibSetupImg;
+    public GameObject kinSetupImg;
+    public TMP_InputField faLength;
+    public TMP_InputField uaLength;
+    public Button setLenght;
+  
     private const int MAX_ENDPOINTS = 10;
     private int endpointCount = 0;
     private Vector3[] endpointPositions = new Vector3[100];
@@ -39,40 +45,47 @@ public class calibrationSceneHandler : MonoBehaviour
         
     }
     private CALIBSTATES calibState ;
-
-
     void Start()
     {
-        messageTxt.text = "HIT MARS BUTTON TO START CALIBRATION";
+        messageTxt.text = "Press the MARS button to start calibration. Before proceeding, ensure the MARS device orientation matches the image shown";
         
         AppLogger.SetCurrentScene(SceneManager.GetActiveScene().name);
         AppLogger.LogInfo($"{SceneManager.GetActiveScene().name} scene started.");
         MarsComm.OnMarsButtonReleased += onMarsButtonReleased;
         MarsComm.OnCalibButtonReleased += onCalibButtonReleased;
         MarsComm.onHumanLimbKinParamData += OnHumanLimbKinParamData;
-        calibState = CALIBSTATES.WAITFORSTART;
+        calibState = CALIBSTATES.SETUPLIMB;
         initUI()
 ;    }
 
     void Update()
     {
+        //To open Weight Estimation Scene
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
         {
              if(calibState == CALIBSTATES.ALLDONE)
                 SceneManager.LoadScene("WEIGHTEST");
         }
+
+        //change length of Arm
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.L))
+        {
+            setLenght.gameObject.SetActive(!setLenght.IsActive());
+        }
+
         MarsComm.sendHeartbeat();
         RunCalibStateMachine();
-        Debug.Log(calibState.ToString());
+       
     }
    
     public void onMarsButtonReleased()
     {
         switch (calibState)
         {
-            case CALIBSTATES.WAITFORSTART:
-                calibState = CALIBSTATES.SETUPLIMB;
-            break;
+            
+            case CALIBSTATES.SETUPLIMB:
+                calibState = CALIBSTATES.CALIBRATE;
+                break;
             case CALIBSTATES.CALIBRATE:
                 
                 break;
@@ -97,8 +110,8 @@ public class calibrationSceneHandler : MonoBehaviour
             }
             averagePosition /= MAX_ENDPOINTS;
             // Set the human limb kinematic parameters based on the average position.
-            setHLimbKinUALength = (float)AppData.Instance.userData.uaLength/100;
-            setHLimbKinFALength = (float)AppData.Instance.userData.faLength/100;
+            setHLimbKinUALength = (float)AppData.Instance.userData.uaLength;
+            setHLimbKinFALength = (float)AppData.Instance.userData.faLength;
             setHLimbKinShPosZ = averagePosition.z;
             Debug.Log($"Setting human limb kinematic parameters: UALength={setHLimbKinUALength}, FALength={setHLimbKinFALength}, Average Position Z={setHLimbKinShPosZ}");
             MarsComm.setHumanLimbKinParams(setHLimbKinUALength, setHLimbKinFALength, setHLimbKinShPosZ);
@@ -139,7 +152,7 @@ public class calibrationSceneHandler : MonoBehaviour
                     MarsComm.setLimb(MarsComm.LIMBTYPE[AppData.Instance.userData.useHand]);
                     return;
                 }
-                 calibState = CALIBSTATES.CALIBRATE;
+                 
                 break;
 
             case CALIBSTATES.CALIBRATE:
@@ -147,7 +160,7 @@ public class calibrationSceneHandler : MonoBehaviour
                 {
                     if (MarsComm.COMMAND_STATUS[MarsComm.recentCommandStatus] == "FAIL")
                     {
-                        messageTxt.text = "CHECK MARS ANGLES";
+                        messageTxt.text = "Check that the MARS device looks exactly like the image (straight and properly aligned)";
                     }
                     MarsComm.calibrate();
                     return;
@@ -159,7 +172,7 @@ public class calibrationSceneHandler : MonoBehaviour
                 if(MarsComm.CALIBRATION[MarsComm.calibration] == "NOCALIB")
                     calibState = CALIBSTATES.CALIBRATE;
                 Debug.Log(MarsKinDynamics.ForwardKinematicsExtended(MarsComm.angle1, MarsComm.angle2, MarsComm.angle3, MarsComm.angle4));
-                messageTxt.text = "HIT CALIB BUTTON TO SET LIMB PARASMETERS";
+                messageTxt.text = "Perform the procedure as illustrated, then press the calibration button in the MARS device.";
                 if (endpointCount < MAX_ENDPOINTS && MarsComm.calibButton == 0)
                 {
                     endpointPositions[endpointCount] = MarsKinDynamics.ForwardKinematicsExtended(MarsComm.angle1, MarsComm.angle2, MarsComm.angle3, MarsComm.angle4);
@@ -171,7 +184,7 @@ public class calibrationSceneHandler : MonoBehaviour
                 }
                 break;
             case CALIBSTATES.ALLDONE:
-                messageTxt.text = "HIT MARS BUTTON TO CHANGE SCENE";
+                messageTxt.text = "You can redo the parameter setup, or press the MARS button to move to the next step.";
                 kinTick.enabled = true;
                 break;
             case CALIBSTATES.CHANGESCENE:
@@ -180,7 +193,6 @@ public class calibrationSceneHandler : MonoBehaviour
                 if (AppData.Instance.transitionControl.isDynLimbParamExist)
                 {
                     SceneManager.LoadScene("CHOOSEMOVEMENT");
-
                 }
                 else
                 {
@@ -194,17 +206,33 @@ public class calibrationSceneHandler : MonoBehaviour
     }
     private void initUI()
     {
-        limbTick.enabled = false;
+      
         calibTick.enabled = false;
         kinTick.enabled = false;
+        CalibSetupImg.gameObject.SetActive(false);
+        kinSetupImg.gameObject.SetActive(false);
+        panel.gameObject.SetActive(false);
         MarsComm.setLimb("NOLIMB");
+        setLenght.gameObject.SetActive(false);
+
+        //change Lenght of Arm Dynamically
+        setLenght.onClick.AddListener(delegate
+        {
+            AppData.Instance.userData.setFALength(float.Parse(faLength.text));
+            AppData.Instance.userData.setUALength(float.Parse(uaLength.text));
+            setLenght.gameObject.SetActive(!setLenght.IsActive());
+        });
+
     }
     private void updataUI()
     {
-       
-        calibTxt.text = $"CALIB : {MarsComm.CALIBRATION[MarsComm.calibration]}";
+        string calibStatus = MarsComm.calibration == 1 ? "DONE" : "CALIBRATE";
+        calibTxt.text = $"STATUS : {calibStatus}";
         kinParaTxt.text = $"KIN-PARAM: \n\t{MarsComm.uaLength}m\n\t{MarsComm.faLength}m\n\t{MarsComm.shPosZ}";
         calibTick.enabled = MarsComm.CALIBRATION[MarsComm.calibration] != "NOCALIB";
+        CalibSetupImg.SetActive(calibState == CALIBSTATES.CALIBRATE || calibState == CALIBSTATES.SETUPLIMB);
+        kinSetupImg.SetActive(calibState == CALIBSTATES.SETLIMBKINPARA);
+        panel.SetActive( calibState == CALIBSTATES.ALLDONE);
 
     }
     public void redoKinParamSet()

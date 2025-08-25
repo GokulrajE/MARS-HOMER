@@ -17,7 +17,7 @@ public class MovementSceneHandler : MonoBehaviour
     public Button exit;
     public static float initialAngle;
     private string nextScene;
-    private string exitScene = "SummaryScene";
+    private string exitScene = "SUMMARY";
     private string assessmentScene = "ASSESSROM";
     public static float shAng;
     //flags
@@ -55,8 +55,7 @@ public class MovementSceneHandler : MonoBehaviour
         marsActivation.SetActive(AppData.Instance.transitionControl.isEnable);
         message.gameObject.SetActive(MarsComm.CONTROLTYPE[MarsComm.controlType] == "AWS");
         SetAWSMessage.gameObject.SetActive(MarsComm.CONTROLTYPE[MarsComm.controlType] != "AWS");
-       
-     
+
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A))
         {
             if (AppData.Instance.selectedMovement == null)
@@ -76,8 +75,7 @@ public class MovementSceneHandler : MonoBehaviour
         }
 
     }
-    
-  
+   
     public void AttachCallbacks()
     {
         // Attach PLUTO button event
@@ -86,7 +84,6 @@ public class MovementSceneHandler : MonoBehaviour
         nextButton.onClick.AddListener(OnNextButtonClicked);
 
     }
-   
     private void UpdateMovementToggleButtons()
     {
         foreach (Transform child in movementSelectGroup.transform)
@@ -118,7 +115,6 @@ public class MovementSceneHandler : MonoBehaviour
             }
         }
     }
-
 
     IEnumerator DelayedAttachListeners()
     {

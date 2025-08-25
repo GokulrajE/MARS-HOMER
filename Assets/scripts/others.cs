@@ -49,8 +49,18 @@ public class marsUserData
 
 
     public int useHand;
-    public int faLength;
-    public int uaLength;
+    public float faLength;
+    public float uaLength;
+    public void setUALength(float uaLength)
+    {
+        this.uaLength = uaLength;
+
+    }
+    public void setFALength(float faLength)
+    {
+        this.faLength = faLength;
+
+    }
 
     public  Dictionary<string, float> movementMoveTimePrsc { get; private set; } // Prescribed movement time
     public  Dictionary<string, float> movementMoveTimeCurr { get; private set; } // Current movement time
@@ -174,8 +184,8 @@ public class marsUserData
         {
             useHand = 2;
         }
-        faLength = int.Parse(lastRow.Field<string>("forearmLength"));
-        uaLength = int.Parse(lastRow.Field<string>("upperarmLength"));
+        faLength = float.Parse(lastRow.Field<string>("forearmLength"));
+        uaLength = float.Parse(lastRow.Field<string>("upperarmLength"));
         //Debug.Log($"{useHand},{faLength}, {uaLength}");
     }
 
@@ -373,9 +383,6 @@ public class MarsMovement
         UpdateTrialNumbers(sessno);
     }
 
-    public bool IsMarsMovement(string movName) => string.Equals(name, movName, StringComparison.OrdinalIgnoreCase);
-    
-    public bool IsSide(string sideName) => string.Equals(side, sideName, StringComparison.OrdinalIgnoreCase);
 
     //public bool IsSpeedUpdated() => currSpeed > 0;
 
@@ -387,7 +394,6 @@ public class MarsMovement
 
     public float[] CurrentAromFWS => currRomFWS == null ? null : new float[] { currRomFWS.aromMinX, currRomFWS.aromMaxX, currRomFWS.aromMinY, currRomFWS.aromMaxY };
     public float[] CurrentAromHWS => currRomHWS == null ? null : new float[] { currRomHWS.aromMinX, currRomHWS.aromMaxX, currRomHWS.aromMinY, currRomHWS.aromMaxY };
-
     public float[] CurrentAromNWS => currRomNWS == null ? null : new float[] { currRomNWS.aromMinX, currRomNWS.aromMaxX, currRomNWS.aromMinY, currRomNWS.aromMaxY };
 
 
@@ -407,13 +413,11 @@ public class MarsMovement
         aromCompletedNWS = false;
     }
 
-
-
     public void SetNewRomValuesFWS(float minx, float maxx, float miny, float maxy)
     {
         newRomFWS.setRom(minx,maxx,miny,maxy);
         if (minx != 0 || maxx != 0 || miny!=0 || maxy!=0) aromCompletedFWS = true;
-        // Cehck if newRom's mechanism needs to be set.
+      
         if (newRomFWS.movement == null)
         {
             newRomFWS.SetMovement(this.name);
@@ -428,7 +432,7 @@ public class MarsMovement
     {
         newRomHWS.setRom(minx, maxx, miny, maxy);
         if (minx != 0 || maxx != 0 || miny != 0 || maxy != 0) aromCompletedHWS = true;
-        // Cehck if newRom's mechanism needs to be set.
+       
         if (newRomHWS.movement == null)
         {
             newRomHWS.SetMovement(this.name);
@@ -443,7 +447,7 @@ public class MarsMovement
     {
         newRomNWS.setRom(minx, maxx, miny, maxy);
         if (minx != 0 || maxx != 0 || miny != 0 || maxy != 0) aromCompletedNWS = true;
-        // Cehck if newRom's mechanism needs to be set.
+      
         if (newRomNWS.movement == null)
         {
             newRomNWS.SetMovement(this.name);
@@ -459,7 +463,7 @@ public class MarsMovement
     {
         if (aromCompletedFWS && aromCompletedHWS && aromCompletedNWS)
         {
-            // Save the new ROM values to the file.
+            // Save the new ROM values.
             newRomFWS.WriteToAssessmentFile();
             newRomHWS.WriteToAssessmentFile();
             newRomNWS.WriteToAssessmentFile();
