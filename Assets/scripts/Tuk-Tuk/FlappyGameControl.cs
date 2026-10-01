@@ -625,7 +625,11 @@ public class FlappyGameControl : MonoBehaviour
                 // Wait for the user to success or fail.
                 if (isTargetHit) gameState = GameStates.SUCCESS;
                 if (isTargetMissed) gameState = GameStates.FAILURE;
-                if (isTimeUp) gameState = GameStates.STOP;
+                if (isTimeUp)
+                {
+                    nFailure++;
+                    gameState = GameStates.STOP;
+                }
                 eventDelayTimer = 0.05f;
                 break;
             case GameStates.SUCCESS:

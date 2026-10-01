@@ -510,6 +510,10 @@ public class DCGameController : MonoBehaviour
     {
         if (gameState != GameStates.WAITING && gameState != GameStates.STOP)
         {
+            if (gameState == GameStates.WAITFORCATCH ||
+                gameState == GameStates.PLAYERIN ||
+                gameState == GameStates.SPAWNDIAMOND)
+                nFailure++;
             gameOver();
         }
         isGamePaused = false;

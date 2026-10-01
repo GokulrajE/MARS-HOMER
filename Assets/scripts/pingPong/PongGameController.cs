@@ -240,11 +240,13 @@ public class pongGameController : MonoBehaviour {
                 targetTime += Time.fixedDeltaTime;
                 if (isBallHitted)
                 {
+                    nSuccess++;
                     gameState = GameStates.SUCCESS;
                     eventDelayTimer = 0.05f;
                 }
-                if (isBallMissed)
+                else if (isBallMissed)
                 {
+                    nFailure++;
                     gameState = GameStates.FAILURE;
                     eventDelayTimer = 0.05f;
                 }
@@ -424,15 +426,13 @@ public class pongGameController : MonoBehaviour {
         targetTime = 0;
         isBallHitted = true;
         isBallMissed = false;
-        nSuccess++;
         playerScore++;
     }
-    
+
     public void BallMissed()
     {
-        isBallHitted = false;
+        if (isBallHitted) return;
         isBallMissed = true;
-        nFailure++;
     }
 
     public void onMarsButtonReleased()

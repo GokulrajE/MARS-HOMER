@@ -60,20 +60,23 @@ public class MCGameController : MonoBehaviour
     public bool isSuccess { get; private set; } = false;
     public bool isGamePaused { get; private set; } = false;
     public bool isFailure { get; private set; } = false;
+    private bool _targetResolved = false;
 
     public float gameDuration = MarsGameDefs.GAMEDURATION["SS"];
     public bool isInitialized { get; private set; } = false;
     private int[] scores;
     public void setIsSuccess()
     {
+        if (_targetResolved) return;
+        _targetResolved = true;
         isSuccess = true;
         nSuccess++;
-       
     }
 
     public void setIsFailure()
     {
-
+        if (_targetResolved) return;
+        _targetResolved = true;
         isFailure = true;
         nFailure++;
     }
@@ -256,6 +259,7 @@ public class MCGameController : MonoBehaviour
                 {
                     SpawnBalls();
                     nTargets++;
+                    _targetResolved = false;
                     eventDelayTimer = 0.05f;
                     runOnce = true;
                 }

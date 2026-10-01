@@ -280,7 +280,7 @@ public class TWGameController : MonoBehaviour
             //Debug.Log("GAMAPARAMETER AFTER" + GameParameter);
             //AppData.Instance.selectedGame.gameParameter = GameParameter;
             gameOverPanel.SetActive(!celebrationPanle.gameObject.activeSelf);
-            AppData.Instance.StopTrial(nTargets, nSuccess, nFailure);
+            AppData.Instance.StopTrial(nTargets, nSuccess, nTargets - nSuccess);
 
             if (gameOverPanel.gameObject.activeSelf)
             {
