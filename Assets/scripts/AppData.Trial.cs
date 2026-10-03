@@ -86,6 +86,7 @@ public partial class AppData
         Instance.selectedGame.resetstarCount();
         awsManager.changeUploadStatus(awsManager.status[0]);
         neurodash.OnSessionEnd();
+        AgentSession.Instance.NotifyTrialEnded();
     }
 
     private void WriteTrialToSessionsFile()

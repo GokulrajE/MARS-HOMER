@@ -134,21 +134,21 @@ public class summarySceneHandler : MonoBehaviour
     }
     public void exit()
     {
-        if (AppData.isNRSBuilt) {
+        AgentSession.Instance.StopSession();
+        neurodash.OnSessionEnd();
 
+        if (AppData.isNRSBuilt)
+        {
             try
             {
-                // Create marker file for NRS device setup check
                 string dirPath = "C:/DeviceSetups/Mars";
                 string filePath = Path.Combine(dirPath, "mars_demo_done.txt");
                 Directory.CreateDirectory(dirPath);
                 File.WriteAllText(filePath, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                
                 AppLogger.LogInfo("Created marker file at: " + filePath);
                 Application.Quit();
-                
                 #if UNITY_EDITOR
-                         UnityEditor.EditorApplication.isPlaying = false;
+                UnityEditor.EditorApplication.isPlaying = false;
                 #endif
             }
             catch (System.Exception ex)
@@ -158,10 +158,8 @@ public class summarySceneHandler : MonoBehaviour
             return;
         }
 
-        AppLogger.LogInfo("Disconnected form Mars And Switch scene to DataUploading");
-
+        AppLogger.LogInfo("Disconnected from Mars. Switching to DataUploading.");
         SceneManager.LoadScene("DATAUPLOADING");
-
     }
 
 

@@ -211,10 +211,33 @@ public class LoginHandler : MonoBehaviour
 
     void OnLoginClicked()
     {
-        if (isNewUser)
-            CreateConfigFromPatientsJson();
-        else
-            SaveChangesIfAny();
+        StartCoroutine(LoginSequence());
+    }
+
+    IEnumerator LoginSequence()
+    {
+        saveButton.interactable = false;
+
+        int agentCode = -1;
+        string agentMsg = "";
+
+        yield return StartCoroutine(AgentSession.Instance.CallStart(hospitalID,
+            (code, msg) => { agentCode = code; agentMsg = msg; }));
+
+        if (agentCode == 409)
+        {
+            if (statusMessage != null)
+            {
+                statusMessage.gameObject.SetActive(true);
+                statusMessage.text = agentMsg;
+            }
+            saveButton.interactable = true;
+            yield break;
+        }
+
+        // 200 or -1 (agent not running) → proceed
+        if (isNewUser) CreateConfigFromPatientsJson();
+        else SaveChangesIfAny();
 
         AppData.Instance.setUser(hospitalID);
         SceneManager.LoadSceneAsync("MAIN");
