@@ -85,6 +85,7 @@ public partial class AppData
         trialRawDataFile = null;
         Instance.selectedGame.resetstarCount();
         awsManager.changeUploadStatus(awsManager.status[0]);
+        neurodash.OnSessionEnd();
     }
 
     private void WriteTrialToSessionsFile()

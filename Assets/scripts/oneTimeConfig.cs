@@ -13,7 +13,6 @@ using SimpleJSON;
 using Unity.VisualScripting; // Make sure you have SimpleJSON in your project
 public class OneTimeConfig : MonoBehaviour
 {
-  
     public TMP_InputField homerIdField;
     public TMP_InputField startDateField;
     public TMP_InputField endDateField;
@@ -96,13 +95,18 @@ public class OneTimeConfig : MonoBehaviour
         }
         else
         {
+            // Pre-fill ID if we arrived from the login scene (new user selected there)
+            if (!string.IsNullOrEmpty(AppData.Instance.userID))
+            {
+                homerIdField.text = AppData.Instance.userID;
+                homerIdField.readOnly = true;
+            }
+
             if (!AppData.isNRSBuilt)
             {
                 detailsPanel.SetActive(false);
                 verifyPanel.SetActive(true);
             }
-          
-
         }
        
         startDateField.text = startDate.ToString("dd-MM-yyyy HH:mm:ss");
