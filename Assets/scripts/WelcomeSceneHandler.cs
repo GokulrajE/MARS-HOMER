@@ -197,9 +197,9 @@ public class welcomeSceneHandler : MonoBehaviour
     {
         MarsComm.OnMarsButtonReleased -= OnMarsButtonReleased;
     }
-    private void OnApplicationQuit()
-    {
-        Application.Quit();
+    // private void OnApplicationQuit()
+    // {
+    //     Application.Quit();
        
-    }
+    // }
 }

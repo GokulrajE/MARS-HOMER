@@ -31,6 +31,7 @@ public class AgentSession : MonoBehaviour
         _instance = this;
         DontDestroyOnLoad(gameObject);
         Application.quitting += OnQuitting;
+        System.AppDomain.CurrentDomain.ProcessExit += (_, __) => OnQuitting();
     }
 
     void OnDestroy()
@@ -104,10 +105,22 @@ public class AgentSession : MonoBehaviour
     }
 
     // ── /stop ────────────────────────────────────────────────────
-    // Called from summarySceneHandler.exit() on session end / logout.
+    // Called on session end / logout.
     public void StopSession()
     {
         StartCoroutine(CallStop());
+    }
+
+    // Synchronous version — use from exit() / quit paths where coroutines may not complete.
+    public void StopSessionNow()
+    {
+        try
+        {
+            using (var client = new System.Net.WebClient())
+                client.DownloadString($"{BaseUrl}/stop");
+            SessionLost = false;
+        }
+        catch { }
     }
 
     IEnumerator CallStop()
@@ -120,7 +133,7 @@ public class AgentSession : MonoBehaviour
         }
     }
 
-    // Synchronous best-effort /stop — coroutines don't run during shutdown
+    // Last-resort synchronous /stop on crash or force-quit
     void OnQuitting()
     {
         try
@@ -128,6 +141,6 @@ public class AgentSession : MonoBehaviour
             using (var client = new System.Net.WebClient())
                 client.DownloadString($"{BaseUrl}/stop");
         }
-        catch { /* best effort — app is closing */ }
+        catch { }
     }
 }

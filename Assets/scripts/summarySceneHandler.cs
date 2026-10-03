@@ -51,6 +51,7 @@ public class summarySceneHandler : MonoBehaviour
         title = "Unlock your Potential through Play";
         updateScores();
         initializeChart();
+       
     }
     void Update()
     {
@@ -134,8 +135,8 @@ public class summarySceneHandler : MonoBehaviour
     }
     public void exit()
     {
-        AgentSession.Instance.StopSession();
-        neurodash.OnSessionEnd();
+        AgentSession.Instance.StopSessionNow();
+        // neurodash.OnSessionEnd();
 
         if (AppData.isNRSBuilt)
         {

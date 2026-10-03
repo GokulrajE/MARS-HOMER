@@ -195,6 +195,7 @@ public class SetUpMars : MonoBehaviour
                 else
                 {
                     AppLogger.LogInfo("Ready To Deactivate");
+                     AgentSession.Instance.StopSessionNow();
                     currentState = SETUPMARS.DEACTIVATE;
                 }
                 break;

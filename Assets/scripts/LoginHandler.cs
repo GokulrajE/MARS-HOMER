@@ -35,6 +35,10 @@ public class LoginHandler : MonoBehaviour
 
     void Start()
     {
+        // Eagerly create AgentSession so Application.quitting is registered immediately,
+        // even if the user closes the app before clicking Login.
+        _ = AgentSession.Instance;
+
         baseDataPath = Path.Combine(Application.dataPath, "data");
         if (!Directory.Exists(baseDataPath))
             Directory.CreateDirectory(baseDataPath);
