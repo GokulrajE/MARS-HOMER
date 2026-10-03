@@ -224,15 +224,21 @@ public class LoginHandler : MonoBehaviour
         yield return StartCoroutine(AgentSession.Instance.CallStart(hospitalID,
             (code, msg) => { agentCode = code; agentMsg = msg; }));
 
+        Debug.Log($"[Login] agent answered {agentCode} for '{hospitalID}': {agentMsg}");
+
         if (agentCode == 409)
         {
+            // Another device is training this patient: stay on the login scene, show one short message, load nothing.
             if (statusMessage != null)
             {
                 statusMessage.gameObject.SetActive(true);
-                statusMessage.text = agentMsg;
+                statusMessage.text = "User is using another device";
             }
-            saveButton.interactable = true;
-            yield break;
+            else
+                Debug.LogWarning("User is using another device (assign statusMessage in the inspector to show it).");
+
+            saveButton.interactable = true; // they can pick another user, or press Login again later
+            yield break;                    // nothing below runs: no config is written, no user is set, no scene is loaded
         }
 
         // 200 or -1 (agent not running) → proceed

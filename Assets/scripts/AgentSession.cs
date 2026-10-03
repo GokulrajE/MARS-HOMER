@@ -22,6 +22,9 @@ public class AgentSession : MonoBehaviour
 
     private const string BaseUrl = "http://127.0.0.1:5055";
 
+    /// <summary>Set after a trial when the server gave the patient to another laptop: end the session when this is true.</summary>
+    public bool SessionLost { get; private set; }
+
     void Awake()
     {
         if (_instance != null && _instance != this) { Destroy(gameObject); return; }
@@ -37,7 +40,7 @@ public class AgentSession : MonoBehaviour
 
     // ── /start ───────────────────────────────────────────────────
     // Called from LoginHandler. Yields until a response arrives.
-    // onResult(statusCode, body): 200 = ok, 409 = conflict, -1 = agent offline
+    // onResult(statusCode, text): 200 = ok, 409 = conflict (text is the message to show), -1 = agent offline
     public IEnumerator CallStart(string patientId, System.Action<int, string> onResult)
     {
         string url = $"{BaseUrl}/start?patient={UnityWebRequest.EscapeURL(patientId)}";
@@ -46,13 +49,25 @@ public class AgentSession : MonoBehaviour
             req.timeout = 5;
             yield return req.SendWebRequest();
 
+            // A 409 arrives as result == ProtocolError, with responseCode 409: it must NOT be treated as "agent offline".
             if (req.result == UnityWebRequest.Result.ConnectionError ||
-                req.result == UnityWebRequest.Result.DataProcessingError)
+                req.result == UnityWebRequest.Result.DataProcessingError ||
+                req.responseCode == 0)
             {
+                Debug.LogWarning($"[AgentSession] /start {patientId}: agent not reachable ({req.error}); login is not restricted.");
                 onResult(-1, ""); // agent not running — caller proceeds without restriction
                 yield break;
             }
-            onResult((int)req.responseCode, req.downloadHandler?.text ?? "");
+
+            string body = req.downloadHandler?.text ?? "";
+            Debug.Log($"[AgentSession] /start {patientId} -> HTTP {(int)req.responseCode} {body}");
+
+            // The agent answers with JSON; hand the caller the sentence to show, not the raw JSON.
+            string message = body;
+            var json = SimpleJSON.JSON.Parse(body);
+            if (json != null && !string.IsNullOrEmpty(json["message"].Value)) message = json["message"].Value;
+
+            onResult((int)req.responseCode, message);
         }
     }
 
@@ -77,9 +92,14 @@ public class AgentSession : MonoBehaviour
             var json = SimpleJSON.JSON.Parse(req.downloadHandler.text);
             if (json == null) yield break;
 
+            // "lost" is null while the patient is still ours, and an object (who took the patient) when another laptop got them.
+            // (AsBool is false for an object, so check IsObject.)
             var lostNode = json["lost"];
-            if (!lostNode.IsNull && lostNode.AsBool)
-                Debug.LogWarning($"[AgentSession] trial-ended: session lost — {lostNode.Value}");
+            if (lostNode.IsObject)
+            {
+                SessionLost = true;
+                Debug.LogWarning($"[AgentSession] trial-ended: another laptop took the patient: {lostNode.ToString()}");
+            }
         }
     }
 
@@ -96,6 +116,7 @@ public class AgentSession : MonoBehaviour
         {
             req.timeout = 3;
             yield return req.SendWebRequest();
+            SessionLost = false;
         }
     }
 

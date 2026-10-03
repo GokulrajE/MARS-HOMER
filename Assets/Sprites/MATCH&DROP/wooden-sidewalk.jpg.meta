@@ -143,7 +143,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      wooden-sidewalk_0: 5093337014848262831
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

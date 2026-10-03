@@ -263,7 +263,13 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      colored_spheres_transparent_0: -4487054363909662899
+      colored_spheres_transparent_1: 8779154283397911993
+      colored_spheres_transparent_2: -2147613366537505553
+      colored_spheres_transparent_3: 425872391306805116
+      colored_spheres_transparent_4: -4095353994030554705
+      colored_spheres_transparent_5: -8493457267308518609
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
