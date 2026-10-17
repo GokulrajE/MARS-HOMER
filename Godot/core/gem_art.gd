@@ -1,0 +1,23 @@
+extends RefCounted
+static func draw(g:CanvasItem,p:Vector2,scale_value:float,t:float,kind:int)->void:
+	var tint=[Color("7de7ff"),Color("ed9bdc"),Color("87f2bd")][kind%3]
+	g.draw_set_transform(p,sin(t*1.7)*0.07,Vector2.ONE*maxf(.01,scale_value))
+	var a=Vector2(-36,-14)
+	var b=Vector2(-20,-34)
+	var c=Vector2(20,-34)
+	var d=Vector2(36,-14)
+	var e=Vector2(0,38)
+	var middle=Vector2(0,-10)
+	g.draw_colored_polygon(PackedVector2Array([a,b,middle]),tint.lightened(.5))
+	g.draw_colored_polygon(PackedVector2Array([b,c,middle]),tint.lightened(.25))
+	g.draw_colored_polygon(PackedVector2Array([c,d,middle]),tint.darkened(.15))
+	g.draw_colored_polygon(PackedVector2Array([a,middle,e]),tint.darkened(.23))
+	g.draw_colored_polygon(PackedVector2Array([middle,d,e]),tint)
+	g.draw_polyline(PackedVector2Array([a,b,c,d,e,a]),tint.lightened(.7),2,true)
+	g.draw_polyline(PackedVector2Array([b,middle,c]),Color(1,1,1,.65),1.5,true)
+	g.draw_line(middle,e,Color(1,1,1,.45),1.5,true)
+	var glint=0.4+0.6*pow(maxf(0,sin(t*2.2)),4)
+	var point=Vector2(-17,-24)
+	g.draw_line(point-Vector2(9,0)*glint,point+Vector2(9,0)*glint,Color.WHITE,2,true)
+	g.draw_line(point-Vector2(0,9)*glint,point+Vector2(0,9)*glint,Color.WHITE,2,true)
+	g.draw_set_transform(Vector2.ZERO,0,Vector2.ONE)

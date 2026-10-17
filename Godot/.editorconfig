@@ -1,0 +1,6 @@
+root = true
+
+# GDScript is indented with tabs (Godot's standard). Mixed tabs and spaces are a parse error
+# that can take the app down, so every script uses tabs only.
+[*.gd]
+indent_style = tab

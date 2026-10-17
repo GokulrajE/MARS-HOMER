@@ -1,0 +1,8 @@
+bird.png <- Assets/FlappyBirdStyleAssets/Sprites/BirdHero.png
+asteroid.png <- Assets/Sprites/Images/pngimg.com - asteroid_PNG13.png
+stain.png <- Assets/Sprites/TABLEWIPPING/stainsbrown.png
+bounce.wav <- Assets/Ping Pong/audio/bounce.wav
+ship.png <- Assets/Images/SpaceShips/ship2.png
+win.wav <- Assets/Ping Pong/audio/win.wav
+miss.wav <- Assets/Ping Pong/audio/loose.wav
+flight-background.png <- Assets/FlappyBirdStyleAssets/Sprites/background.png

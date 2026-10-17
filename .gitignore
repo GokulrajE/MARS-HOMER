@@ -73,3 +73,41 @@ crashlytics-build.properties
 
 # Custom ignores
 data/
+# Godot generated files and local verification tools
+**/.godot/
+Godot/test-output/
+
+# Portable build outputs
+dist/
+
+# ---- Godot version ----
+# Godot editor cache and imported-asset cache (rebuilt automatically)
+**/.godot/
+# Downloaded Godot binaries, local verification tools and logs (can contain keys)
+**/.tools/
+# Test screenshots, renders and scratch data
+**/test-output/
+# Portable / exported builds
+dist/
+# Local app data created while running or testing
+**/.local-data/
+# Editor settings copied into the project folder
+Godot/.vscode/
+Godot/export_templates/
+Godot/feature_profiles/
+Godot/script_templates/
+Godot/text_editor_themes/
+# Exported binaries and installers
+*.exe
+*.dll
+*.pck
+*.zip
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+
+# Standalone mini-game projects that live in their own repositories (copies ship in Godot/games)
+/bubble-sparkle/
+/fire-works/
+/fish-rescue/

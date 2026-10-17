@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bi3q52us0rlnq"]
+
+[ext_resource type="Script" uid="uid://cb6i7mul016tk" path="res://core/launcher.gd" id="1"]
+
+[node name="MarsHomer" type="Control" unique_id=589631374]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
