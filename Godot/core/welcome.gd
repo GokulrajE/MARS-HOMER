@@ -5,7 +5,6 @@ signal settings
 signal guide
 signal logout
 signal exit_app
-signal mode_changed(device)
 signal user_changed
 const UITheme = preload("res://core/ui_theme.gd")
 const Stats = preload("res://core/stats.gd")
@@ -23,8 +22,6 @@ var role_label: Label
 var side_label: Label
 var end_label: Label
 var avatar: Control
-var sim_button: Button
-var dev_button: Button
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -121,23 +118,6 @@ func _ready() -> void:
 	side_label = fact(grid, "Training arm")
 	end_label = fact(grid, "Plan ends")
 	date_label = fact(grid, "Date")
-	# Simulation / device switch.
-	var spacer = Control.new()
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_box.add_child(spacer)
-	left_box.add_child(UITheme.label("Input", 15, UITheme.MUTED))
-	var switch = HBoxContainer.new()
-	switch.add_theme_constant_override("separation", 0)
-	left_box.add_child(switch)
-	var group = ButtonGroup.new()
-	sim_button = segment("Mouse simulation", group, true)
-	dev_button = segment("MARS device", group, false)
-	switch.add_child(sim_button)
-	switch.add_child(dev_button)
-	sim_button.set_pressed_no_signal(not Trial.hardware)
-	dev_button.set_pressed_no_signal(Trial.hardware)
-	sim_button.pressed.connect(func(): mode_changed.emit(false))
-	dev_button.pressed.connect(func(): mode_changed.emit(true))
 	var right = UITheme.card()
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(right)
@@ -187,28 +167,6 @@ func fact(parent: Node, caption: String) -> Label:
 	value.clip_text = true
 	column.add_child(value)
 	return value
-
-## One half of the simulation / device switch.
-func segment(title: String, group: ButtonGroup, left_side: bool) -> Button:
-	var node = Button.new()
-	node.text = title
-	node.toggle_mode = true
-	node.button_group = group
-	node.custom_minimum_size = Vector2(0, 52)
-	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	var radius_left = 26 if left_side else 0
-	var radius_right = 0 if left_side else 26
-	for state in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
-		var on = state in ["pressed", "hover_pressed"]
-		var style = UITheme.box(Color("0f766e") if on else Color(1, 1, 1, 0.06), UITheme.FOCUS if state == "focus" else (UITheme.ACCENT if on else Color(1, 1, 1, 0.18)), 3 if state == "focus" else 1, 26, 20, 8)
-		style.corner_radius_top_left = radius_left if left_side else 0
-		style.corner_radius_bottom_left = radius_left if left_side else 0
-		style.corner_radius_top_right = radius_right if not left_side else 0
-		style.corner_radius_bottom_right = radius_right if not left_side else 0
-		if state == "focus": style.bg_color = Color.TRANSPARENT
-		node.add_theme_stylebox_override(state, style)
-	return node
 
 func draw_avatar() -> void:
 	var centre = avatar.size / 2.0

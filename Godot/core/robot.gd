@@ -25,10 +25,14 @@ var button_down = false
 var low_rate_since = 0
 var version = ""
 var last_fault=""
+## True after the link dropped by itself (watchdog, bridge loss); cleared by the next connect.
+var link_lost = false
 var log_file: FileAccess
 
 func connect_port(port: String) -> bool:
-	disconnect_port()
+	# Starting a new connection never sends stop commands over the old one.
+	disconnect_port(false)
+	link_lost = false
 	port = normalize_port(port)
 	if not valid_port(port):
 		message = "Choose a port, for example %s." % example_port()
@@ -199,6 +203,7 @@ func accept_packet(packet: Dictionary) -> void:
 	if packet.has("version"):
 		version = packet.version
 		return
+	link_lost = false
 	var now = Time.get_ticks_msec()
 	if not last_packet.is_empty():
 		var dt = packet.runtime-last_packet.runtime
@@ -258,6 +263,7 @@ func _process(_delta: float) -> void:
 				elif decoded.has("error"):
 					cancel_button()
 					fail(decoded.error)
+					if connected: link_lost = true
 					connected = false
 				elif decoded.has("bytes"):
 					for packet in parser.feed(Marshalls.base64_to_raw(decoded.bytes)):
@@ -266,14 +272,18 @@ func _process(_delta: float) -> void:
 						accept_packet(packet)
 		elif connected:
 			connected = false
+			link_lost = true
 			cancel_button()
 			fail("Serial bridge disconnected.")
+	# A handler above (a button release that lowers the arm) may just have dropped the link.
+	if not enabled: return
 	var now = Time.get_ticks_msec()
 	if connected and now-last_heartbeat >= 100:
 		command(PackedByteArray([128]))
 		last_heartbeat = now
 	if connected and now-last_seen > 2000:
 		cancel_button()
+		link_lost = true
 		fail("Robot watchdog timed out; trial held.")
 	if not connected and now-opened_at > 8000 and not authenticated:
 		fail("Serial bridge did not connect. Check the COM port and Windows PowerShell." if OS.get_name()=="Windows" else "Serial bridge did not connect. Check Python 3, the device path and serial permissions.")

@@ -11,6 +11,8 @@ var message: Label
 var fields: Dictionary={}
 var port: LineEdit
 var port_result: Label
+var update_status: Label
+var dash_status: Label
 var shell: MarginContainer
 
 func text(parent: Node,value: String) -> Label:
@@ -74,7 +76,7 @@ func _ready() -> void:
 	var formatted=today.substr(8,2)+"-"+today.substr(5,2)+"-"+today.substr(0,4)+" 00:00:00"
 	var end_date=Time.get_date_string_from_unix_time(Time.get_unix_time_from_datetime_string(today+"T00:00:00")+28*86400)
 	var end_formatted=end_date.substr(8,2)+"-"+end_date.substr(5,2)+"-"+end_date.substr(0,4)+" 23:59:59"
-	var defaults={"HomerID":Trial.user_id,"StartDate":formatted,"EndDate":end_formatted,"ML":"10","AP":"10","MLAP":"10","ForeArmLength":"0.291","UpperArmLength":"0.475","TrainingSide":"RIGHT","Location":"","Group":"Experimental"}
+	var defaults={"HomerID":Trial.user_id,"StartDate":formatted,"EndDate":end_formatted,"ML":"10","AP":"10","MLAP":"10","ForeArmLength":"0.291","UpperArmLength":"0.475","TrainingSide":(NeuroDash.assigned_side(Trial.user_id) if NeuroDash.assigned_side(Trial.user_id) in ["LEFT","RIGHT"] else "RIGHT"),"Location":"","Group":"Experimental"}
 	for key in defaults:
 		if key=="TrainingSide": fields[key]=side_picker(patient,str(Records.profile.get(key,defaults[key])))
 		else: fields[key]=field(patient,key,str(Records.profile.get(key,defaults[key])))
@@ -93,16 +95,35 @@ func _ready() -> void:
 	enabled.toggled.connect(func(value): Services.uploads_enabled=value; Services.save())
 	services.add_child(enabled)
 	var agent=CheckButton.new()
-	agent.text="Use local session agent (127.0.0.1:5055) at login"
+	agent.text="Always use the local session agent (127.0.0.1:5055); it is also detected automatically"
 	agent.button_pressed=Services.agent_enabled
 	agent.toggled.connect(func(value): Services.agent_enabled=value; Services.save())
 	services.add_child(agent)
-	for pair in [["Python executable","python_path"],["MARS uploader script","uploader"],["NeuroDash sender script","sender"],["Upload status file","upload_status"]]:
+	for pair in [["Python executable","python_path"],["MARS uploader script","uploader"],["Upload status file","upload_status"]]:
 		var edit=field(services,pair[0],Services.get(pair[1]))
 		edit.text_changed.connect(func(value): Services.set(pair[1],value); Services.save())
 	action(services,"Upload saved data now",Services.upload_now)
-	action(services,"Open NeuroDash login",func(): Services.neurodash(true))
-	action(services,"Send data to NeuroDash",func(): Services.neurodash(false))
+	text(services,"NeuroDash (built in, replaces sender.py): fetches the patient list for this device, locks one laptop per patient, and uploads sessions and finished assessments.")
+	var dash=CheckButton.new()
+	dash.text="Use the built-in NeuroDash client (patient lock, automatic upload, patient list)"
+	dash.button_pressed=NeuroDash.enabled()
+	dash.toggled.connect(func(value): NeuroDash.set_value("enabled",value))
+	services.add_child(dash)
+	for pair in [["NeuroDash server","server_ip",NeuroDash.DEFAULT_SERVER],["Server port","server_port",str(NeuroDash.DEFAULT_PORT)],["Device ID","device_id",NeuroDash.DEFAULT_DEVICE],["This laptop's name","client_id",""]]:
+		var edit=field(services,pair[0],str(NeuroDash.value(pair[1],pair[2])))
+		edit.placeholder_text=pair[2] if pair[2]!="" else NeuroDash.computer_name()
+		edit.text_changed.connect(func(value): NeuroDash.set_value(pair[1],int(value) if pair[1]=="server_port" and value.is_valid_int() else value))
+	action(services,"Fetch patient list now",func(): Services.neurodash(true))
+	action(services,"Send current patient data now",func(): Services.neurodash(false))
+	dash_status=text(services,"")
+	text(services,"App updates: the app looks for a newer release on GitHub when it starts, downloads it and installs it from the login screen.")
+	var auto_update=CheckButton.new()
+	auto_update.text="Check for updates automatically"
+	auto_update.button_pressed=Updater.enabled()
+	auto_update.toggled.connect(func(value): Updater.set_enabled(value))
+	services.add_child(auto_update)
+	update_status=text(services,"")
+	action(services,"Check for updates now",func(): Updater.check(true))
 	var service_status=text(services,"")
 	fields["service_status"]=service_status
 	message=Label.new()
@@ -195,6 +216,8 @@ func _process(_delta: float) -> void:
 	device_status.text=Robot.message+(" • "+Robot.version if Robot.version!="" else "")
 	update_port_test()
 	fields.service_status.text=Services.message
+	dash_status.text="NeuroDash: "+(NeuroDash.status if NeuroDash.status!="" else "idle")+"  •  patient file: "+NeuroDash.patients_file()
+	update_status.text="Version %s • %s" % [Updater.current_version(),Updater.status_text()]
 
 ## Saves the port to the settings file, then reports whether MARS answers on it.
 func save_and_test_port() -> void:

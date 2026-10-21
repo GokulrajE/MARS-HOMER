@@ -28,13 +28,19 @@ var tutorial: Control
 var signed_account = ""
 var assessment: Control
 var glass_controls:Control
+var error_panel: CanvasLayer
+var login_account = ""
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
+	if not "--script" in OS.get_cmdline_args() and bool(Services.settings.get_value("ui","hardware",false)): apply_mode(true)
 	theme = UITheme.build()
 	backdrop = Backdrop.new()
 	add_child(backdrop)
 	Trial.ended.connect(on_ended)
+	error_panel = load("res://core/error_panel.gd").new()
+	add_child(error_panel)
+	error_panel.close_requested.connect(on_error_close)
 	Robot.fault.connect(on_fault)
 	Services.session_checked.connect(on_login_checked)
 	glass_controls=load("res://core/glass_controls.gd").new()
@@ -99,12 +105,24 @@ func show_login() -> void:
 	add_child(login)
 	fade_in(login)
 	login.diagnostics.connect(show_diagnostics)
+	login.mode_changed.connect(on_mode_changed)
 	login.signed_in.connect(func(account):
+		# Is agent.py (always running on the device) there? Then it is the one the app tells.
+		if Trial.hardware and not Services.agent_enabled: await Services.probe_agent()
+		# Technical options revealed with Ctrl+Shift+X (for example on the login page) hide again.
+		if Nav.advanced:
+			Nav.advanced = false
+			Nav.advanced_changed.emit()
 		Trial.session_started = ""
 		Trial.user_id = account
 		signed_account = account
-		if ensure_user() and Records.profile.is_empty(): show_plan_setup()
-		else: show_menu())
+		# Built-in NeuroDash: tell the server this laptop holds the patient before the session starts.
+		if Trial.hardware and (NeuroDash.enabled() or Services.agent_in_use()):
+			login_account = account
+			if is_instance_valid(login) and login.has_method("show_checking"): login.show_checking()
+			Services.login(account)
+			return
+		enter_session())
 
 ## Connection check before login: shows everything the robot reports.
 func show_diagnostics() -> void:
@@ -147,7 +165,6 @@ func show_menu() -> void:
 	welcome.start.connect(begin_flow)
 	welcome.settings.connect(open_workflow)
 	welcome.guide.connect(show_tutorial)
-	welcome.mode_changed.connect(on_mode_changed)
 	welcome.user_changed.connect(func():
 		if ensure_user(): menu.refresh())
 	welcome.exit_app.connect(quit_app)
@@ -163,7 +180,8 @@ func show_menu() -> void:
 	Nav.fade_bar_after(6.0)
 	Nav.tip("welcome", "Press the MARS button (or F2) to start training. Hold it to open patient and setup records. Help & tutorial explains everything.")
 
-func on_mode_changed(value: bool) -> void:
+## Mouse simulation or the MARS device. Each keeps its own data folder; the choice is remembered.
+func apply_mode(value: bool, remember: bool = false) -> void:
 	Trial.hardware=value
 	Trial.data_root="user://data" if value else "user://simulation-data"
 	Trial.session_started=""
@@ -172,8 +190,13 @@ func on_mode_changed(value: bool) -> void:
 	Records.corners.clear()
 	Records.weight.clear()
 	login_approved=""
-	status.text = ""
-	if ensure_user(): menu.refresh()
+	if remember:
+		Services.settings.set_value("ui","hardware",value)
+		Services.save()
+
+func on_mode_changed(value: bool) -> void:
+	apply_mode(value, true)
+	if is_instance_valid(screen) and screen.has_method("rebuild_suggestions"): screen.rebuild_suggestions()
 
 func show_tutorial() -> void:
 	if is_instance_valid(tutorial): return
@@ -277,7 +300,21 @@ func notify(message: String) -> void:
 	if is_instance_valid(status): status.text = message
 	Nav.tip_now(message)
 
+## Opens the patient's session after a successful (or unnecessary) server check.
+func enter_session() -> void:
+	if ensure_user() and Records.profile.is_empty(): show_plan_setup()
+	else: show_menu()
+
 func on_login_checked(allowed: bool,message: String) -> void:
+	if login_account != "":
+		login_account = ""
+		if allowed:
+			login_approved = Trial.user_id
+			enter_session()
+		elif is_instance_valid(screen) and "error" in screen:
+			screen.error.text = message
+			screen.error.add_theme_color_override("font_color", Color("ff8a7a"))
+		return
 	if allowed:
 		login_approved=Trial.user_id
 		if pending_code!="":
@@ -287,6 +324,15 @@ func on_login_checked(allowed: bool,message: String) -> void:
 	else:
 		pending_code=""
 		notify(message)
+
+## "Close" on the error panel (or a hold of the MARS button): the running trial is saved and the
+## session moves on to the detachment / summary, as Unity's Close button did.
+func on_error_close() -> void:
+	Records.log_event("Error panel closed")
+	if Trial.running: Trial.finish("DEVICE_ERROR")
+	if Robot.link_lost: Robot.link_lost = false
+	# After the trial-end handler has queued its own screen change.
+	call_deferred("finish_session")
 
 func on_fault(message: String) -> void:
 	Records.log_event(message)
@@ -300,10 +346,14 @@ func on_fault(message: String) -> void:
 
 func launch(code: String) -> void:
 	if not ensure_user(): return
-	if Services.session_lost or Services.agent_busy:
-		notify("Session unavailable or awaiting server ownership check.")
+	# A "lost" flag is re-checked with the server instead of blocking every game for good; a check
+	# that is still running never holds a patient back (the network must not stop therapy).
+	if Services.session_lost and Trial.hardware:
+		pending_code = code
+		notify("Checking with the server that this patient is still yours…")
+		Services.login(Trial.user_id)
 		return
-	if Trial.hardware and Services.agent_enabled and login_approved!=Trial.user_id:
+	if Trial.hardware and Services.agent_in_use() and login_approved!=Trial.user_id:
 		pending_code=code
 		Services.login(Trial.user_id)
 		return
@@ -312,6 +362,8 @@ func launch(code: String) -> void:
 		notify(Trial.error)
 		return
 	active_code = code
+	# The server hears about every trial start (a renewed claim keeps the patient's lock fresh).
+	if Trial.hardware and NeuroDash.enabled(): NeuroDash.renew_claim()
 	load("res://core/visual_cycle.gd").note_trial(code)
 	clear_screens()
 	backdrop.hide()

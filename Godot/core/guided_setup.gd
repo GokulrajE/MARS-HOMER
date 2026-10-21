@@ -162,8 +162,17 @@ func primary() -> void:
 	if state == OFF:
 		finished.emit("shutdown")
 		return
+	# Lowering the arm only ever disconnects, even when telemetry looks unhealthy: pressing the
+	# button here must never start a new connection.
+	if shutdown and state == REMOVE:
+		if not hand_on():
+			Robot.disconnect_port(false)
+			state = OFF
+		return
 	if not Robot.healthy():
-		connect_robot()
+		# A live link that reports an error is not reconnected (that would drop the arm's control).
+		if Robot.connected: status.text = Robot.message
+		else: connect_robot()
 		return
 	match state:
 		CALIBRATE:
@@ -229,8 +238,8 @@ func refresh(healthy: bool) -> void:
 	plane_value.text = "%d°" % int(plane_slider.value) + ("  (horizontal)" if int(plane_slider.value) == -90 else "")
 	var sensors = Robot.last_packet.get("sensors", [])
 	var text = ""
-	connect_row.visible = not healthy
-	if not healthy:
+	connect_row.visible = not healthy and not shutdown
+	if not healthy and not shutdown:
 		instruction.text = "Connect MARS: check the serial port, then press the MARS button or Connect."
 		status.text = Robot.message
 		action_button.visible = true

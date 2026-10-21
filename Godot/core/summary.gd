@@ -97,11 +97,11 @@ func button_for(title: String, action: Callable, width: float) -> Button:
 	return button
 
 func upload() -> void:
-	if not Services.uploads_enabled:
-		message.text = "Uploads are turned off. Enable them under Patient, setup & records > Uploads & services."
-		return
-	Services.upload_now()
-	message.text = Services.message
+	message.text = Services.upload_all()
+	if not NeuroDash.upload_finished.is_connected(on_upload_finished): NeuroDash.upload_finished.connect(on_upload_finished)
+
+func on_upload_finished(result: Dictionary) -> void:
+	if is_instance_valid(message): message.text = ("Server upload done. " if result.get("ok", false) else "Server upload problem. ") + str(result.get("message", ""))
 
 func build_scores() -> void:
 	var stars_today = 0

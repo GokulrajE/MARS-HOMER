@@ -159,7 +159,11 @@ func cancel() -> void:
 	holding = false
 	fired = false
 
+## While set (the error panel is up) a tap does nothing and a hold calls this instead.
+var lock: Callable
+
 func do_short() -> void:
+	if lock.is_valid(): return
 	short_press.emit()
 	dismiss_tip()
 	if game_short.is_valid(): game_short.call()
@@ -167,6 +171,9 @@ func do_short() -> void:
 	else: scan(1)
 
 func do_long() -> void:
+	if lock.is_valid():
+		lock.call()
+		return
 	long_press.emit()
 	dismiss_tip()
 	if game_long.is_valid(): game_long.call()

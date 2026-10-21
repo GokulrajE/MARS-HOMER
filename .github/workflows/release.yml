@@ -1,0 +1,68 @@
+# Builds the portable MARS HOMER packages for Windows and Raspberry Pi and publishes them as a
+# GitHub release. The in-app updater (Godot/core/updater.gd) downloads these exact asset names:
+#   MARS_HOMER-windows-x86_64.zip   MARS_HOMER-linux-arm64.zip   (each with a .sha256 file)
+#
+# To release: set the version, commit, then  git tag v1.1.0 && git push origin v1.1.0
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: "4.6.2"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Godot (editor for export, runtimes for the packages)
+        run: |
+          base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
+          mkdir -p tools && cd tools
+          wget -q "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          wget -q "$base/Godot_v${GODOT_VERSION}-stable_win64.exe.zip"
+          wget -q "$base/Godot_v${GODOT_VERSION}-stable_linux.arm64.zip"
+          unzip -q "Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q "Godot_v${GODOT_VERSION}-stable_win64.exe.zip"
+          unzip -q "Godot_v${GODOT_VERSION}-stable_linux.arm64.zip"
+          chmod +x "Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+
+      - name: Stamp the version from the tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          sed -i "s|^config/version=.*|config/version=\"${version}\"|" Godot/project.godot
+          grep -n "config/version" Godot/project.godot
+
+      - name: Import and export the project pack
+        run: |
+          godot="$PWD/tools/Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          "$godot" --headless --path Godot --import || true
+          mkdir -p out
+          "$godot" --headless --path Godot --export-pack "Windows" "$PWD/out/MARS_HOMER.pck"
+          test -s out/MARS_HOMER.pck
+
+      - name: Assemble the packages
+        run: |
+          mkdir -p win pi dist
+          cp out/MARS_HOMER.pck win/ && cp out/MARS_HOMER.pck pi/
+          cp "tools/Godot_v${GODOT_VERSION}-stable_win64.exe" win/MARS_HOMER.exe
+          cp "tools/Godot_v${GODOT_VERSION}-stable_linux.arm64" pi/MARS_HOMER.arm64
+          chmod +x pi/MARS_HOMER.arm64
+          cp Godot/README.md win/README.md && cp Godot/README.md pi/README.md
+          (cd win && zip -qr ../dist/MARS_HOMER-windows-x86_64.zip .)
+          (cd pi && zip -qr ../dist/MARS_HOMER-linux-arm64.zip .)
+          cd dist
+          for f in *.zip; do sha256sum "$f" > "$f.sha256"; done
+          ls -l
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
